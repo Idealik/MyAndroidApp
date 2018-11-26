@@ -17,6 +17,8 @@ public class registration extends AppCompatActivity {
     final String TAG = "DBInf";
     boolean status;
     final String STATUS = "status";
+    final String PHONE = "phone";
+    final String PASS = "pass";
     final String FILE_NAME = "Info";
     SharedPreferences sPref; //класс для работы с записью в файлы
 
@@ -44,11 +46,6 @@ public class registration extends AppCompatActivity {
 
         final  String s1 = "9999999";
         phone.setText(String.valueOf(s1));
-
-        status = getStatus(); // если он уже считается вошедшим, то ничего не создаем.
-        if(status) { //сразу идем в профиль
-            goToProfile();
-        }
 
         // беру данные с форм
         dbHelper = new DBHelper(this);
@@ -99,7 +96,10 @@ public class registration extends AppCompatActivity {
         contentValues.put(DBHelper.KEY_PASS, mypass);
 
         database.insert(DBHelper.TABLE_CONTACTS_USERS,null,contentValues); //попробуй изменить имя таблицы
+        savePhoneAndPass(myphone, mypass);
+        saveStatus();
         Log.d(TAG, "reg was successfull");
+
 
         return  true;
     }
@@ -148,6 +148,21 @@ public class registration extends AppCompatActivity {
         boolean result = sPref.getBoolean(STATUS, false);
 
         return  result;
+    }
+
+    private void saveStatus() {
+        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putBoolean(STATUS, true);
+        editor.apply();
+    }
+
+    private void savePhoneAndPass(String phone, String pass) {
+        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(PHONE, phone);
+        editor.putString(PASS, pass);
+        editor.apply();
     }
 
     private  void goToProfile(){

@@ -15,6 +15,8 @@ public class authorization extends AppCompatActivity implements View.OnClickList
 
     final String TAG = "DBInf";
     final String STATUS = "status";
+    final String PHONE = "phone";
+    final String PASS = "pass";
     final String FILE_NAME = "Info";
 
     SharedPreferences sPref; //класс для работы с записью в файлы
@@ -22,28 +24,38 @@ public class authorization extends AppCompatActivity implements View.OnClickList
 
     DBHelper dbHelper;
     Button autorizationBT;
+    Button registrationBT;
 
     EditText phoneTB;
     EditText passTB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.authorization);
 
+        dbHelper = new DBHelper(this);
+
         status = getStatus(); // если он уже считается вошедшим, то ничего не создаем.
-        if(status) { //сразу идем в профиль
-            goToProfile();
+        if(status) {
+            //проверяем БД
+            SQLiteDatabase database = dbHelper.getWritableDatabase();
+            String myPhone = getPhone();
+            String myPass = getPass();
+            boolean confirmed  = checkData(database,myPhone,myPass);
+
+            if (confirmed) // Входим в профиль
+                goToProfile();
         }
 
         autorizationBT = (Button) findViewById(R.id.authorizationBtn);
+        registrationBT = (Button) findViewById(R.id.registrationAuthBtn);
+
         phoneTB = (EditText) findViewById(R.id.phoneAutTB);
         passTB = (EditText) findViewById(R.id.passAutTB);
 
         autorizationBT.setOnClickListener(this);
-
-        dbHelper = new DBHelper(this);
+        registrationBT.setOnClickListener(this);
     }
 
     @Override
@@ -57,13 +69,11 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         switch (v.getId()){
             case R.id.authorizationBtn:
                 ReadDB(database);
-
                 boolean confirmed  = checkData(database,myPhone,myPass);
-
                 logIn(confirmed); // сохраняем статус,получаем, переходим в профиль
-
                 break;
-
+            case R.id.registrationAuthBtn:
+                goToReg();
             default:
                 break;
         }
@@ -135,11 +145,31 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         return  result;
     }
 
+    private String getPhone() {
+        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        String phone = sPref.getString(PHONE, "");
+
+        return  phone;
+    }
+
+    private String getPass() {
+        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        String pass = sPref.getString(PASS, "");
+
+        return  pass;
+    }
+
     private void saveStatus() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putBoolean(STATUS, true);
         editor.apply();
+    }
+
+    private void goToReg() {
+        Intent intent = new Intent(this, registration.class);
+        startActivity(intent);
+        finish();
     }
 
     private  void goToProfile(){
