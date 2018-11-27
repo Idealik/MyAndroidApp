@@ -1,4 +1,11 @@
 lol
+<<<<<<< HEAD
 haha
 
 lal
+=======
+fuck!
+fuck!
+Fuck!!!
+lal
+>>>>>>> test
