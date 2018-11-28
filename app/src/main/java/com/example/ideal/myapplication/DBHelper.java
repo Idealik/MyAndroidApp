@@ -19,7 +19,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public  static final  String KEY_PHONE = "phone";
     public  static final  String KEY_PASS = "pass";
 
-
     //services
     public  static final  String KEY_NAME_SERVICES = "name";
     public  static final  String KEY_DESCRIPTION_SERVICES = "description";
@@ -34,12 +33,20 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String users = "create table "+ TABLE_CONTACTS_USERS + "(" + KEY_ID
-                + " integer primary key," + KEY_PHONE + " text," + KEY_PASS + " text" + ")";
-        String services = "create table "+ TABLE_CONTACTS_SERVICES + "(" + KEY_ID
-                + " integer primary key," + KEY_NAME_SERVICES + " text," + KEY_DESCRIPTION_SERVICES
-                + " text," + KEY_RATING_SERVICES + " text," + KEY_COUNT_OF_RATES_SERVICES + " text,"
-                + KEY_MIN_COST_SERVICES + " text" + ")";
+        String users = "create table "+ TABLE_CONTACTS_USERS
+                + "("
+                + KEY_ID + " integer primary key,"
+                + KEY_PHONE + " text,"
+                + KEY_PASS + " text"
+                + ")";
+        String services = "create table "+ TABLE_CONTACTS_SERVICES
+                + "(" + KEY_ID + " integer primary key,"
+                + KEY_NAME_SERVICES + " text,"
+                + KEY_DESCRIPTION_SERVICES+ " text,"
+                + KEY_RATING_SERVICES + " text,"
+                + KEY_COUNT_OF_RATES_SERVICES + " text,"
+                + KEY_MIN_COST_SERVICES + " text"
+                + ")";
 
         // create users table
         db.execSQL(users);
@@ -51,7 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     db.execSQL("drop table if exists "+TABLE_CONTACTS_USERS);
-    /*db.execSQL("drop table if exists "+TABLE_CONTACTS_SERVICES);*/
+    db.execSQL("drop table if exists "+TABLE_CONTACTS_SERVICES);
 
     onCreate(db);
     }

@@ -7,7 +7,7 @@
     tools:context=".addService">
 
     <EditText
-        android:id="@+id/nameAddServiceTB"
+        android:id="@+id/nameAddServiceInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
@@ -19,13 +19,13 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/nameAddServiceTB"
-        app:layout_constraintBottom_toTopOf="@+id/costAddServiceTB"
+        app:layout_constraintBottom_toTopOf="@+id/costAddServiceInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/costAddServiceTB"
+        android:id="@+id/costAddServiceInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="83dp"
@@ -37,13 +37,13 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/costAddServiceTB"
-        app:layout_constraintBottom_toTopOf="@+id/descriptonAddServiceTB"
+        app:layout_constraintBottom_toTopOf="@+id/descriptonAddServiceInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameAddServiceTB" />
+        app:layout_constraintTop_toBottomOf="@+id/nameAddServiceInput" />
 
     <EditText
-        android:id="@+id/descriptonAddServiceTB"
+        android:id="@+id/descriptonAddServiceInput"
         android:layout_width="312dp"
         android:layout_height="233dp"
         android:layout_marginStart="34dp"
@@ -58,20 +58,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/costAddServiceTB" />
+        app:layout_constraintTop_toBottomOf="@+id/costAddServiceInput" />
 
     <Button
         android:id="@+id/addServiceAddServiceBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="16dp"
         android:text="@string/addServices"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptonAddServiceTB" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptonAddServiceInput" />
 
     <Button
         android:id="@+id/readAddServiceBtn"
@@ -86,7 +86,9 @@
         android:text="@string/readDB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/addServiceAddServiceBtn"
-        app:layout_constraintTop_toBottomOf="@+id/descriptonAddServiceTB" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptonAddServiceInput"
+        app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>

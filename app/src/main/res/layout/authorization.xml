@@ -7,7 +7,7 @@
     tools:context=".authorization">
 
     <EditText
-        android:id="@+id/phoneAutTB"
+        android:id="@+id/phoneAuthorizationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="84dp"
@@ -17,14 +17,15 @@
         android:layout_marginRight="85dp"
         android:layout_marginBottom="13dp"
         android:ems="10"
+        android:hint="Phone"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/passAutTB"
+        app:layout_constraintBottom_toTopOf="@+id/passAuthorizationInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/passAutTB"
+        android:id="@+id/passAuthorizationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="84dp"
@@ -35,13 +36,14 @@
         android:layout_marginBottom="43dp"
         android:ems="10"
         android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/authorizationBtn"
+        android:hint="Pass"
+        app:layout_constraintBottom_toTopOf="@+id/logInAuthorizationBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneAutTB" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneAuthorizationInput" />
 
     <Button
-        android:id="@+id/authorizationBtn"
+        android:id="@+id/logInAuthorizationBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="148dp"
@@ -55,10 +57,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passAutTB" />
+        app:layout_constraintTop_toBottomOf="@+id/passAuthorizationInput" />
 
     <Button
-        android:id="@+id/registrationAuthBtn"
+        android:id="@+id/registrationAuthorizationBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="131dp"
@@ -69,5 +71,5 @@
         android:text="registration"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authorizationBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/logInAuthorizationBtn" />
 </android.support.constraint.ConstraintLayout>

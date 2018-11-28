@@ -11,113 +11,133 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-public class registration extends AppCompatActivity {
+public class registration extends AppCompatActivity implements View.OnClickListener {
 
     final String TAG = "DBInf";
-    boolean status;
     final String STATUS = "status";
     final String PHONE = "phone";
     final String PASS = "pass";
-    final String FILE_NAME = "Info";
-    SharedPreferences sPref; //класс для работы с записью в файлы
+    final String FILE_NAME = "Info";   
 
-     EditText phone;
-     EditText pass;
-     DBHelper dbHelper;
-
-     Button btnReg;
-     Button btnRead;
-     Button btnDel;
-     Button authoriz;
-
+    boolean status;
+    
+    Button registrateBtn;
+    Button readBtn;
+    Button deleteBtn;
+    Button loginBtn;
+    
+    EditText phoneInput;
+    EditText passInput;
+    
+    DBHelper dbHelper;          //База Данных
+    SharedPreferences sPref;    //класс для работы с записью в файлы
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration);
 
-        phone = (EditText) findViewById(R.id.phoneRegTB);
-        pass = (EditText) findViewById(R.id.passRegTB);
-
-        btnReg = (Button) findViewById(R.id.BTreg);
-        btnRead = (Button) findViewById(R.id.BTread);
-        btnDel = (Button) findViewById(R.id.BTdel);
-        authoriz = (Button) findViewById(R.id.AuthorizationRegistrationBtn);
-
-        final  String s1 = "9999999";
-        phone.setText(String.valueOf(s1));
-
-        // беру данные с форм
+        registrateBtn = (Button) findViewById(R.id.registrateRegistrationBtn);
+        readBtn = (Button) findViewById(R.id.readRegistrationBtn);
+        deleteBtn = (Button) findViewById(R.id.deleteRegistrationBtn);
+        loginBtn = (Button) findViewById(R.id.loginRegistrationBtn);
+        
+        phoneInput = (EditText) findViewById(R.id.phoneRegistrationInput);
+        passInput = (EditText) findViewById(R.id.passRegistrationInput);
+        
         dbHelper = new DBHelper(this);
 
-        WorkWithDB();
+        registrateBtn.setOnClickListener(this);
+        readBtn.setOnClickListener(this);
+        deleteBtn.setOnClickListener(this);
+        loginBtn.setOnClickListener(this);
     }
 
-    private void WorkWithDB(){
-        View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                ContentValues contentValues = new ContentValues();
-                String myphone = phone.getText().toString();
-                String mypass = pass.getText().toString();
+        switch (v.getId()){
+            case R.id.registrateRegistrationBtn:
+                String myPhone = phoneInput.getText().toString();
+                String myPass = passInput.getText().toString();
 
-                switch (v.getId()){
-                    case R.id.BTreg:
-                        Registration(database,contentValues,myphone,mypass);
-                        break;
-
-                    case R.id.BTread:
-                        ReadDB(database);
-                        break;
-
-                    case R.id.BTdel:
-                        DeleteDB(database);
-                        break;
-
-                    case R.id.AuthorizationRegistrationBtn:
-                        goToAuthoriz();
-                    default:
-                        break;
+                if(isStrongPassword(myPass)) {
+                    if(isFreePhone(database, myPhone)) {
+                        registration(database, myPhone, myPass);
+                        goToProfile();
+                    } else {
+                        Log.d(TAG, "reg has failed!");
+                        Toast.makeText(
+                                this,
+                                "Пользователь с данным номером телефона уже зарегистрирован.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Log.d(TAG, "reg has failed!");
+                    Toast.makeText(
+                            this,
+                            "Пароль недостаточно надёжен, попробуй другой.",
+                            Toast.LENGTH_SHORT).show();
                 }
-            }
-        };
-        btnReg.setOnClickListener(onClickListener);
-        btnRead.setOnClickListener(onClickListener);
-        btnDel.setOnClickListener(onClickListener);
-        authoriz.setOnClickListener(onClickListener);
+                break;
+
+            case R.id.readRegistrationBtn:
+                readDB(database);
+                break;
+
+            case R.id.deleteRegistrationBtn:
+                deleteDB(database);
+                break;
+
+            case R.id.loginRegistrationBtn:
+                goToAuthorization();
+                break;
+
+            default:
+                break;
+        }
     }
 
+    private void registration(SQLiteDatabase database, String myPhone, String myPass){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DBHelper.KEY_PHONE, myPhone);
+            contentValues.put(DBHelper.KEY_PASS, myPass);
 
-    private boolean Registration(SQLiteDatabase database, ContentValues contentValues, String myphone, String mypass){
+            database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
+            savePhoneAndPass(myPhone, myPass);
+            saveStatus();
 
-        contentValues.put(DBHelper.KEY_PHONE, myphone);
-        contentValues.put(DBHelper.KEY_PASS, mypass);
-
-        database.insert(DBHelper.TABLE_CONTACTS_USERS,null,contentValues); //попробуй изменить имя таблицы
-        savePhoneAndPass(myphone, mypass);
-        saveStatus();
-        Log.d(TAG, "reg was successfull");
-
-
-        return  true;
+            Log.d(TAG, "reg was successfull");
     }
 
-    private void ReadDB(SQLiteDatabase database){
+    protected boolean isStrongPassword(String myPass) {
+        if(!myPass.matches(".*[A-Z].*")) return  false;
+        if(!myPass.matches(".*[0-9].*")) return  false;
+        if(myPass.length()<=5) return false;
+        return true;
+    }
+
+    private boolean isFreePhone(SQLiteDatabase database, String phone){
         String msg = "";
-
-        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_USERS,null,null,null,null,null,null,null);
+        Cursor cursor = database.query(
+                DBHelper.TABLE_CONTACTS_USERS,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
 
         if(cursor.moveToFirst()){
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexPhone = cursor.getColumnIndex(DBHelper.KEY_PHONE);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS);
-
             do{
-                msg += " Index = " + cursor.getString(indexId) + " Number = " + cursor.getString(indexPhone) + " Pass =" + cursor.getString(indexPass) + " ";
-                Log.d(TAG, cursor.getString(indexId) + " " + cursor.getString(indexPhone) + " " + cursor.getString(indexPass) + " ");
-
+                if(phone.equals(cursor.getString(indexPhone))){
+                    return  false;
+                }
             }while (cursor.moveToNext());
 
             Log.d(TAG, "Full msg = " + msg);
@@ -126,28 +146,49 @@ public class registration extends AppCompatActivity {
             Log.d(TAG, "DB is empty");
         }
         cursor.close();
+        return  true;
     }
 
-    private  void DeleteDB(SQLiteDatabase database){
+    private void readDB(SQLiteDatabase database){
+        String msg = "";
+        Cursor cursor = database.query(
+                DBHelper.TABLE_CONTACTS_USERS,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        if(cursor.moveToFirst()){
+            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_PHONE);
+            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS);
+
+            do{
+                msg +=
+                        "Index = " + cursor.getString(indexId)
+                        + "\t Number = " + cursor.getString(indexPhone)
+                        + "\t Pass = " + cursor.getString(indexPass) 
+                        + " \n";
+                Log.d(TAG, cursor.getString(indexId) 
+                        + " \t" + cursor.getString(indexPhone) 
+                        + " \t" + cursor.getString(indexPass)
+                        + " ");
+            }while (cursor.moveToNext());
+
+            Log.d(TAG, " \nFull msg \n" + msg);
+        }
+        else {
+            Log.d(TAG, "DB is empty");
+        }
+        cursor.close();
+    }
+
+    private  void deleteDB(SQLiteDatabase database){
         database.delete(DBHelper.TABLE_CONTACTS_USERS,null,null);
         Log.d(TAG, "DB was deleted");
-    }
-
-
-    private  void  goToAuthoriz(){
-        Intent intent = new Intent(registration.this, authorization.class);
-
-        dbHelper.close();
-
-        startActivity(intent);
-        finish();
-    }
-
-    private boolean getStatus() {
-        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        boolean result = sPref.getBoolean(STATUS, false);
-
-        return  result;
     }
 
     private void saveStatus() {
@@ -170,7 +211,12 @@ public class registration extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
+    
+    private  void  goToAuthorization(){
+        Intent intent = new Intent(registration.this, authorization.class);
+        startActivity(intent);
+        finish();
+    }
 }
 
 

@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".registration">
 
     <EditText
-        android:id="@+id/passRegTB"
+        android:id="@+id/passRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="75dp"
@@ -17,16 +17,16 @@
         android:layout_marginRight="75dp"
         android:layout_marginBottom="30dp"
         android:ems="10"
-        android:hint="pass"
+        android:hint="Pass"
         android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/BTreg"
+        app:layout_constraintBottom_toTopOf="@+id/registrateRegistrationBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneRegTB"
+        app:layout_constraintTop_toBottomOf="@+id/phoneRegistrationInput"
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/phoneRegTB"
+        android:id="@+id/phoneRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="75dp"
@@ -35,16 +35,16 @@
         android:layout_marginEnd="75dp"
         android:layout_marginRight="75dp"
         android:ems="10"
-        android:hint="number"
+        android:hint="Phone"
         android:inputType="phone"
-        app:layout_constraintBottom_toTopOf="@+id/passRegTB"
+        app:layout_constraintBottom_toTopOf="@+id/passRegistrationInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/BTreg"
+        android:id="@+id/registrateRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
@@ -55,13 +55,13 @@
         android:layout_marginBottom="72dp"
         android:text="@string/regUser"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/BTread"
+        app:layout_constraintEnd_toStartOf="@+id/readRegistrationBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/BTread"
+        android:id="@+id/readRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
@@ -71,11 +71,11 @@
         android:layout_marginBottom="72dp"
         android:text="@string/readDB"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/BTdel"
-        app:layout_constraintStart_toEndOf="@+id/BTreg" />
+        app:layout_constraintEnd_toStartOf="@+id/deleteRegistrationBtn"
+        app:layout_constraintStart_toEndOf="@+id/registrateRegistrationBtn" />
 
     <Button
-        android:id="@+id/BTdel"
+        android:id="@+id/deleteRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
@@ -88,25 +88,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/BTread"
+        app:layout_constraintStart_toEndOf="@+id/readRegistrationBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/AuthorizationRegistrationBtn"
+        android:id="@+id/loginRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/goToAuthor"
-        app:layout_constraintBottom_toTopOf="@+id/phoneRegTB"
+        android:text="Authorization"
+        app:layout_constraintBottom_toTopOf="@+id/phoneRegistrationInput"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.516" />
+        app:layout_constraintVertical_bias="0.050000012" />
 
 </android.support.constraint.ConstraintLayout>

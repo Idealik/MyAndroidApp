@@ -92,10 +92,10 @@ activity#com.example.ideal.myapplication.profile
 ADDED from F:\uni\Extra\App\JAVA\MyAndroidApp\app\src\main\AndroidManifest.xml:19:9-45
 	android:name
 		ADDED from F:\uni\Extra\App\JAVA\MyAndroidApp\app\src\main\AndroidManifest.xml:19:19-42
-activity#com.example.ideal.myapplication.search
-ADDED from F:\uni\Extra\App\JAVA\MyAndroidApp\app\src\main\AndroidManifest.xml:20:9-44
+activity#com.example.ideal.myapplication.searchService
+ADDED from F:\uni\Extra\App\JAVA\MyAndroidApp\app\src\main\AndroidManifest.xml:20:9-51
 	android:name
-		ADDED from F:\uni\Extra\App\JAVA\MyAndroidApp\app\src\main\AndroidManifest.xml:20:19-41
+		ADDED from F:\uni\Extra\App\JAVA\MyAndroidApp\app\src\main\AndroidManifest.xml:20:19-48
 activity#com.example.ideal.myapplication.addService
 ADDED from F:\uni\Extra\App\JAVA\MyAndroidApp\app\src\main\AndroidManifest.xml:21:9-57
 	android:name
