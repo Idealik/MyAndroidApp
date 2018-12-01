@@ -44,10 +44,12 @@ public class authorization extends AppCompatActivity implements View.OnClickList
             String myPhone = getPhone();
             String myPass = getPass();
             boolean confirmed  = checkData(database,myPhone,myPass);
-
+//            Log.d(TAG, "Erorr!");
             // Входим в профиль
             if (confirmed)
                 goToProfile();
+            else
+                Log.d(TAG, myPhone + " " + myPass);
         }
 
         logInBtn = (Button) findViewById(R.id.logInAuthorizationBtn);
@@ -174,7 +176,7 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     //получить номер телефона для проверки
     private String getPhone() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String phone = sPref.getString(PHONE, "");
+        String phone = sPref.getString(PHONE, "-");
 
         return  phone;
     }
@@ -182,7 +184,7 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     //получить пароль для проверки 
     private String getPass() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String pass = sPref.getString(PASS, "");
+        String pass = sPref.getString(PASS, "-");
 
         return  pass;
     }

@@ -1,30 +1,44 @@
 package com.example.ideal.myapplication;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-public class searchService extends AppCompatActivity implements View.OnClickListener {
+import com.example.ideal.myapplication.fragments.foundElement;
+
+public class searchService extends FragmentActivity implements View.OnClickListener {
     // нужно сохранять номер, чтобы потом делать запрос в бд по нему и узнавать местоположение
     // сначала идут константы
     final String TAG = "DBInf";
 
-    //переменные стринг или др
-
     // кнопки
     Button findBtn;
+
     //editTEXT
     EditText nameInput;
     EditText answerInput;
+
+    //Вертикальный лэйаут
+    LinearLayout resultLayout;
+
     //бд
     DBHelper dbHelper;
 
-    // работа с файлами
+    private foundElement fElement;
+    private FragmentManager manager;
+    private FragmentTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +50,10 @@ public class searchService extends AppCompatActivity implements View.OnClickList
         nameInput = findViewById(R.id.nameSearchServiceInput);
         answerInput = findViewById(R.id.answerSearchServiceInput);
 
+        resultLayout = findViewById(R.id.resultsLayout);
+
         dbHelper = new DBHelper(this);
+        manager = getSupportFragmentManager();
 
         findBtn.setOnClickListener(this);
     }
@@ -77,9 +94,13 @@ public class searchService extends AppCompatActivity implements View.OnClickList
                 boolean isName  = name.equals(cursor.getString(indexName));
                 if(isName){
                     //  формирую сообщения, в будущем тут будем формировать объект
-                    msg +=  " Name = " + cursor.getString(indexName)
-                            + " Cost = " + cursor.getString(indexMinCost)
-                            + " Descr = " + cursor.getString(indexDescription)
+                    String foundName = cursor.getString(indexName);
+                    String foundCost = cursor.getString(indexMinCost);
+                    String foundDescription = cursor.getString(indexDescription);
+                    addToScreen(foundName, foundCost, foundDescription);
+                    msg +=  " Name = " + foundName
+                            + " Cost = " + foundCost
+                            + " Descr = " + foundDescription
                             + " ";
                 }
             }while (cursor.moveToNext());
@@ -91,6 +112,15 @@ public class searchService extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, "DB is empty");
         }
         cursor.close();
+    }
+
+    private void addToScreen(String name, String cost, String description) {
+        fElement = new foundElement(name, cost, description);
+        transaction = manager.beginTransaction();
+
+        transaction.add(R.id.resultsLayout, fElement);
+
+        transaction.commit();
     }
 
 }

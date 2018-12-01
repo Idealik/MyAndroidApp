@@ -105,7 +105,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
                         + " "
                         + cursor.getString(indexDescription )
                         + " ");
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             Log.d(TAG, "Full msg = " + msg);
         }
