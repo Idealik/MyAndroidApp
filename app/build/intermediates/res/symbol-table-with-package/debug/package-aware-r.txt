@@ -694,12 +694,14 @@ id collapseActionView
 id content
 id contentPanel
 id costAddServiceInput
+id costGuestServiceText
 id costText
 id custom
 id customPanel
 id decor_content_parent
 id default_activity_button
 id deleteRegistrationBtn
+id descriptionGuestServiceText
 id descriptionText
 id descriptonAddServiceInput
 id dimensions
@@ -739,6 +741,7 @@ id message
 id middle
 id multiply
 id nameAddServiceInput
+id nameGuestServiceText
 id nameSearchServiceInput
 id nameText
 id never
@@ -852,6 +855,7 @@ layout abc_tooltip
 layout add_service
 layout authorization
 layout found_element
+layout guest_service
 layout notification_action
 layout notification_action_tombstone
 layout notification_template_custom_big

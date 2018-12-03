@@ -1,22 +1,16 @@
 package com.example.ideal.myapplication;
 
-import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.example.ideal.myapplication.fragments.foundElement;
 
 public class searchService extends FragmentActivity implements View.OnClickListener {
     // нужно сохранять номер, чтобы потом делать запрос в бд по нему и узнавать местоположение
@@ -60,7 +54,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        String name = nameInput.getText().toString();
+        String name = nameInput.getText().toString().toLowerCase();
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         switch (v.getId()){
@@ -85,19 +79,22 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                 null);
 
         if(cursor.moveToFirst()){
+            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
             int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
 
             // есть только имя
             do{
-                boolean isName  = name.equals(cursor.getString(indexName));
+                boolean isName  = name.equals(cursor.getString(indexName).toLowerCase());
                 if(isName){
                     //  формирую сообщения, в будущем тут будем формировать объект
+                    String foundId = cursor.getString(indexId);
                     String foundName = cursor.getString(indexName);
                     String foundCost = cursor.getString(indexMinCost);
                     String foundDescription = cursor.getString(indexDescription);
-                    addToScreen(foundName, foundCost, foundDescription);
+
+                    addToScreen(foundId, foundName, foundCost, foundDescription);
                     msg +=  " Name = " + foundName
                             + " Cost = " + foundCost
                             + " Descr = " + foundDescription
@@ -114,8 +111,9 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         cursor.close();
     }
 
-    private void addToScreen(String name, String cost, String description) {
-        fElement = new foundElement(name, cost, description);
+    private void addToScreen(String id, String name, String cost, String description) {
+        fElement = new foundElement(id, name, cost, description);
+
         transaction = manager.beginTransaction();
 
         transaction.add(R.id.resultsLayout, fElement);

@@ -5,47 +5,54 @@
     build-mode="COLD"
     density="xxhdpi"
     format="10"
-    ir-eligibility="COMPATIBLE"
+    ir-eligibility="FIELD_TYPE_CHANGE"
     plugin-version="3.2.1"
-    timestamp="1543661795127"
+    timestamp="1543781711627"
     token="-6757887997616891234"
     verifier="COLD_SWAP_REQUESTED" >
 
     <task
         name="javac"
-        duration="291" />
+        duration="562" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="28" />
+        duration="71" />
     <task
         name="verifier"
         duration="8" />
 
-    <artifact
-        location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_3.apk"
-        type="SPLIT" />
     <artifact
         location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_2.apk"
         type="SPLIT" />
 
     <build
         build-mode="FULL"
-        timestamp="1543655413695"
-        verifier="FULL_BUILD_REQUESTED" >
+        ir-eligibility="CLASS_ADDED"
+        timestamp="1543779925241"
+        verifier="COLD_SWAP_REQUESTED" >
         <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\resources\instant-run\debug\resources-debug.apk"
             type="SPLIT" />
         <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_0.apk"
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\dep\dependencies.apk"
+            type="SPLIT" />
+        <artifact
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
             type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_5.apk"
             type="SPLIT" />
         <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_7.apk"
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_3.apk"
+            type="SPLIT" />
+        <artifact
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_0.apk"
+            type="SPLIT" />
+        <artifact
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_2.apk"
             type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_4.apk"
@@ -54,22 +61,13 @@
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_1.apk"
             type="SPLIT" />
         <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_2.apk"
-            type="SPLIT" />
-        <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_3.apk"
-            type="SPLIT" />
-        <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\dep\dependencies.apk"
-            type="SPLIT" />
-        <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_9.apk"
-            type="SPLIT" />
-        <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\resources\instant-run\debug\resources-debug.apk"
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_7.apk"
             type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_8.apk"
+            type="SPLIT" />
+        <artifact
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_9.apk"
             type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\instant-run-apk\debug\app-debug.apk"
@@ -78,13 +76,10 @@
     <build
         build-mode="COLD"
         ir-eligibility="R_CLASS_CHANGE"
-        timestamp="1543658639247"
+        timestamp="1543781149154"
         verifier="COLD_SWAP_REQUESTED" >
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\resources\instant-run\debug\resources-debug.apk"
-            type="SPLIT" />
-        <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
             type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_5.apk"
@@ -93,10 +88,16 @@
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_0.apk"
             type="SPLIT" />
         <artifact
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_3.apk"
+            type="SPLIT" />
+        <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_4.apk"
             type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_7.apk"
+            type="SPLIT" />
+        <artifact
+            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
             type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_9.apk"
@@ -104,12 +105,9 @@
     </build>
     <build
         build-mode="COLD"
-        ir-eligibility="COMPATIBLE"
-        timestamp="1543661795127"
+        ir-eligibility="FIELD_TYPE_CHANGE"
+        timestamp="1543781711627"
         verifier="COLD_SWAP_REQUESTED" >
-        <artifact
-            location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_3.apk"
-            type="SPLIT" />
         <artifact
             location="F:\uni\Extra\App\JAVA\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_2.apk"
             type="SPLIT" />

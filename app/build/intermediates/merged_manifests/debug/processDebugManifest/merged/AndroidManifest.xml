@@ -29,6 +29,7 @@
         <activity android:name="com.example.ideal.myapplication.profile" />
         <activity android:name="com.example.ideal.myapplication.searchService" />
         <activity android:name="com.example.ideal.myapplication.addService" />
+        <activity android:name="com.example.ideal.myapplication.guestService" />
     </application>
 
 </manifest>
