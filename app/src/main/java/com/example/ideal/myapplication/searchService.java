@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.example.ideal.myapplication.fragments.foundElement;
+
 public class searchService extends FragmentActivity implements View.OnClickListener {
     // нужно сохранять номер, чтобы потом делать запрос в бд по нему и узнавать местоположение
     // сначала идут константы
@@ -112,6 +114,9 @@ public class searchService extends FragmentActivity implements View.OnClickListe
     }
 
     private void addToScreen(String id, String name, String cost, String description) {
+
+        resultLayout.removeAllViews();
+
         fElement = new foundElement(id, name, cost, description);
 
         transaction = manager.beginTransaction();

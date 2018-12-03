@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "F:\\uni\\Extra\\App\\JAVA\\MyAndroidApp\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v24\\values-v24.xml",
+            "outputFile": "C:\\Users\\Ideal\\Desktop\\MySecondProj\\MyAndroidApp\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v24\\values-v24.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\maxas\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\0be557c83e3f9b410aba23cdd32325ca\\res\\values-v24\\values-v24.xml",
+                    "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\325bb812408cc9e00cd850bf07474124\\res\\values-v24\\values-v24.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

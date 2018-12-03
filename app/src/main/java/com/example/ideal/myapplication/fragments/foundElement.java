@@ -1,4 +1,4 @@
-package com.example.ideal.myapplication;
+package com.example.ideal.myapplication.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
+import com.example.ideal.myapplication.guestService;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -60,7 +61,8 @@ public class foundElement extends Fragment implements View.OnClickListener {
         sPref = getContext().getSharedPreferences(FILE_NAME, MODE_PRIVATE);
 
         nameText.setOnClickListener(this);
-
+        costText.setOnClickListener(this);
+        descriptionText.setOnClickListener(this);
         setData();
     }
 
@@ -71,9 +73,9 @@ public class foundElement extends Fragment implements View.OnClickListener {
     }
 
     private void setData() {
-        nameText.setText(nameString);
-        costText.setText(costString);
-        descriptionText.setText(descriptionString);
+        nameText.setText(nameString + " ");
+        costText.setText(costString + " ");
+        descriptionText.setText(descriptionString + " ");
     }
 
 
