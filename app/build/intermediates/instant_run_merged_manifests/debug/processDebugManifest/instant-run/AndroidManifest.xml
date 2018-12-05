@@ -30,6 +30,7 @@
         <activity android:name="com.example.ideal.myapplication.searchService" />
         <activity android:name="com.example.ideal.myapplication.addService" />
         <activity android:name="com.example.ideal.myapplication.guestService" />
+        <activity android:name="com.example.ideal.myapplication.mainScreen" />
 
         <provider
             android:name="com.android.tools.ir.server.InstantRunContentProvider"

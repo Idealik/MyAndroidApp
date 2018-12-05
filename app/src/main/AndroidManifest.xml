@@ -20,7 +20,8 @@
         <activity android:name=".profile" />
         <activity android:name=".searchService" />
         <activity android:name=".addService" />
-        <activity android:name=".guestService"></activity>
+        <activity android:name=".guestService" />
+        <activity android:name=".mainScreen"></activity>
     </application>
 
 </manifest>

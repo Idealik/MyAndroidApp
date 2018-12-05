@@ -24,7 +24,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
     //editTEXT
     EditText nameInput;
-    EditText answerInput;
 
     //Вертикальный лэйаут
     LinearLayout resultLayout;
@@ -44,7 +43,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         findBtn = findViewById(R.id.findServiceSearchServiceBtn);
 
         nameInput = findViewById(R.id.nameSearchServiceInput);
-        answerInput = findViewById(R.id.answerSearchServiceInput);
 
         resultLayout = findViewById(R.id.resultsLayout);
 
@@ -70,7 +68,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
 
     private  void search(SQLiteDatabase database, String name){
-        String msg= "";
         Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_SERVICES,
                 null,
                 null,
@@ -97,15 +94,10 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                     String foundDescription = cursor.getString(indexDescription);
 
                     addToScreen(foundId, foundName, foundCost, foundDescription);
-                    msg +=  " Name = " + foundName
-                            + " Cost = " + foundCost
-                            + " Descr = " + foundDescription
-                            + " ";
                 }
             }while (cursor.moveToNext());
-            answerInput.setText(String.valueOf(msg));
-            
-            Log.d(TAG, "Full msg = " + msg);
+
+            Log.d(TAG, "Full msg = ");
         }
         else {
             Log.d(TAG, "DB is empty");

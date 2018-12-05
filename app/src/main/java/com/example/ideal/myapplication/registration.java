@@ -30,6 +30,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
     
     EditText phoneInput;
     EditText passInput;
+    EditText cityInput;
     
     DBHelper dbHelper;          //База Данных
     SharedPreferences sPref;    //класс для работы с записью в файлы
@@ -46,7 +47,8 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         
         phoneInput = (EditText) findViewById(R.id.phoneRegistrationInput);
         passInput = (EditText) findViewById(R.id.passRegistrationInput);
-        
+        cityInput = (EditText) findViewById(R.id.cityRegistrationInput);
+
         dbHelper = new DBHelper(this);
 
         registrateBtn.setOnClickListener(this);
@@ -63,10 +65,13 @@ public class registration extends AppCompatActivity implements View.OnClickListe
             case R.id.registrateRegistrationBtn:
                 String myPhone = phoneInput.getText().toString();
                 String myPass = passInput.getText().toString();
+                String myCity = cityInput.getText().toString();
+
+                Log.d(TAG, myPhone + myPass+myCity);
 
                 if(isStrongPassword(myPass)) {
                     if(isFreePhone(database, myPhone)) {
-                        registration(database, myPhone, myPass);
+                        registration(database, myPhone, myPass,myCity);
                         goToProfile();
                     } else {
                         Log.d(TAG, "reg has failed!");
@@ -101,13 +106,15 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void registration(SQLiteDatabase database, String myPhone, String myPass){
+    private void registration(SQLiteDatabase database, String myPhone, String myPass, String myCity){
             ContentValues contentValues = new ContentValues();
-            contentValues.put(DBHelper.KEY_PHONE, myPhone);
-            contentValues.put(DBHelper.KEY_PASS, myPass);
+
+            contentValues.put(DBHelper.KEY_USER_ID, myPhone);
+            contentValues.put(DBHelper.KEY_PASS_USERS, myPass);
+            contentValues.put(DBHelper.KEY_CITY_USERS, myCity);
 
             database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
-            savePhoneAndPass(myPhone, myPass);
+            saveIdAndPass(myPhone, myPass);
             saveStatus();
 
             Log.d(TAG, "reg was successfull");
@@ -121,7 +128,6 @@ public class registration extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isFreePhone(SQLiteDatabase database, String phone){
-        String msg = "";
         Cursor cursor = database.query(
                 DBHelper.TABLE_CONTACTS_USERS,
                 null,
@@ -133,17 +139,13 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                 null);
 
         if(cursor.moveToFirst()){
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_PHONE);
+            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
             do{
                 if(phone.equals(cursor.getString(indexPhone))){
                     return  false;
                 }
             }while (cursor.moveToNext());
 
-            Log.d(TAG, "Full msg = " + msg);
-        }
-        else {
-            Log.d(TAG, "DB is empty");
         }
         cursor.close();
         return  true;
@@ -163,18 +165,21 @@ public class registration extends AppCompatActivity implements View.OnClickListe
 
         if(cursor.moveToFirst()){
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_PHONE);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS);
+            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
+            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
 
             do{
                 msg +=
                         "Index = " + cursor.getString(indexId)
                         + "\t Number = " + cursor.getString(indexPhone)
-                        + "\t Pass = " + cursor.getString(indexPass) 
+                        + "\t Pass = " + cursor.getString(indexPass)
+                        + "\t City = " + cursor.getString(indexCity)
                         + " \n";
                 Log.d(TAG, cursor.getString(indexId) 
                         + " \t" + cursor.getString(indexPhone) 
                         + " \t" + cursor.getString(indexPass)
+                        + " \t" + cursor.getString(indexCity)
                         + " ");
             }while (cursor.moveToNext());
 
@@ -198,7 +203,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         editor.apply();
     }
 
-    private void savePhoneAndPass(String phone, String pass) {
+    private void saveIdAndPass(String phone, String pass) {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(PHONE, phone);

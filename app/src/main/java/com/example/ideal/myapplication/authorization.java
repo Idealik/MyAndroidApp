@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.net.PasswordAuthentication;
+
 public class authorization extends AppCompatActivity implements View.OnClickListener {
 
     final String TAG = "DBInf";
@@ -41,10 +43,10 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         if(status) {
             //проверяем БД
             SQLiteDatabase database = dbHelper.getWritableDatabase();
-            String myPhone = getPhone();
+            String myPhone = getId();
             String myPass = getPass();
             boolean confirmed  = checkData(database,myPhone,myPass);
-//            Log.d(TAG, "Erorr!");
+
             // Входим в профиль
             if (confirmed)
                 goToProfile();
@@ -73,7 +75,7 @@ public class authorization extends AppCompatActivity implements View.OnClickList
                 readDB(database);
                 //Проверка пароля и логина
                 boolean confirmed  = checkData(database,myPhone,myPass);
-                logIn(confirmed); // сохраняем статус,получаем, переходим в профиль
+                logIn(confirmed,myPhone,myPass); // сохраняем статус,получаем, переходим в профиль
                 break;
             case R.id.registrationAuthorizationBtn:
                 goToRegegistration();
@@ -82,12 +84,14 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void logIn(boolean confirmed){
+    private void logIn(boolean confirmed, String phone, String pass){
         if(confirmed){
             Log.d(TAG, "You are ");
             saveStatus(); // сохраняем статус
-            status = getStatus(); // если true то пользователь вошел иначе не вошел
+            saveIdAndPass(phone,pass);  //сохраяем пользователя и пароль
 
+
+            status = getStatus(); // если true то пользователь вошел иначе не вошел
             if(status){
                 goToProfile(); // переходим в профиль
             }
@@ -110,18 +114,18 @@ public class authorization extends AppCompatActivity implements View.OnClickList
                 null);
 
         if(cursor.moveToFirst()){
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_PHONE);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS);
+            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
             boolean isConfirmed;
 
             do{
-               isConfirmed=
-                       myPhone.equals(cursor.getString(indexPhone))
-                       && myPass.equals(cursor.getString(indexPass));
-               if(isConfirmed){                   
-                   cursor.close();
-                   return true;
-               }
+                isConfirmed=
+                        myPhone.equals(cursor.getString(indexPhone))
+                                && myPass.equals(cursor.getString(indexPass));
+                if(isConfirmed){
+                    cursor.close();
+                    return true;
+                }
             }while (cursor.moveToNext());
         }
         cursor.close();
@@ -139,22 +143,22 @@ public class authorization extends AppCompatActivity implements View.OnClickList
                 null,
                 null,
                 null);
-        
+
         if(cursor.moveToFirst()){
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_PHONE);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS);
+            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
 
             do{
-                msg += 
-                        " Index = " + cursor.getString(indexId) 
-                        + " Number = " + cursor.getString(indexPhone) 
-                        + " Pass =" + cursor.getString(indexPass)
-                        + " ";
-                Log.d(TAG, cursor.getString(indexId) 
-                                + " " + cursor.getString(indexPhone)
-                                + " " + cursor.getString(indexPass) 
-                                + " ");
+                msg +=
+                        " Index = " + cursor.getString(indexId)
+                                + " Number = " + cursor.getString(indexPhone)
+                                + " Pass =" + cursor.getString(indexPass)
+                                + " ";
+                Log.d(TAG, cursor.getString(indexId)
+                        + " " + cursor.getString(indexPhone)
+                        + " " + cursor.getString(indexPass)
+                        + " ");
 
             }while (cursor.moveToNext());
 
@@ -174,14 +178,14 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     }
 
     //получить номер телефона для проверки
-    private String getPhone() {
+    private String getId() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String phone = sPref.getString(PHONE, "-");
+        String userId = sPref.getString(PHONE, "-");
 
-        return  phone;
+        return  userId;
     }
 
-    //получить пароль для проверки 
+    //получить пароль для проверки
     private String getPass() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         String pass = sPref.getString(PASS, "-");
@@ -189,11 +193,17 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         return  pass;
     }
 
-    //получить статус для входа
     private void saveStatus() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putBoolean(STATUS, true);
+        editor.apply();
+    }
+    private void saveIdAndPass(String phone, String pass) {
+        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(PHONE, phone);
+        editor.putString(PASS, pass);
         editor.apply();
     }
 
@@ -210,7 +220,3 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     }
 
 }
-
-
-
-

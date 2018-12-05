@@ -10,6 +10,8 @@
     //Add service
     <string name="nameAddServiceTB">Name</string>
     <string name="costAddServiceTB">Cost</string>
+    <string name="main_screen">Main screen</string>
+    <string name="city">City</string>
 
 
 </resources>

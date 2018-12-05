@@ -12,26 +12,24 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="75dp"
         android:layout_marginLeft="75dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="75dp"
         android:layout_marginRight="75dp"
-        android:layout_marginBottom="30dp"
         android:ems="10"
         android:hint="Pass"
         android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/registrateRegistrationBtn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneRegistrationInput"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneRegistrationInput" />
 
     <EditText
         android:id="@+id/phoneRegistrationInput"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="43dp"
         android:layout_marginStart="75dp"
         android:layout_marginLeft="75dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="144dp"
         android:layout_marginEnd="75dp"
         android:layout_marginRight="75dp"
         android:ems="10"
@@ -99,9 +97,29 @@
         android:text="Authorization"
         app:layout_constraintBottom_toTopOf="@+id/phoneRegistrationInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintHorizontal_bias="0.935"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.050000012" />
+        app:layout_constraintVertical_bias="0.25" />
+
+    <EditText
+        android:id="@+id/cityRegistrationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/city"
+        app:layout_constraintBottom_toTopOf="@+id/readRegistrationBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passRegistrationInput"
+        app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1256,6 +1256,10 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\325bb812408cc9e00cd850bf07474124\\res\\drawable-hdpi-v4\\abc_tab_indicator_mtrl_alpha.9.png"
     },
     {
+        "merged": "C:\\Users\\Ideal\\Desktop\\MySecondProj\\MyAndroidApp\\app\\build\\intermediates\\res\\merged\\debug\\layout_main_screen.xml.flat",
+        "source": "C:\\Users\\Ideal\\Desktop\\MySecondProj\\MyAndroidApp\\app\\src\\main\\res\\layout\\main_screen.xml"
+    },
+    {
         "merged": "C:\\Users\\Ideal\\Desktop\\MySecondProj\\MyAndroidApp\\app\\build\\intermediates\\res\\merged\\debug\\anim_abc_tooltip_enter.xml.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\325bb812408cc9e00cd850bf07474124\\res\\anim\\abc_tooltip_enter.xml"
     },

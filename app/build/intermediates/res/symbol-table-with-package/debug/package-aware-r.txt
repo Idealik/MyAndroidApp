@@ -688,6 +688,7 @@ id center_vertical
 id chains
 id checkbox
 id chronometer
+id cityRegistrationInput
 id clip_horizontal
 id clip_vertical
 id collapseActionView
@@ -737,6 +738,7 @@ id list_item
 id logInAuthorizationBtn
 id logOutProfileBtn
 id loginRegistrationBtn
+id mainScreenProfileBtn
 id message
 id middle
 id multiply
@@ -856,6 +858,7 @@ layout add_service
 layout authorization
 layout found_element
 layout guest_service
+layout main_screen
 layout notification_action
 layout notification_action_tombstone
 layout notification_template_custom_big
@@ -912,11 +915,13 @@ string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
 string addServices
 string app_name
+string city
 string costAddServiceTB
 string delUser
 string findServices
 string goToAuthor
 string logOut
+string main_screen
 string nameAddServiceTB
 string readDB
 string regUser

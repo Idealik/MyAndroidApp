@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
+ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
+INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
+INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
+INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
 MERGED from [com.android.support:appcompat-v7:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\appcompat-v7-28.0.0.aar\325bb812408cc9e00cd850bf07474124\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\582c702f7cef9abe6f1ae36616764e11\AndroidManifest.xml:2:1-11:12
 MERGED from [com.android.support:support-fragment:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-fragment-28.0.0.aar\afd13d8702f0c32bb23bfab9ea7bc773\AndroidManifest.xml:17:1-22:12
@@ -31,25 +31,25 @@ MERGED from [android.arch.lifecycle:livedata:1.1.1] C:\Users\Ideal\.gradle\cache
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.1.aar\884ef877d7293a3eb747ffe6e6bb71e7\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\runtime-1.1.1.aar\fe81f2aecc6346ef512b2587df6ee850\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\interpolator-28.0.0.aar\f8952b0a1ecc1abd7967bed3e1894162\AndroidManifest.xml:17:1-22:12
-INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
+INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
+INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
+INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
 	package
 		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:3:5-46
 		INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
+		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
 		INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-26:12
+		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-27:12
 		INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:11-69
 application
-ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:5:5-24:19
+ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:5:5-25:19
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\582c702f7cef9abe6f1ae36616764e11\AndroidManifest.xml:9:5-20
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\582c702f7cef9abe6f1ae36616764e11\AndroidManifest.xml:9:5-20
 MERGED from [com.android.support:support-compat:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-compat-28.0.0.aar\096ecfa0ecc664bc734d29407e714ccc\AndroidManifest.xml:22:5-94
@@ -101,9 +101,13 @@ ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\Android
 	android:name
 		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:22:19-45
 activity#com.example.ideal.myapplication.guestService
-ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:23:9-59
+ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:23:9-50
 	android:name
 		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:23:19-47
+activity#com.example.ideal.myapplication.mainScreen
+ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:24:9-57
+	android:name
+		ADDED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml:24:19-45
 uses-sdk
 INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Ideal\Desktop\MySecondProj\MyAndroidApp\app\src\main\AndroidManifest.xml

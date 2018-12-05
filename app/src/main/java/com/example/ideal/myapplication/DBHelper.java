@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final  int DATABASE_VERSION = 3;
+    public static final  int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "MyFirstDB";
     //tables name
     public static final String TABLE_CONTACTS_USERS = "users";
@@ -16,8 +16,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public  static final  String KEY_ID = "_id";
 
     // users
-    public  static final  String KEY_PHONE = "phone";
-    public  static final  String KEY_PASS = "pass";
+    public  static final  String KEY_USER_ID = "phone";
+    public  static final  String KEY_PASS_USERS = "pass";
+    public  static final  String KEY_CITY_USERS = "city";
 
     //services
     public  static final  String KEY_NAME_SERVICES = "name";
@@ -36,8 +37,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String users = "create table "+ TABLE_CONTACTS_USERS
                 + "("
                 + KEY_ID + " integer primary key,"
-                + KEY_PHONE + " text,"
-                + KEY_PASS + " text"
+                + KEY_USER_ID + " text,"
+                + KEY_PASS_USERS + " text,"
+                + KEY_CITY_USERS + " text"
                 + ")";
         String services = "create table "+ TABLE_CONTACTS_SERVICES
                 + "(" + KEY_ID + " integer primary key,"
@@ -45,7 +47,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_DESCRIPTION_SERVICES+ " text,"
                 + KEY_RATING_SERVICES + " text,"
                 + KEY_COUNT_OF_RATES_SERVICES + " text,"
-                + KEY_MIN_COST_SERVICES + " text"
+                + KEY_MIN_COST_SERVICES + " text,"
+                + KEY_USER_ID + " text"
                 + ")";
 
         // create users table

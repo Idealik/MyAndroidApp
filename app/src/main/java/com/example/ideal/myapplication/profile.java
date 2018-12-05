@@ -12,13 +12,14 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
 
     final String FILE_NAME = "Info";
     final String STATUS = "status";
-    
+
     Button logOutBtn;
     Button findServicesBtn;
     Button addServicesBtn;
-    
+    Button mainScreenBtn;
+
     SharedPreferences sPref;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,10 +28,12 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         logOutBtn = (Button) findViewById(R.id.logOutProfileBtn);
         findServicesBtn = (Button) findViewById(R.id.findServicesProfileBtn);
         addServicesBtn = (Button) findViewById(R.id.addServicesProfileBtn);
+        mainScreenBtn = (Button) findViewById(R.id.mainScreenProfileBtn);
 
         logOutBtn.setOnClickListener(this);
         findServicesBtn.setOnClickListener(this);
         addServicesBtn.setOnClickListener(this);
+        mainScreenBtn.setOnClickListener(this);
     }
 
     @Override
@@ -45,11 +48,15 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             case R.id.logOutProfileBtn:
                 annulStatus();
                 goToLogIn();
+                break;
+            case R.id.mainScreenProfileBtn:
+                goToMainScreen();
+                break;
             default:
                 break;
         }
     }
-    
+
     //Анулировать статус
     private void annulStatus() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
@@ -57,7 +64,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         editor.remove(STATUS);
         editor.apply();
     }
-    
+
     private void goToLogIn() {
         Intent intent = new Intent(this, authorization.class);
         startActivity(intent);
@@ -67,9 +74,14 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         Intent intent = new Intent(this, addService.class);
         startActivity(intent);
     }
-    
+
     private void goToSearchService() {
         Intent intent = new Intent(this, searchService.class);
+        startActivity(intent);
+    }
+
+    private void goToMainScreen() {
+        Intent intent = new Intent(this, mainScreen.class);
         startActivity(intent);
     }
 }
