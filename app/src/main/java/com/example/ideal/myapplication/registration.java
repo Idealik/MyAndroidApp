@@ -164,20 +164,17 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                 null);
 
         if(cursor.moveToFirst()){
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
             int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
             int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
 
             do{
                 msg +=
-                        "Index = " + cursor.getString(indexId)
-                        + "\t Number = " + cursor.getString(indexPhone)
+                        "\t Number = " + cursor.getString(indexPhone)
                         + "\t Pass = " + cursor.getString(indexPass)
                         + "\t City = " + cursor.getString(indexCity)
                         + " \n";
-                Log.d(TAG, cursor.getString(indexId) 
-                        + " \t" + cursor.getString(indexPhone) 
+                Log.d(TAG, " \t" + cursor.getString(indexPhone)
                         + " \t" + cursor.getString(indexPass)
                         + " \t" + cursor.getString(indexCity)
                         + " ");

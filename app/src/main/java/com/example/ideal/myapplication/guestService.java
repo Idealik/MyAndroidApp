@@ -23,8 +23,8 @@ public class guestService extends AppCompatActivity {
     TextView descriptionText;
 
     DBHelper dbHelper;
-    SharedPreferences sPref;
 
+    SharedPreferences sPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,40 +38,28 @@ public class guestService extends AppCompatActivity {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
 
         dbHelper = new DBHelper(this);
-        String id = sPref.getString(ID, "-");
-        getData(id);
+        String serviceId = sPref.getString(ID, "-");
+
+        getData(serviceId);
     }
 
-    private void getData(String id) {
+    private void getData(String serviceId) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_SERVICES,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
+        // получаем сервис с указанным ID
+        String sqlQuery =
+                "SELECT " + DBHelper.TABLE_CONTACTS_SERVICES + ".*"
+                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
+                        + " WHERE " + DBHelper.KEY_ID +" = ? ";
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {serviceId});
 
         if(cursor.moveToFirst()) {
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
             int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
 
-            // есть только имя
-            do {
-                boolean isId = id.equals(cursor.getString(indexId));
-                if (isId) {
-                    //  формирую сообщения, в будущем тут будем формировать объект
-                    nameText.setText(cursor.getString(indexName));
-                    costText.setText(cursor.getString(indexMinCost));
-                    descriptionText.setText(cursor.getString(indexDescription));
-
-                    cursor.close();
-                    return;
-                }
-            } while (cursor.moveToNext());
+            nameText.setText(cursor.getString(indexName));
+            costText.setText(cursor.getString(indexMinCost));
+            descriptionText.setText(cursor.getString(indexDescription));
         }
         else {
             Log.d(TAG, "DB is empty");

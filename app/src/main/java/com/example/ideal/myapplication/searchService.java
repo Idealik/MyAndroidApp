@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import com.example.ideal.myapplication.fragments.foundElement;
 
 public class searchService extends FragmentActivity implements View.OnClickListener {
-    // нужно сохранять номер, чтобы потом делать запрос в бд по нему и узнавать местоположение
     // сначала идут константы
     final String TAG = "DBInf";
 
@@ -54,12 +53,11 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        String name = nameInput.getText().toString().toLowerCase();
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         switch (v.getId()){
             case R.id.findServiceSearchServiceBtn:
-                search(database, name);
+                search(database);
                 break;
             default:
                 break;
@@ -67,7 +65,9 @@ public class searchService extends FragmentActivity implements View.OnClickListe
     }
 
 
-    private  void search(SQLiteDatabase database, String name){
+    private  void search(SQLiteDatabase database){
+
+        String name = nameInput.getText().toString().toLowerCase();
         Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_SERVICES,
                 null,
                 null,
@@ -83,21 +83,19 @@ public class searchService extends FragmentActivity implements View.OnClickListe
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
             int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
 
-            // есть только имя
             do{
+                // проверяем только по имени причем в нижнем регистре
                 boolean isName  = name.equals(cursor.getString(indexName).toLowerCase());
                 if(isName){
-                    //  формирую сообщения, в будущем тут будем формировать объект
+
                     String foundId = cursor.getString(indexId);
                     String foundName = cursor.getString(indexName);
                     String foundCost = cursor.getString(indexMinCost);
                     String foundDescription = cursor.getString(indexDescription);
-
+                    //  формируем объект layout c некоторыми элементами
                     addToScreen(foundId, foundName, foundCost, foundDescription);
                 }
             }while (cursor.moveToNext());
-
-            Log.d(TAG, "Full msg = ");
         }
         else {
             Log.d(TAG, "DB is empty");
@@ -112,9 +110,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         fElement = new foundElement(id, name, cost, description);
 
         transaction = manager.beginTransaction();
-
         transaction.add(R.id.resultsLayout, fElement);
-
         transaction.commit();
     }
 

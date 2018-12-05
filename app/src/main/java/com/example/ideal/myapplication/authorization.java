@@ -43,8 +43,8 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         if(status) {
             //проверяем БД
             SQLiteDatabase database = dbHelper.getWritableDatabase();
-            String myPhone = getId();
-            String myPass = getPass();
+            String myPhone = getUserId();
+            String myPass = getUserPass();
             boolean confirmed  = checkData(database,myPhone,myPass);
 
             // Входим в профиль
@@ -89,8 +89,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, "You are ");
             saveStatus(); // сохраняем статус
             saveIdAndPass(phone,pass);  //сохраяем пользователя и пароль
-
-
             status = getStatus(); // если true то пользователь вошел иначе не вошел
             if(status){
                 goToProfile(); // переходим в профиль
@@ -102,7 +100,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     }
 
     private boolean checkData(SQLiteDatabase database,String myPhone, String myPass){
-
         Cursor cursor = database.query(
                 DBHelper.TABLE_CONTACTS_USERS,
                 null,
@@ -117,7 +114,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
             int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
             int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
             boolean isConfirmed;
-
             do{
                 isConfirmed=
                         myPhone.equals(cursor.getString(indexPhone))
@@ -145,18 +141,14 @@ public class authorization extends AppCompatActivity implements View.OnClickList
                 null);
 
         if(cursor.moveToFirst()){
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
             int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
 
             do{
-                msg +=
-                        " Index = " + cursor.getString(indexId)
-                                + " Number = " + cursor.getString(indexPhone)
+                msg += " Number = " + cursor.getString(indexPhone)
                                 + " Pass =" + cursor.getString(indexPass)
                                 + " ";
-                Log.d(TAG, cursor.getString(indexId)
-                        + " " + cursor.getString(indexPhone)
+                Log.d(TAG," " + cursor.getString(indexPhone)
                         + " " + cursor.getString(indexPass)
                         + " ");
 
@@ -178,7 +170,7 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     }
 
     //получить номер телефона для проверки
-    private String getId() {
+    private String getUserId() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         String userId = sPref.getString(PHONE, "-");
 
@@ -186,7 +178,7 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     }
 
     //получить пароль для проверки
-    private String getPass() {
+    private String getUserPass() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         String pass = sPref.getString(PASS, "-");
 

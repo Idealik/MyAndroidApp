@@ -17,7 +17,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
 
-
     Button addServicesBtn;
     Button readBtn;
 
@@ -51,7 +50,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View v){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-
 
         switch (v.getId()){
             case R.id.addServiceAddServiceBtn:

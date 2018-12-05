@@ -14,17 +14,24 @@ import com.example.ideal.myapplication.fragments.foundElement;
 
 public class mainScreen extends AppCompatActivity {
 
-    // выводим 100 объявлений,
+    // перемешивать значения
+    // выводим 5 объявлений,
+    //  1 2 3 4 5
+    //  актуалность - 0.6 рейтинг - 0.2 цена - 0.2
+    // цена * 0,2 -> min актуальность*0,6 -> min рейтинг*0,2 -> max
+    //   11*0,6
+    // z - какое-то число
+    // 100 = 32 24 10 14 11
+    // рандом
     final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
 
-    //Вертикальный лэйаут
-    LinearLayout resultLayout;
-
     DBHelper dbHelper;
 
     SharedPreferences sPref;
+
+    LinearLayout resultLayout;
 
     private foundElement fElement;
     private FragmentManager manager;
@@ -43,7 +50,6 @@ public class mainScreen extends AppCompatActivity {
         dbHelper = new DBHelper(this);
 
         createMainScreen();
-
     }
 
 
@@ -53,46 +59,65 @@ public class mainScreen extends AppCompatActivity {
         //получаем id пользователя
         String userId = getUserId();
         //получаем город юзера
-        String cityUser = getCityUser(database,userId);
-        //получаем всех пользователей из этого города ЖЕЛАТЕЛЬНО ТОЛЬКО ТЕХ У КОГО
-        // ЕСТЬ ЧТО-ТО ИЗ УСЛУГ НО ДЛЯ ЭТОГО НАДО БЫ НАУЧИТЬСЯ ПИСАТЬ ЗАПРОС
+        String userCity = getUserCity(database,userId);
 
-        String [] users =  findAllWorkersInTheUserCity(database,cityUser);
-        int count = users.length;
-        Log.d(TAG, ""+count);
-
-        Log.d(TAG, cityUser);
-       // getData(database);
+        //получаем все сервисы, которые находятся в городе юзера
+        getServicesInThisCity(database, userCity);
     }
 
-    private  void getData(SQLiteDatabase database){
-        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_SERVICES,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
+    private  String getUserId(){
+        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
+        String userId = sPref.getString(PHONE, "-");
 
+        return userId;
+    }
+
+    private String getUserCity(SQLiteDatabase database,String userId){
+        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_USERS,
+                new String[] {DBHelper.KEY_CITY_USERS},
+                DBHelper.KEY_USER_ID + " = ?",
+                new String[] {userId},
+                null, null, null);
+
+        int indexCity= cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+
+        String city="dubna"; // дефолтное значение
+        if(cursor.moveToFirst()) {
+            city = cursor.getString(indexCity);
+        }
+        cursor.close();
+        return city;
+    }
+
+
+    private  void getServicesInThisCity(SQLiteDatabase database,String userCity){
+        int limitOfService = 10; //максимальное количество выводимых предложений
+        //запрос в бд сравнивает номера в табилце юзер и сервис, а также учитывает город
+        String sqlQuery =
+        "SELECT " + DBHelper.TABLE_CONTACTS_SERVICES + ".*"
+               + " FROM " + DBHelper.TABLE_CONTACTS_USERS + " , " + DBHelper.TABLE_CONTACTS_SERVICES
+               + " WHERE " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID + " = "
+               + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID
+               + " AND LOWER(" + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_CITY_USERS + ") = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {userCity.toLowerCase()});
         if(cursor.moveToFirst()){
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
             int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
 
-            // есть только имя
+            int countOfFoundServices = 0;
             do{
-                    //  формирую сообщения, в будущем тут будем формировать объект
-                    String foundId = cursor.getString(indexId);
-                    String foundName = cursor.getString(indexName);
-                    String foundCost = cursor.getString(indexMinCost);
-                    String foundDescription = cursor.getString(indexDescription);
+                //  формирую сообщения, в будущем тут будем формировать объект
+                String foundId = cursor.getString(indexId);
+                String foundName = cursor.getString(indexName);
+                String foundCost = cursor.getString(indexMinCost);
+                String foundDescription = cursor.getString(indexDescription);
 
-                    addToScreen(foundId, foundName, foundCost, foundDescription);
-            }while (cursor.moveToNext());
-
-            Log.d(TAG, "Full msg = ");
+                addToScreen(foundId, foundName, foundCost, foundDescription);
+                countOfFoundServices++;
+            }while (cursor.moveToNext() && countOfFoundServices < limitOfService);
         }
         else {
             Log.d(TAG, "DB is empty");
@@ -107,103 +132,7 @@ public class mainScreen extends AppCompatActivity {
         fElement = new foundElement(id, name, cost, description);
 
         transaction = manager.beginTransaction();
-
         transaction.add(R.id.resultsLayout, fElement);
-
         transaction.commit();
     }
-
-
-
-    private  String getUserId(){
-        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        String userId = sPref.getString(PHONE, "-");
-
-        return userId;
-    }
-
-    /*private String getCityUser(SQLiteDatabase database,String userId){ тут в цикле курсор
-
-        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_USERS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        if(cursor.moveToFirst()){
-            int indexIdUser= cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
-            // есть только имя
-            do{
-                //  совпадает айди? наш юзер
-                if(userId.equals(cursor.getString(indexIdUser))){
-                    return cursor.getString(indexCity);
-                }
-            }while (cursor.moveToNext());
-        }
-        else {
-            Log.d(TAG, "DB is empty");
-        }
-        cursor.close();
-        return "";
-    }*/
-
-    private String getCityUser(SQLiteDatabase database,String userId){
-
-        String query = "SELECT city FROM users WHERE _id = 123 ";
-
-        Cursor cursor = database.rawQuery(query,null);
-
-        Log.d(TAG,cursor.toString());
-
-        int indexCity= cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
-        String city =  cursor.getString(indexCity);
-
-        Log.d(TAG,city);
-
-        cursor.close();
-        return city;
-    }
-
-     private  String [] findAllWorkersInTheUserCity(SQLiteDatabase database,String cityUser){
-        // тут в массив стринг добавляем юузеров
-         String [] users = new String[100];
-         int index=0;
-
-         Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_USERS,
-                 null,
-                 null,
-                 null,
-                 null,
-                 null,
-                 null,
-                 null);
-
-         if(cursor.moveToFirst()){
-             int indexIdUser= cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-             int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
-             // есть только имя
-             do{
-                 //  если город совпадает это тот юзер, что на нужен
-                 if(cityUser.equals(cursor.getString(indexCity))){
-                     users[index] = cursor.getString(indexIdUser);
-                     index++;
-                 }
-             }while (cursor.moveToNext());
-
-             return users;
-         }
-         else {
-             Log.d(TAG, "DB is empty");
-         }
-         cursor.close();
-         return null;
-
-     }
-
-
-
 }
