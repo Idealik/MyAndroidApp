@@ -1,6 +1,7 @@
 package com.example.ideal.myapplication;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class addService extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,7 +29,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     DBHelper dbHelper;
 
     SharedPreferences sPref;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         String name = nameServiceInput.getText().toString();
         String cost = costAddServiceTB.getText().toString();
         String description = descriptonServiceInput.getText().toString();
+        if(isFullInputs(name,cost,description)){
         String userId = getUserId();
 
         ContentValues contentValues = new ContentValues();
@@ -80,7 +82,14 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         
         Log.d(TAG, "reg was successfull");
 
+        goToCalendar();
+
         return  true;
+        }
+        else {
+            Toast.makeText(this, "Не все поля заполнены", Toast.LENGTH_SHORT).show();
+            return  false;
+        }
     }
 
     private  void readBtn(SQLiteDatabase database){
@@ -139,6 +148,19 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         String userId = sPref.getString(PHONE, "-");
 
         return userId;
+    }
+
+    protected Boolean isFullInputs(String name, String cost, String description){
+
+        if(name.trim().equals("")) return false;
+        if(cost.trim().equals("")) return false;
+        if(description.trim().equals("") ) return false;
+
+        return  true;
+    }
+    private void goToCalendar(){
+        Intent intent = new Intent(this, myCalendar.class);
+        startActivity(intent);
     }
 
 

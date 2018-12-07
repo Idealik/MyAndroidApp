@@ -67,26 +67,30 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                 String myPass = passInput.getText().toString();
                 String myCity = cityInput.getText().toString();
 
-                Log.d(TAG, myPhone + myPass+myCity);
-
+            if(isFullInputs(myPhone,myPass,myCity)){
                 if(isStrongPassword(myPass)) {
                     if(isFreePhone(database, myPhone)) {
                         registration(database, myPhone, myPass,myCity);
                         goToProfile();
                     } else {
-                        Log.d(TAG, "reg has failed!");
                         Toast.makeText(
                                 this,
                                 "Пользователь с данным номером телефона уже зарегистрирован.",
                                 Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.d(TAG, "reg has failed!");
                     Toast.makeText(
                             this,
                             "Пароль недостаточно надёжен, попробуй другой.",
                             Toast.LENGTH_SHORT).show();
                 }
+            }
+            else{
+                Toast.makeText(
+                        this,
+                        "Не все поля заполнены",
+                        Toast.LENGTH_SHORT).show();
+            }
                 break;
 
             case R.id.readRegistrationBtn:
@@ -150,7 +154,14 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         cursor.close();
         return  true;
     }
+    protected Boolean isFullInputs(String phone, String pass, String city){
 
+        if(phone.trim().equals("")) return false;
+        if(pass.trim().equals("")) return false;
+        if(city.trim().equals("") ) return false;
+
+        return  true;
+    }
     private void readDB(SQLiteDatabase database){
         String msg = "";
         Cursor cursor = database.query(

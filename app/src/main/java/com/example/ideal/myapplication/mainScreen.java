@@ -23,6 +23,7 @@ public class mainScreen extends AppCompatActivity {
     // z - какое-то число
     // 100 = 32 24 10 14 11
     // рандом
+
     final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
@@ -33,9 +34,8 @@ public class mainScreen extends AppCompatActivity {
 
     LinearLayout resultLayout;
 
-    private foundElement fElement;
     private FragmentManager manager;
-    private FragmentTransaction transaction;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +126,9 @@ public class mainScreen extends AppCompatActivity {
     }
 
     private void addToScreen(String id, String name, String cost, String description) {
+
+        foundElement fElement;
+        FragmentTransaction transaction;
 
         resultLayout.removeAllViews();
 

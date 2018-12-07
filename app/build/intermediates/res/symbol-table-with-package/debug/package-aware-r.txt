@@ -647,6 +647,7 @@ drawable tooltip_frame_light
 id ALT
 id CTRL
 id FUNCTION
+id LinearLayout1
 id META
 id SHIFT
 id SYM
@@ -682,6 +683,7 @@ id beginning
 id blocking
 id bottom
 id buttonPanel
+id calendarView
 id center
 id center_horizontal
 id center_vertical
@@ -859,6 +861,7 @@ layout authorization
 layout found_element
 layout guest_service
 layout main_screen
+layout my_calendar
 layout notification_action
 layout notification_action_tombstone
 layout notification_template_custom_big

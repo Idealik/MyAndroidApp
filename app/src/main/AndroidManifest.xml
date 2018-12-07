@@ -21,7 +21,8 @@
         <activity android:name=".searchService" />
         <activity android:name=".addService" />
         <activity android:name=".guestService" />
-        <activity android:name=".mainScreen"></activity>
+        <activity android:name=".mainScreen" />
+        <activity android:name=".myCalendar"></activity>
     </application>
 
 </manifest>
