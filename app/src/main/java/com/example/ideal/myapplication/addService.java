@@ -18,6 +18,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
+    final String SERVICE_ID = "service id";
 
     Button addServicesBtn;
     Button readBtn;
@@ -29,6 +30,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     DBHelper dbHelper;
 
     SharedPreferences sPref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,24 +69,25 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         String name = nameServiceInput.getText().toString();
         String cost = costAddServiceTB.getText().toString();
         String description = descriptonServiceInput.getText().toString();
+
         if(isFullInputs(name,cost,description)){
-        String userId = getUserId();
+            String userId = getUserId();
 
-        ContentValues contentValues = new ContentValues();
-        //добавление в сервис данных
-        contentValues.put(DBHelper.KEY_NAME_SERVICES, name);
-        contentValues.put(DBHelper.KEY_MIN_COST_SERVICES, cost);
-        contentValues.put(DBHelper.KEY_DESCRIPTION_SERVICES, description);
-        // добавление id пользователя в таблицу сервисов, чтобы потом использовать в mainScreen
-        contentValues.put(DBHelper.KEY_USER_ID, userId);
+            ContentValues contentValues = new ContentValues();
+            //добавление в сервис данных
+            contentValues.put(DBHelper.KEY_NAME_SERVICES, name);
+            contentValues.put(DBHelper.KEY_MIN_COST_SERVICES, cost);
+            contentValues.put(DBHelper.KEY_DESCRIPTION_SERVICES, description);
+            // добавление id пользователя в таблицу сервисов, чтобы потом использовать в mainScreen
+            contentValues.put(DBHelper.KEY_USER_ID, userId);
 
-        database.insert(DBHelper.TABLE_CONTACTS_SERVICES,null,contentValues);
-        
-        Log.d(TAG, "reg was successfull");
+            long rowId = database.insert(DBHelper.TABLE_CONTACTS_SERVICES,null,contentValues);
+            Log.d(TAG, ""+rowId);
 
-        goToCalendar();
+            goToCalendar(rowId);
 
-        return  true;
+            Log.d(TAG, "reg was successfull");
+            return  true;
         }
         else {
             Toast.makeText(this, "Не все поля заполнены", Toast.LENGTH_SHORT).show();
@@ -138,6 +141,14 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         cursor.close();
     }
 
+    protected Boolean isFullInputs(String name, String cost, String description){
+        if(name.trim().equals("")) return false;
+        if(cost.trim().equals("")) return false;
+        if(description.trim().equals("") ) return false;
+
+        return  true;
+    }
+
     private  void deleteDB(SQLiteDatabase database){
         database.delete(DBHelper.TABLE_CONTACTS_SERVICES,null,null);
         Log.d(TAG, "DB was deleted");
@@ -150,19 +161,11 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         return userId;
     }
 
-    protected Boolean isFullInputs(String name, String cost, String description){
-
-        if(name.trim().equals("")) return false;
-        if(cost.trim().equals("")) return false;
-        if(description.trim().equals("") ) return false;
-
-        return  true;
-    }
-    private void goToCalendar(){
+    private void goToCalendar(long id) {
         Intent intent = new Intent(this, myCalendar.class);
+        intent.putExtra(SERVICE_ID, id);
         startActivity(intent);
     }
-
 
 }
 

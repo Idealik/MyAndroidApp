@@ -14,17 +14,14 @@ import static android.os.Build.ID;
 
 public class guestService extends AppCompatActivity {
 
-    final String FILE_NAME = "Info";
     final String TAG = "DBInf";
-    final String ID = "id";
+    final String SERVICE_ID = "service id";
 
     TextView nameText;
     TextView costText;
     TextView descriptionText;
 
     DBHelper dbHelper;
-
-    SharedPreferences sPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +32,8 @@ public class guestService extends AppCompatActivity {
         costText = findViewById(R.id.costGuestServiceText);
         descriptionText = findViewById(R.id.descriptionGuestServiceText);
 
-        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-
         dbHelper = new DBHelper(this);
-        String serviceId = sPref.getString(ID, "-");
+        String serviceId =getIntent().getStringExtra(SERVICE_ID);
 
         getData(serviceId);
     }

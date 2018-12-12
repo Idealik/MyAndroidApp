@@ -647,7 +647,6 @@ drawable tooltip_frame_light
 id ALT
 id CTRL
 id FUNCTION
-id LinearLayout1
 id META
 id SHIFT
 id SYM
@@ -683,7 +682,7 @@ id beginning
 id blocking
 id bottom
 id buttonPanel
-id calendarView
+id calendarCalendar
 id center
 id center_horizontal
 id center_vertical
@@ -696,6 +695,7 @@ id clip_vertical
 id collapseActionView
 id content
 id contentPanel
+id continueMyCalendarBtn
 id costAddServiceInput
 id costGuestServiceText
 id costText
@@ -740,6 +740,7 @@ id list_item
 id logInAuthorizationBtn
 id logOutProfileBtn
 id loginRegistrationBtn
+id mainMyTimeLayout
 id mainScreenProfileBtn
 id message
 id middle
@@ -862,6 +863,7 @@ layout found_element
 layout guest_service
 layout main_screen
 layout my_calendar
+layout my_time
 layout notification_action
 layout notification_action_tombstone
 layout notification_template_custom_big

@@ -19,22 +19,22 @@ public class registration extends AppCompatActivity implements View.OnClickListe
     final String STATUS = "status";
     final String PHONE = "phone";
     final String PASS = "pass";
-    final String FILE_NAME = "Info";   
+    final String FILE_NAME = "Info";
 
     boolean status;
-    
+
     Button registrateBtn;
     Button readBtn;
     Button deleteBtn;
     Button loginBtn;
-    
+
     EditText phoneInput;
     EditText passInput;
     EditText cityInput;
-    
+
     DBHelper dbHelper;          //База Данных
     SharedPreferences sPref;    //класс для работы с записью в файлы
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +44,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         readBtn = (Button) findViewById(R.id.readRegistrationBtn);
         deleteBtn = (Button) findViewById(R.id.deleteRegistrationBtn);
         loginBtn = (Button) findViewById(R.id.loginRegistrationBtn);
-        
+
         phoneInput = (EditText) findViewById(R.id.phoneRegistrationInput);
         passInput = (EditText) findViewById(R.id.passRegistrationInput);
         cityInput = (EditText) findViewById(R.id.cityRegistrationInput);
@@ -67,30 +67,30 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                 String myPass = passInput.getText().toString();
                 String myCity = cityInput.getText().toString();
 
-            if(isFullInputs(myPhone,myPass,myCity)){
-                if(isStrongPassword(myPass)) {
-                    if(isFreePhone(database, myPhone)) {
-                        registration(database, myPhone, myPass,myCity);
-                        goToProfile();
+                if(isFullInputs(myPhone,myPass,myCity)){
+                    if(isStrongPassword(myPass)) {
+                        if(isFreePhone(database, myPhone)) {
+                            registration(database, myPhone, myPass,myCity);
+                            goToProfile();
+                        } else {
+                            Toast.makeText(
+                                    this,
+                                    "Пользователь с данным номером телефона уже зарегистрирован.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(
                                 this,
-                                "Пользователь с данным номером телефона уже зарегистрирован.",
+                                "Пароль недостаточно надёжен, попробуй другой.",
                                 Toast.LENGTH_SHORT).show();
                     }
-                } else {
+                }
+                else{
                     Toast.makeText(
                             this,
-                            "Пароль недостаточно надёжен, попробуй другой.",
+                            "Не все поля заполнены",
                             Toast.LENGTH_SHORT).show();
                 }
-            }
-            else{
-                Toast.makeText(
-                        this,
-                        "Не все поля заполнены",
-                        Toast.LENGTH_SHORT).show();
-            }
                 break;
 
             case R.id.readRegistrationBtn:
@@ -111,17 +111,17 @@ public class registration extends AppCompatActivity implements View.OnClickListe
     }
 
     private void registration(SQLiteDatabase database, String myPhone, String myPass, String myCity){
-            ContentValues contentValues = new ContentValues();
+        ContentValues contentValues = new ContentValues();
 
-            contentValues.put(DBHelper.KEY_USER_ID, myPhone);
-            contentValues.put(DBHelper.KEY_PASS_USERS, myPass);
-            contentValues.put(DBHelper.KEY_CITY_USERS, myCity);
+        contentValues.put(DBHelper.KEY_USER_ID, myPhone);
+        contentValues.put(DBHelper.KEY_PASS_USERS, myPass);
+        contentValues.put(DBHelper.KEY_CITY_USERS, myCity);
 
-            database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
-            saveIdAndPass(myPhone, myPass);
-            saveStatus();
+        database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
+        saveIdAndPass(myPhone, myPass);
+        saveStatus();
 
-            Log.d(TAG, "reg was successfull");
+        Log.d(TAG, "reg was successfull");
     }
 
     protected boolean isStrongPassword(String myPass) {
@@ -182,9 +182,9 @@ public class registration extends AppCompatActivity implements View.OnClickListe
             do{
                 msg +=
                         "\t Number = " + cursor.getString(indexPhone)
-                        + "\t Pass = " + cursor.getString(indexPass)
-                        + "\t City = " + cursor.getString(indexCity)
-                        + " \n";
+                                + "\t Pass = " + cursor.getString(indexPass)
+                                + "\t City = " + cursor.getString(indexCity)
+                                + " \n";
                 Log.d(TAG, " \t" + cursor.getString(indexPhone)
                         + " \t" + cursor.getString(indexPass)
                         + " \t" + cursor.getString(indexCity)
@@ -224,16 +224,10 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
         finish();
     }
-    
+
     private  void  goToAuthorization(){
         Intent intent = new Intent(registration.this, authorization.class);
         startActivity(intent);
         finish();
     }
 }
-
-
-
-
-
-
