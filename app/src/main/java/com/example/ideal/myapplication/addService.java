@@ -96,7 +96,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     }
 
     private  void readBtn(SQLiteDatabase database){
-        String msg= "";
         Cursor cursor = database.query(
                 DBHelper.TABLE_CONTACTS_SERVICES,
                 null,
@@ -115,12 +114,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
             int indexIdUser= cursor.getColumnIndex(DBHelper.KEY_USER_ID);
 
             do{
-                msg += " Index = " + cursor.getString(indexId)
-                        + " Name = " + cursor.getString(indexName)
-                        + " Cost = " + cursor.getString(indexMinCost)
-                        + " Descr = " + cursor.getString(indexDescription)
-                        + " Id user = " + cursor.getString(indexIdUser)
-                        + " ";
                 Log.d(TAG, cursor.getString(indexId)
                         + " "
                         + cursor.getString(indexName)
@@ -132,8 +125,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
                         + cursor.getString(indexIdUser)
                         + " ");
             } while (cursor.moveToNext());
-
-            Log.d(TAG, "Full msg = " + msg);
         }
         else {
             Log.d(TAG, "DB is empty");

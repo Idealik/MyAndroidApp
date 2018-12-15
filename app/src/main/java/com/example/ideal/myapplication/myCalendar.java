@@ -56,7 +56,6 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
         switch (v.getId()) {
             case R.id.continueMyCalendarBtn:
                 addWorkingDay();
-
                 break;
             default:
                 break;
