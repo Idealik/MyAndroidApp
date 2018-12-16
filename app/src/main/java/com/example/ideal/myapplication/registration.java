@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class registration extends AppCompatActivity implements View.OnClickListener {
 
     final String TAG = "DBInf";
@@ -112,7 +116,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
 
     private void registration(SQLiteDatabase database, String myPhone, String myPass, String myCity){
         ContentValues contentValues = new ContentValues();
-
+        myPass =  encryptThisStringSHA512(myPass);
         contentValues.put(DBHelper.KEY_USER_ID, myPhone);
         contentValues.put(DBHelper.KEY_PASS_USERS, myPass);
         contentValues.put(DBHelper.KEY_CITY_USERS, myCity);
@@ -219,6 +223,38 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         editor.apply();
     }
 
+    private static String encryptThisStringSHA512(String input)
+    {
+        try {
+            // getInstance() method is called with algorithm SHA-512
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+
+            // digest() method is called
+            // to calculate message digest of the input string
+            // returned as array of byte
+            byte[] messageDigest = md.digest(input.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            // Convert message digest into hex value
+            String hashtext = no.toString(16);
+
+            // Add preceding 0s to make it 32 bit
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+
+            // return the HashText
+            return hashtext;
+        }
+
+        // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private  void goToProfile(){
         Intent intent = new Intent(this, profile.class);
         startActivity(intent);
@@ -230,4 +266,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
         finish();
     }
+
+
+
 }

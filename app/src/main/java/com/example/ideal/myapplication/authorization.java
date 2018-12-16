@@ -10,8 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import java.math.BigInteger;
 import java.net.PasswordAuthentication;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class authorization extends AppCompatActivity implements View.OnClickListener {
 
@@ -74,6 +78,8 @@ public class authorization extends AppCompatActivity implements View.OnClickList
             case R.id.logInAuthorizationBtn:
                 readDB(database);
                 //Проверка пароля и логина
+                // тут хэш, чтобы не хэшировать 2 раза то, что получаем из файла
+                myPass = encryptThisStringSHA512(myPass);
                 boolean confirmed  = checkData(database,myPhone,myPass);
                 logIn(confirmed,myPhone,myPass); // сохраняем статус,получаем, переходим в профиль
                 break;
@@ -95,11 +101,15 @@ public class authorization extends AppCompatActivity implements View.OnClickList
             }
         }
         else {
-            Log.d(TAG, "You are NOT!");
+            Toast.makeText(
+                    this,
+                    "Вы ввели неправильные данные.",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     private boolean checkData(SQLiteDatabase database,String myPhone, String myPass){
+        // пробегаем по базе данных и сравниваем введенный пароль и логин с теми, что хранится в бд
         Cursor cursor = database.query(
                 DBHelper.TABLE_CONTACTS_USERS,
                 null,
@@ -129,7 +139,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     }
 
     private void readDB(SQLiteDatabase database){
-        String msg = "";
         Cursor cursor = database.query(
                 DBHelper.TABLE_CONTACTS_USERS,
                 null,
@@ -145,16 +154,11 @@ public class authorization extends AppCompatActivity implements View.OnClickList
             int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
 
             do{
-                msg += " Number = " + cursor.getString(indexPhone)
-                                + " Pass =" + cursor.getString(indexPass)
-                                + " ";
                 Log.d(TAG," " + cursor.getString(indexPhone)
                         + " " + cursor.getString(indexPass)
                         + " ");
 
             }while (cursor.moveToNext());
-
-            Log.d(TAG, "Full msg = " + msg);
         }
         else {
             Log.d(TAG, "DB is empty");
@@ -181,7 +185,7 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     private String getUserPass() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         String pass = sPref.getString(PASS, "-");
-
+        Log.d(TAG, pass);
         return  pass;
     }
 
@@ -192,11 +196,44 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         editor.apply();
     }
     private void saveIdAndPass(String phone, String pass) {
+        Log.d(TAG,pass);
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(PHONE, phone);
         editor.putString(PASS, pass);
         editor.apply();
+    }
+
+    private static String encryptThisStringSHA512(String input)
+    {
+        try {
+            // getInstance() method is called with algorithm SHA-512
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+
+            // digest() method is called
+            // to calculate message digest of the input string
+            // returned as array of byte
+            byte[] messageDigest = md.digest(input.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            // Convert message digest into hex value
+            String hashtext = no.toString(16);
+
+            // Add preceding 0s to make it 32 bit
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+
+            // return the HashText
+            return hashtext;
+        }
+
+        // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void goToRegegistration() {

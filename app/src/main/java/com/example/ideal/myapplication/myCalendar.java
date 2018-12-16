@@ -64,17 +64,49 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
 
     private void addWorkingDay() {
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
 
-        contentValues.put(DBHelper.KEY_DATE_WORKING_DAYS, date);
-        contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
+        long id = checkCurrentDay(serviceId, database);
+        if(id != 0){
+            goToMyTime(id);
+        } else {
+            ContentValues contentValues = new ContentValues();
 
-        long id = database.insert(DBHelper.TABLE_WORKING_DAYS,null,contentValues);
+            contentValues.put(DBHelper.KEY_DATE_WORKING_DAYS, date);
+            contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
 
-        goToMyTime(id);
+            id = database.insert(DBHelper.TABLE_WORKING_DAYS, null, contentValues);
 
+            goToMyTime(id);
+        }
+
+    }
+
+    private long checkCurrentDay(long serviceId, SQLiteDatabase database) {
+
+
+        Cursor cursor = database.query(
+                DBHelper.TABLE_WORKING_DAYS,
+                new String[]{DBHelper.KEY_ID, DBHelper.KEY_DATE_WORKING_DAYS},
+                DBHelper.KEY_SERVICE_ID_WORKING_DAYS + " = ?",
+                new String[]{String.valueOf(serviceId)},
+                null,
+                null,
+                null,
+                null);
+
+        if(cursor.moveToFirst()) {
+            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
+
+            do {
+                if (date.equals(cursor.getString(indexDate))) {
+                    return Long.valueOf(cursor.getString(indexId));
+                }
+            } while (cursor.moveToNext());
+        }
+
+        return 0;
     }
 
 

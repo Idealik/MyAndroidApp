@@ -373,6 +373,8 @@ color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
 color background_material_light
+color blue2
+color blue25
 color bright_foreground_disabled_material_dark
 color bright_foreground_disabled_material_light
 color bright_foreground_inverse_material_dark
@@ -392,8 +394,10 @@ color error_color_material_dark
 color error_color_material_light
 color foreground_material_dark
 color foreground_material_light
+color grey05
 color highlighted_text_material_dark
 color highlighted_text_material_light
+color lightText
 color material_blue_grey_800
 color material_blue_grey_900
 color material_blue_grey_950
@@ -408,6 +412,8 @@ color material_grey_850
 color material_grey_900
 color notification_action_color_filter
 color notification_icon_bg_color
+color orange4
+color orange5
 color primary_dark_material_dark
 color primary_dark_material_light
 color primary_material_dark
@@ -430,6 +436,9 @@ color switch_thumb_normal_material_dark
 color switch_thumb_normal_material_light
 color tooltip_background_dark
 color tooltip_background_light
+color white
+color yellow1
+color yellow2
 dimen abc_action_bar_content_inset_material
 dimen abc_action_bar_content_inset_with_nav
 dimen abc_action_bar_default_height_material
@@ -628,8 +637,13 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable bg
+drawable btn
+drawable bun_beauty
+drawable fields
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable log_in
 drawable notification_action_background
 drawable notification_bg
 drawable notification_bg_low
@@ -642,6 +656,11 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable panel
+drawable pressed_button
+drawable recover
+drawable registration
+drawable time_button
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id ALT
@@ -729,6 +748,8 @@ id icon
 id icon_group
 id ifRoom
 id image
+id imageView
+id imageView2
 id info
 id invisible
 id italic
@@ -774,6 +795,7 @@ id resultsLayout
 id right
 id right_icon
 id right_side
+id saveMyTimeBtn
 id screen
 id scrollIndicatorDown
 id scrollIndicatorUp
@@ -928,6 +950,7 @@ string goToAuthor
 string logOut
 string main_screen
 string nameAddServiceTB
+string phone
 string readDB
 string regUser
 string search_menu_title

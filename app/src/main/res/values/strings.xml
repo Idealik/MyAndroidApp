@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="readDB">Read db</string>
-    <string name="regUser">Reg user</string>
+    <string name="regUser">Зарегестрироваться</string>
     <string name="delUser">Del user</string>
     <string name="goToAuthor">Authorization</string>
     <string name="logOut">Log out</string>
@@ -12,6 +12,5 @@
     <string name="costAddServiceTB">Cost</string>
     <string name="main_screen">Main screen</string>
     <string name="city">City</string>
-
-
+    <string name="phone">Phone</string>
 </resources>
