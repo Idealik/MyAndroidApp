@@ -50,7 +50,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
         nameInput = findViewById(R.id.nameSearchServiceInput);
 
-        resultLayout = findViewById(R.id.resultsLayout);
+        resultLayout = findViewById(R.id.resultSearchServiceLayout);
 
         dbHelper = new DBHelper(this);
         manager = getSupportFragmentManager();
@@ -193,7 +193,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         fElement = new foundElement(id, name, cost, description);
 
         transaction = manager.beginTransaction();
-        transaction.add(R.id.resultsLayout, fElement);
+        transaction.add(R.id.resultSearchServiceLayout, fElement);
         transaction.commit();
     }
 

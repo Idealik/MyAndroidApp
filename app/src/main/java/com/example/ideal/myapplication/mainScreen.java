@@ -14,15 +14,7 @@ import com.example.ideal.myapplication.fragments.foundElement;
 
 public class mainScreen extends AppCompatActivity {
 
-    // перемешивать значения
-    // выводим 5 объявлений,
-    //  1 2 3 4 5
-    //  актуалность - 0.6 рейтинг - 0.2 цена - 0.2
-    // цена * 0,2 -> min актуальность*0,6 -> min рейтинг*0,2 -> max
-    //   11*0,6
-    // z - какое-то число
-    // 100 = 32 24 10 14 11
-    // рандом
+    //добавить обнавление layot, чтобы сразу появлилсь новые сервисы!
     final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";

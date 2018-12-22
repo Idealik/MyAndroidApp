@@ -17,28 +17,25 @@
 
     <EditText
         android:layout_gravity="center"
+        android:id="@+id/phoneRegistrationInput"
+        android:layout_width="wrap_content"
         android:layout_marginTop="45dp"
+        android:layout_height="43dp"
+        android:ems="10"
+        android:backgroundTint="@color/lightText"
+        android:hint="@string/phone"
+        android:inputType="phone" />
+
+    <EditText
+        android:layout_gravity="center"
         android:id="@+id/passRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Pass"
         android:backgroundTint="@color/lightText"
-        android:inputType="textPassword"
-        tools:layout_editor_absoluteX="75dp"
-        tools:layout_editor_absoluteY="222dp" />
+        android:inputType="textPassword" />
 
-    <EditText
-        android:layout_gravity="center"
-        android:id="@+id/phoneRegistrationInput"
-        android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:ems="10"
-        android:backgroundTint="@color/lightText"
-        android:hint="@string/phone"
-        android:inputType="phone"
-        tools:layout_editor_absoluteX="75dp"
-        tools:layout_editor_absoluteY="136dp" />
 
     <EditText
         android:layout_gravity="center"
@@ -48,9 +45,7 @@
         android:ems="10"
         android:backgroundTint="@color/lightText"
         android:hint="@string/city"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="133dp"
-        tools:layout_editor_absoluteY="355dp" />
+        android:inputType="textPersonName"/>
 
     <Button
         android:id="@+id/registrateRegistrationBtn"
@@ -59,34 +54,27 @@
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:background="@drawable/btn"
+        android:textColor="@color/white"
         android:text="@string/regUser"
-        android:textStyle="bold"
-        tools:layout_editor_absoluteX="33dp"
-        tools:layout_editor_absoluteY="427dp" />
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/readRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="@string/readDB"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="468dp" />
+        android:text="@string/readDB"/>
 
     <Button
         android:id="@+id/deleteRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="@string/delUser"
-        tools:layout_editor_absoluteX="305dp"
-        tools:layout_editor_absoluteY="458dp" />
+        android:text="@string/delUser" />
 
     <Button
         android:id="@+id/loginRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Authorization"
-        tools:layout_editor_absoluteX="139dp"
-        tools:layout_editor_absoluteY="64dp" />
+        android:text="Authorization" />
 
 
 

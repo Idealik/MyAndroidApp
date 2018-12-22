@@ -20,21 +20,24 @@ import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class myTime extends AppCompatActivity  implements View.OnClickListener {
     final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
     final String WORKING_DAYS_ID = "working days id";
+    final String STATUS_USER_BY_SERVICE = "status user";
 
-
-    String fullTime = "";
+    String statusUser;
 
     Button[][] timeBtns;
     Button saveBtn;
 
     // чтобы сохранять несколько выбранных часов надо создать массив,
     // куда будем добавлять текст выбранной кнопки?
-    ArrayList<String> workinngHours;
+    ArrayList<String> workingHours;
+    ArrayList<String> removedHours;
 
     DBHelper dbHelper;
     SharedPreferences sPref;
@@ -45,13 +48,18 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_time);
+
+        statusUser = getIntent().getStringExtra(STATUS_USER_BY_SERVICE);
+
         dbHelper = new DBHelper(this);
 
         mainLayout = findViewById(R.id.mainMyTimeLayout);
 
         timeBtns = new Button[7][4];
         saveBtn = findViewById(R.id.saveMyTimeBtn);
-        workinngHours = new ArrayList<>();
+
+        workingHours = new ArrayList<>();
+        removedHours = new ArrayList<>();
 
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
@@ -79,7 +87,12 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         checkCurrentTimes(database);
 
-        saveBtn.setOnClickListener(this);
+        if(statusUser.equals("worker")){
+            saveBtn.setOnClickListener(this);
+        }
+        else {
+            saveBtn.setVisibility(View.GONE);
+        }
     }
 
     private void checkCurrentTimes(SQLiteDatabase database) {
@@ -106,27 +119,20 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         }
     }
 
-    private boolean hasTime(Cursor cursor, String time) {
-        if(cursor.moveToFirst()) {
-            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
-
-            do {
-                if (time.equals(cursor.getString(indexTime))) {
-                    return true;
-                }
-            } while (cursor.moveToNext());
-        }
-        return false;
-    }
-
     @Override
     public void onClick(View v) {
-        //SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         switch (v.getId()) {
 
             case R.id.saveMyTimeBtn:
-                addTime();
+                if(workingHours.size() > 0) {
+                    addTime();
+                }
+
+                if(removedHours.size() > 0 ) {
+                    deleteTime();
+                }
+
                 break;
 
             default:
@@ -134,11 +140,13 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
 
                 if(Boolean.valueOf((btn.getTag()).toString())) {
                     btn.setBackgroundResource(R.drawable.time_button);
-                    workinngHours.remove(btn.getText().toString());
+                    workingHours.remove(btn.getText().toString());
+                    removedHours.add(btn.getText().toString());
                     btn.setTag(false);
                 } else {
                     btn.setBackgroundResource(R.drawable.pressed_button);
-                    workinngHours.add(btn.getText().toString());
+                    workingHours.add(btn.getText().toString());
+                    removedHours.remove(btn.getText().toString());
                     btn.setTag(true);
                 }
                 break;
@@ -152,20 +160,60 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-        ContentValues contentValues = new ContentValues();
-        for (String time: workinngHours) {
-            contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, time);
-            contentValues.put(DBHelper.KEY_USER_ID, getUserId());
-            contentValues.put(DBHelper.KEY_TIME_WORKING_DAYS_ID, workingDaysId);
+        Cursor cursor = database.query(
+                DBHelper.TABLE_WORKING_TIME,
+                new String[]{DBHelper.KEY_TIME_WORKING_TIME},
+                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ? ",
+                new String[]{String.valueOf(workingDaysId)},
+                null,
+                null,
+                null,
+                null);
 
-            database.insert(DBHelper.TABLE_WORKING_TIME,null,contentValues);
+        ContentValues contentValues = new ContentValues();
+        for (String time: workingHours) {
+            if(!hasTime(cursor, time)) {
+                contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, time);
+                contentValues.put(DBHelper.KEY_USER_ID, getUserId());
+                contentValues.put(DBHelper.KEY_TIME_WORKING_DAYS_ID, workingDaysId);
+
+                database.insert(DBHelper.TABLE_WORKING_TIME,null,contentValues);
+            }
         }
 
         readDB(database);
+        workingHours.clear();
+    }
+
+    private void deleteTime() {
+        long workingDaysId = getIntent().getLongExtra(WORKING_DAYS_ID, -1);
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        Cursor cursor = database.query(
+                DBHelper.TABLE_WORKING_TIME,
+                new String[]{DBHelper.KEY_TIME_WORKING_TIME},
+                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ? ",
+                new String[]{String.valueOf(workingDaysId)},
+                null,
+                null,
+                null,
+                null);
+
+        for (String time: removedHours) {
+            if(hasTime(cursor, time)) {
+                database.delete(
+                        DBHelper.TABLE_WORKING_TIME,
+                        DBHelper.KEY_TIME_WORKING_TIME + " = ? AND " + DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ?",
+                        new String[]{time, String.valueOf(workingDaysId)});
+            }
+        }
+
+        readDB(database);
+        removedHours.clear();
     }
 
     private  void readDB(SQLiteDatabase database){
-        String msg= "";
         Cursor cursor = database.query(
                 DBHelper.TABLE_WORKING_TIME,
                 null,
@@ -198,8 +246,21 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
             Log.d(TAG, "DB is empty");
         }
         cursor.close();
+        Log.d(TAG, "Done!");
     }
 
+    private boolean hasTime(Cursor cursor, String time) {
+        if(cursor.moveToFirst()) {
+            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
+
+            do {
+                if (time.equals(cursor.getString(indexTime))) {
+                    return true;
+                }
+            } while (cursor.moveToNext());
+        }
+        return false;
+    }
 
     private  String getUserId(){
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);

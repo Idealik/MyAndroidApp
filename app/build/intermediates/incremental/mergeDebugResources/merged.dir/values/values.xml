@@ -143,6 +143,7 @@
     <color name="background_floating_material_light">@android:color/white</color>
     <color name="background_material_dark">@color/material_grey_850</color>
     <color name="background_material_light">@color/material_grey_50</color>
+    <color name="black">#000000</color>
     <color name="blue2">#3675fc</color>
     <color name="blue25">#158aea</color>
     <color name="bright_foreground_disabled_material_dark">#80ffffff</color>
@@ -167,7 +168,8 @@
     <color name="grey05">#64d1d1d1</color>
     <color name="highlighted_text_material_dark">#6680cbc4</color>
     <color name="highlighted_text_material_light">#66009688</color>
-    <color name="lightText">#8CF3F1F1</color>
+    <color name="lightText">#7DF3F1F1</color>
+    <color name="mainColorBG">#D1E1E5</color>
     <color name="material_blue_grey_800">#ff37474f</color>
     <color name="material_blue_grey_900">#ff263238</color>
     <color name="material_blue_grey_950">#ff21272b</color>
@@ -1629,12 +1631,11 @@
     <style name="Animation.AppCompat.DropDownUp" parent="Base.Animation.AppCompat.DropDownUp"/>
     <style name="Animation.AppCompat.Tooltip" parent="Base.Animation.AppCompat.Tooltip"/>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <!-- Reg pages -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/lightText</item>
-        <item name="android:textColorHint">@color/lightText</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/black</item>
     </style>
     <style name="Base.AlertDialog.AppCompat" parent="android:Widget">
         <item name="android:layout">@layout/abc_alert_dialog_material</item>
@@ -3094,5 +3095,14 @@
     <style name="Widget.Compat.NotificationActionText" parent=""/>
     <style name="Widget.Support.CoordinatorLayout" parent="android:Widget">
         <item name="statusBarBackground">#000000</item>
+    </style>
+    <style name="allPages" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/mainColorBG</item>
+    </style>
+    <style name="regPages" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/lightText</item>
+        <item name="android:textColorHint">@color/lightText</item>
     </style>
 </resources>

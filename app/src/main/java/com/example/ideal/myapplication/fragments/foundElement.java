@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -74,7 +75,7 @@ public class foundElement extends Fragment implements View.OnClickListener {
 
     private void goToGuestService(){
         Intent intent = new Intent(this.getContext(), guestService.class);
-        intent.putExtra(SERVICE_ID, idString);
+        intent.putExtra(SERVICE_ID, Long.valueOf(idString));
         startActivity(intent);
     }
 }

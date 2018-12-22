@@ -129,7 +129,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
     }
 
     protected boolean isStrongPassword(String myPass) {
-        if(!myPass.matches(".*[A-Z].*")) return  false;
+      //  if(!myPass.matches(".*[A-Z].*")) return  false;
         if(!myPass.matches(".*[0-9].*")) return  false;
         if(myPass.length()<=5) return false;
         return true;

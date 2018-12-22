@@ -19,6 +19,8 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
     final String SERVICE_ID = "service id";
+    final String STATUS_USER_BY_SERVICE = "status user";
+
 
     Button addServicesBtn;
     Button readBtn;
@@ -36,7 +38,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_service);
-        
+        Log.d(TAG, "ADD SERVICE");
         addServicesBtn = (Button) findViewById(R.id.addServiceAddServiceBtn);
         readBtn = (Button) findViewById(R.id.readAddServiceBtn);
         
@@ -81,10 +83,10 @@ public class addService extends AppCompatActivity implements View.OnClickListene
             // добавление id пользователя в таблицу сервисов, чтобы потом использовать в mainScreen
             contentValues.put(DBHelper.KEY_USER_ID, userId);
 
-            long rowId = database.insert(DBHelper.TABLE_CONTACTS_SERVICES,null,contentValues);
-            Log.d(TAG, ""+rowId);
+            long serviceId = database.insert(DBHelper.TABLE_CONTACTS_SERVICES,null,contentValues);
+            Log.d(TAG, ""+serviceId);
 
-            goToCalendar(rowId);
+            goToMyCalendar("worker",serviceId);
 
             Log.d(TAG, "reg was successfull");
             return  true;
@@ -152,11 +154,13 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         return userId;
     }
 
-    private void goToCalendar(long id) {
+    private void goToMyCalendar(String status, Long serviceId) {
+        Log.d(TAG, serviceId + " ");
         Intent intent = new Intent(this, myCalendar.class);
-        intent.putExtra(SERVICE_ID, id);
+        intent.putExtra(SERVICE_ID, serviceId);
+        intent.putExtra(STATUS_USER_BY_SERVICE, status);
+
         startActivity(intent);
     }
-
 }
 

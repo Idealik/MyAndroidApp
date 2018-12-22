@@ -12,7 +12,9 @@
         android:layout_height="match_parent"
         android:selectedWeekBackgroundColor="#ff0000"
         android:weekNumberColor="#0000ff"
-        android:weekSeparatorLineColor="#00ff00" />
+        android:weekSeparatorLineColor="#00ff00"
+        tools:layout_editor_absoluteX="52dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <Button
         android:id="@+id/continueMyCalendarBtn"

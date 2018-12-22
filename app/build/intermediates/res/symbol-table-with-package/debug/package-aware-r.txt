@@ -373,6 +373,7 @@ color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
 color background_material_light
+color black
 color blue2
 color blue25
 color bright_foreground_disabled_material_dark
@@ -398,6 +399,7 @@ color grey05
 color highlighted_text_material_dark
 color highlighted_text_material_light
 color lightText
+color mainColorBG
 color material_blue_grey_800
 color material_blue_grey_900
 color material_blue_grey_950
@@ -729,6 +731,7 @@ id descriptonAddServiceInput
 id dimensions
 id direct
 id disableHome
+id editScheduleGuestServiceBtn
 id edit_query
 id end
 id expand_activities_button
@@ -791,6 +794,8 @@ id readAddServiceBtn
 id readRegistrationBtn
 id registrateRegistrationBtn
 id registrationAuthorizationBtn
+id resultProfileLayout
+id resultSearchServiceLayout
 id resultsLayout
 id right
 id right_icon
@@ -1302,6 +1307,8 @@ style Widget_AppCompat_Toolbar_Button_Navigation
 style Widget_Compat_NotificationActionContainer
 style Widget_Compat_NotificationActionText
 style Widget_Support_CoordinatorLayout
+style allPages
+style regPages
 styleable ActionBar background backgroundSplit backgroundStacked contentInsetEnd contentInsetEndWithActions contentInsetLeft contentInsetRight contentInsetStart contentInsetStartWithNavigation customNavigationLayout displayOptions divider elevation height hideOnContentScroll homeAsUpIndicator homeLayout icon indeterminateProgressStyle itemPadding logo navigationMode popupTheme progressBarPadding progressBarStyle subtitle subtitleTextStyle title titleTextStyle
 styleable ActionBarLayout android_layout_gravity
 styleable ActionMenuItemView android_minWidth

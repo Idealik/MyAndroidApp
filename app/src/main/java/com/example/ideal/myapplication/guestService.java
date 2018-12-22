@@ -1,25 +1,35 @@
 package com.example.ideal.myapplication;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ResourceBundle;
 
 import static android.os.Build.ID;
 
-public class guestService extends AppCompatActivity {
+public class guestService extends AppCompatActivity implements View.OnClickListener {
 
-    final String TAG = "DBInf";
-    final String SERVICE_ID = "service id";
+    private final String PHONE = "phone";
+    private final String FILE_NAME = "Info";
+    private final String TAG = "DBInf";
+    private final String SERVICE_ID = "service id";
+    private final String STATUS_USER_BY_SERVICE = "status user";
+
+    Boolean isMyService = false;
 
     TextView nameText;
     TextView costText;
     TextView descriptionText;
+
+    Button editScheduleBtn;
 
     DBHelper dbHelper;
 
@@ -32,20 +42,51 @@ public class guestService extends AppCompatActivity {
         costText = findViewById(R.id.costGuestServiceText);
         descriptionText = findViewById(R.id.descriptionGuestServiceText);
 
+        editScheduleBtn = findViewById(R.id.editScheduleGuestServiceBtn);
+
         dbHelper = new DBHelper(this);
-        String serviceId =getIntent().getStringExtra(SERVICE_ID);
+        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
 
         getData(serviceId);
+        long userId = getUserId();
+        // спрашиваю мой сервис или нет?
+        // в переменной, чтобы использовать много где и постоянно не вызывать метод
+        isMyService = isMyService(serviceId,userId);
+
+        if(isMyService){
+            editScheduleBtn.setText("Редактировать расписание");
+        }
+        else {
+            editScheduleBtn.setText("Расписание");
+        }
+
+        editScheduleBtn.setOnClickListener(this);
     }
 
-    private void getData(String serviceId) {
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.editScheduleGuestServiceBtn:
+                if(isMyService){
+                    goToMyCalendar("worker");
+                }
+                else {
+                    goToMyCalendar("user");
+                }
+
+        }
+    }
+
+    private void getData(long serviceId) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         // получаем сервис с указанным ID
         String sqlQuery =
                 "SELECT " + DBHelper.TABLE_CONTACTS_SERVICES + ".*"
                         + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
                         + " WHERE " + DBHelper.KEY_ID +" = ? ";
-        Cursor cursor = database.rawQuery(sqlQuery, new String[] {serviceId});
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(serviceId)});
 
         if(cursor.moveToFirst()) {
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
@@ -61,4 +102,48 @@ public class guestService extends AppCompatActivity {
         }
         cursor.close();
     }
+
+    private boolean isMyService(long serviceId, long userId) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        //Картеж этого сервиса с id текущего пользователя
+        Cursor cursor = database.query(
+            DBHelper.TABLE_CONTACTS_SERVICES,
+            new String[]{DBHelper.KEY_NAME_SERVICES},
+            DBHelper.KEY_ID + " = ? AND " + DBHelper.KEY_USER_ID + " = ? ",
+            new String[]{String.valueOf(serviceId), String.valueOf(userId)},
+            null,
+            null,
+            null,
+            null);
+
+        // такой существует ?
+        if(cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private long getUserId() {
+        SharedPreferences sPref;
+        sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
+
+        return  userId;
+    }
+
+
+    private void goToMyCalendar(String status) {
+        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+        Log.d(TAG, serviceId + " ");
+        Log.d(TAG, status + " ");
+
+        Intent intent = new Intent(this, myCalendar.class);
+        intent.putExtra(SERVICE_ID, serviceId);
+        intent.putExtra(STATUS_USER_BY_SERVICE, status);
+
+        startActivity(intent);
+    }
+
 }
