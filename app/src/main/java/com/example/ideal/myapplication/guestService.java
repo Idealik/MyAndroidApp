@@ -119,10 +119,13 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
 
         // такой существует ?
         if(cursor.moveToFirst()) {
+            cursor.close();
             return true;
         } else {
+            cursor.close();
             return false;
         }
+
     }
 
     private long getUserId() {

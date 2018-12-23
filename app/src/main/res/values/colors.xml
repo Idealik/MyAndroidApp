@@ -13,6 +13,6 @@
     <color name="grey05">#64d1d1d1</color>
     <color name="orange4">#fca22e</color>
     <color name="orange5">#ff8810</color>
-    <color name="blue2">#3675fc</color>
-    <color name="blue25">#158aea</color>
+    <color name="activeButton">#FFFFFF</color>
+    <color name="disabledButton">#7fffffff</color>
 </resources>

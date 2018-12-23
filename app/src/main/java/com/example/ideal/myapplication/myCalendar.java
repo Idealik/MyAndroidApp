@@ -90,6 +90,7 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
                     }
                 });
             }
+            //иначе просто ничего не выводит
         }
         nextBtn.setOnClickListener(this);
     }
@@ -106,7 +107,6 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
                     goToMyTime(currentIdDay,statusUser);
                     Log.d(TAG, "IT IS USER!");
                 }
-
                 break;
             default:
                 break;
@@ -128,7 +128,6 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
             contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
 
             id = database.insert(DBHelper.TABLE_WORKING_DAYS, null, contentValues);
-
 
             goToMyTime(id,statusUser);
         }
@@ -153,6 +152,7 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
 
             return Long.valueOf(cursor.getString(indexId));
         }
+        cursor.close();
         return 0;
     }
 
@@ -197,6 +197,7 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
             }
 
         }
+        cursor.close();
         return "nul";
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -204,8 +205,6 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
         // спросить Валентина про алгоритм сравнения, правильный ли он?
         // date = current date, а secondDate = динамическая дата, получаемая из бд
         // если date > secondDate - то return -1| если =, то 0| иначе 1
-
-
         String [] datesFirst = date.split("-"); // curDate
         LocalDate myLocalDatesFirst = LocalDate.of(
                 Integer.valueOf(datesFirst[0]),
@@ -235,7 +234,6 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
     }
 
     private void goToMyTime(long dayId, String statusUser){
-
         Intent intent = new Intent(this, myTime.class);
         intent.putExtra(WORKING_DAYS_ID, dayId);
         intent.putExtra(STATUS_USER_BY_SERVICE, statusUser);

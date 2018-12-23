@@ -369,13 +369,12 @@ color abc_tint_spinner
 color abc_tint_switch_track
 color accent_material_dark
 color accent_material_light
+color activeButton
 color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
 color background_material_light
 color black
-color blue2
-color blue25
 color bright_foreground_disabled_material_dark
 color bright_foreground_disabled_material_light
 color bright_foreground_inverse_material_dark
@@ -391,6 +390,7 @@ color dim_foreground_disabled_material_dark
 color dim_foreground_disabled_material_light
 color dim_foreground_material_dark
 color dim_foreground_material_light
+color disabledButton
 color error_color_material_dark
 color error_color_material_light
 color foreground_material_dark
@@ -642,6 +642,7 @@ drawable abc_vector_test
 drawable bg
 drawable btn
 drawable bun_beauty
+drawable disabled_button
 drawable fields
 drawable ic_launcher_background
 drawable ic_launcher_foreground
