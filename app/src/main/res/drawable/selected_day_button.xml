@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true" >
+        <shape>
+            <gradient
+                android:endColor="@color/activeButton"
+                android:startColor="@color/activeButton"
+                android:angle="270" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/grey05" />
+            <corners
+                android:radius="3dp" />
+            <padding
+                android:left="5dp"
+                android:top="2dp"
+                android:right="5dp"
+                android:bottom="2dp" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true" >
+        <shape>
+            <gradient
+                android:endColor="@color/selectedButton"
+                android:startColor="@color/selectedButton"
+                android:angle="270" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/grey05" />
+            <corners
+                android:radius="3dp" />
+            <padding
+                android:left="5dp"
+                android:top="2dp"
+                android:right="5dp"
+                android:bottom="2dp" />
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <gradient
+                android:startColor="@color/selectedButton"
+                android:endColor="@color/selectedButton"
+                android:angle="270" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/grey05" />
+            <corners
+                android:radius="3dp" />
+            <padding
+                android:left="5dp"
+                android:top="2dp"
+                android:right="5dp"
+                android:bottom="2dp" />
+        </shape>
+    </item>
+</selector>

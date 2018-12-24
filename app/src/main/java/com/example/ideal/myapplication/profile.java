@@ -196,6 +196,8 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     private void goToAddService() {
         Intent intent = new Intent(this, addService.class);
         startActivity(intent);
+        /*Intent intent = new Intent(this, myCalendar.class);
+        startActivity(intent);*/
     }
 
     private void goToSearchService() {

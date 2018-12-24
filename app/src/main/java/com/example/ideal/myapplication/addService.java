@@ -3,7 +3,6 @@ package com.example.ideal.myapplication;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,18 +14,17 @@ import android.widget.Toast;
 
 public class addService extends AppCompatActivity implements View.OnClickListener {
 
+    // сказать, что случайно удалил readBtn
     final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
     final String SERVICE_ID = "service id";
     final String STATUS_USER_BY_SERVICE = "status user";
 
-
     Button addServicesBtn;
-    Button readBtn;
 
     EditText nameServiceInput;
-    EditText costAddServiceTB;
+    EditText costAddServiceInput;
     EditText descriptonServiceInput;
     
     DBHelper dbHelper;
@@ -40,16 +38,14 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         setContentView(R.layout.add_service);
         Log.d(TAG, "ADD SERVICE");
         addServicesBtn = (Button) findViewById(R.id.addServiceAddServiceBtn);
-        readBtn = (Button) findViewById(R.id.readAddServiceBtn);
-        
+
         nameServiceInput = (EditText) findViewById(R.id.nameAddServiceInput);
-        costAddServiceTB = (EditText) findViewById(R.id.costAddServiceInput);
-        descriptonServiceInput = (EditText) findViewById(R.id.descriptonAddServiceInput);
+        costAddServiceInput = (EditText) findViewById(R.id.costAddServiceInput);
+        descriptonServiceInput = (EditText) findViewById(R.id.descriptionAddServiceInput);
         
         dbHelper = new DBHelper(this);
 
         addServicesBtn.setOnClickListener(this);
-        readBtn.setOnClickListener(this);
     }
 
     @Override
@@ -60,8 +56,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
             case R.id.addServiceAddServiceBtn:
                 addService(database);
                 break;
-            case R.id.readAddServiceBtn:
-                readBtn(database);
+
             default:
                 break;
         }
@@ -69,7 +64,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
 
     private boolean addService(SQLiteDatabase database){
         String name = nameServiceInput.getText().toString();
-        String cost = costAddServiceTB.getText().toString();
+        String cost = costAddServiceInput.getText().toString();
         String description = descriptonServiceInput.getText().toString();
 
         if(isFullInputs(name,cost,description)){
@@ -97,43 +92,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         }
     }
 
-    private  void readBtn(SQLiteDatabase database){
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_SERVICES,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        if(cursor.moveToFirst()){
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
-            int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
-            int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
-            int indexIdUser= cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-
-            do{
-                Log.d(TAG, cursor.getString(indexId)
-                        + " "
-                        + cursor.getString(indexName)
-                        + " "
-                        + cursor.getString(indexMinCost)
-                        + " "
-                        + cursor.getString(indexDescription)
-                        + " "
-                        + cursor.getString(indexIdUser)
-                        + " ");
-            } while (cursor.moveToNext());
-        }
-        else {
-            Log.d(TAG, "DB is empty");
-        }
-        cursor.close();
-    }
-
     protected Boolean isFullInputs(String name, String cost, String description){
         if(name.trim().equals("")) return false;
         if(cost.trim().equals("")) return false;
@@ -142,10 +100,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         return  true;
     }
 
-    private  void deleteDB(SQLiteDatabase database){
-        database.delete(DBHelper.TABLE_CONTACTS_SERVICES,null,null);
-        Log.d(TAG, "DB was deleted");
-    }
 
     private  String getUserId(){
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
@@ -161,6 +115,7 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         intent.putExtra(STATUS_USER_BY_SERVICE, status);
 
         startActivity(intent);
+        finish();
     }
 }
 

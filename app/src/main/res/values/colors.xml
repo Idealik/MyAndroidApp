@@ -15,4 +15,6 @@
     <color name="orange5">#ff8810</color>
     <color name="activeButton">#FFFFFF</color>
     <color name="disabledButton">#7fffffff</color>
+    <color name="selectedButton">#ffd646</color>
+
 </resources>

@@ -430,6 +430,7 @@ color secondary_text_default_material_dark
 color secondary_text_default_material_light
 color secondary_text_disabled_material_dark
 color secondary_text_disabled_material_light
+color selectedButton
 color switch_thumb_disabled_material_dark
 color switch_thumb_disabled_material_light
 color switch_thumb_material_dark
@@ -642,6 +643,7 @@ drawable abc_vector_test
 drawable bg
 drawable btn
 drawable bun_beauty
+drawable day_button
 drawable disabled_button
 drawable fields
 drawable ic_launcher_background
@@ -663,6 +665,7 @@ drawable panel
 drawable pressed_button
 drawable recover
 drawable registration
+drawable selected_day_button
 drawable time_button
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
@@ -718,7 +721,9 @@ id collapseActionView
 id content
 id contentPanel
 id continueMyCalendarBtn
+id continueMyCalendarBtn2
 id costAddServiceInput
+id costEditServiceInput
 id costGuestServiceText
 id costText
 id custom
@@ -726,13 +731,15 @@ id customPanel
 id decor_content_parent
 id default_activity_button
 id deleteRegistrationBtn
+id descriptionAddServiceInput
+id descriptionEditServiceInput
 id descriptionGuestServiceText
 id descriptionText
-id descriptonAddServiceInput
 id dimensions
 id direct
 id disableHome
-id editScheduleGuestServiceBtn
+id editServiceEditServiceBtn
+id editServiceGuestServiceBtn
 id edit_query
 id end
 id expand_activities_button
@@ -765,12 +772,14 @@ id list_item
 id logInAuthorizationBtn
 id logOutProfileBtn
 id loginRegistrationBtn
+id mainMyCalendarLayout
 id mainMyTimeLayout
 id mainScreenProfileBtn
 id message
 id middle
 id multiply
 id nameAddServiceInput
+id nameEditServiceInput
 id nameGuestServiceText
 id nameSearchServiceInput
 id nameText
@@ -791,7 +800,6 @@ id phoneRegistrationInput
 id progress_circular
 id progress_horizontal
 id radio
-id readAddServiceBtn
 id readRegistrationBtn
 id registrateRegistrationBtn
 id registrationAuthorizationBtn
@@ -887,6 +895,7 @@ layout abc_select_dialog_material
 layout abc_tooltip
 layout add_service
 layout authorization
+layout edit_service
 layout found_element
 layout guest_service
 layout main_screen
@@ -901,6 +910,7 @@ layout notification_template_part_time
 layout profile
 layout registration
 layout search_service
+layout second_calendar
 layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
@@ -951,6 +961,7 @@ string app_name
 string city
 string costAddServiceTB
 string delUser
+string edit
 string findServices
 string goToAuthor
 string logOut
@@ -960,7 +971,9 @@ string phone
 string readDB
 string regUser
 string search_menu_title
+string selectedId
 string status_bar_notification_info_overflow
+string yearId
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog

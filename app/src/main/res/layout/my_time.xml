@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".myTime"
-    android:theme="@style/allPages">
+    android:theme="@style/allPages"
+    tools:context=".myTime">
 
     <RelativeLayout
         android:id="@+id/mainMyTimeLayout"

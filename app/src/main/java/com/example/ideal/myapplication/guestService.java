@@ -11,10 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ResourceBundle;
-
-import static android.os.Build.ID;
-
 public class guestService extends AppCompatActivity implements View.OnClickListener {
 
     private final String PHONE = "phone";
@@ -29,7 +25,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     TextView costText;
     TextView descriptionText;
 
-    Button editScheduleBtn;
+    Button editServiceBtn;
 
     DBHelper dbHelper;
 
@@ -42,7 +38,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         costText = findViewById(R.id.costGuestServiceText);
         descriptionText = findViewById(R.id.descriptionGuestServiceText);
 
-        editScheduleBtn = findViewById(R.id.editScheduleGuestServiceBtn);
+        editServiceBtn = findViewById(R.id.editServiceGuestServiceBtn);
 
         dbHelper = new DBHelper(this);
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
@@ -54,13 +50,13 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         isMyService = isMyService(serviceId,userId);
 
         if(isMyService){
-            editScheduleBtn.setText("Редактировать расписание");
+            editServiceBtn.setText("Редактировать сервис");
         }
         else {
-            editScheduleBtn.setText("Расписание");
+            editServiceBtn.setText("Расписание");
         }
 
-        editScheduleBtn.setOnClickListener(this);
+        editServiceBtn.setOnClickListener(this);
     }
 
 
@@ -68,9 +64,9 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.editScheduleGuestServiceBtn:
+            case R.id.editServiceGuestServiceBtn:
                 if(isMyService){
-                    goToMyCalendar("worker");
+                    goToMyEditService("worker");
                 }
                 else {
                     goToMyCalendar("user");
@@ -119,13 +115,10 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
 
         // такой существует ?
         if(cursor.moveToFirst()) {
-            cursor.close();
             return true;
         } else {
-            cursor.close();
             return false;
         }
-
     }
 
     private long getUserId() {
@@ -136,13 +129,24 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         return  userId;
     }
 
-
     private void goToMyCalendar(String status) {
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
         Log.d(TAG, serviceId + " ");
         Log.d(TAG, status + " ");
 
         Intent intent = new Intent(this, myCalendar.class);
+        intent.putExtra(SERVICE_ID, serviceId);
+        intent.putExtra(STATUS_USER_BY_SERVICE, status);
+
+        startActivity(intent);
+    }
+
+    private void goToMyEditService(String status) {
+        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+        Log.d(TAG, serviceId + " ");
+        Log.d(TAG, status + " ");
+
+        Intent intent = new Intent(this, editService.class);
         intent.putExtra(SERVICE_ID, serviceId);
         intent.putExtra(STATUS_USER_BY_SERVICE, status);
 

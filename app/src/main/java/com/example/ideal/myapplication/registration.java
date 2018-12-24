@@ -119,7 +119,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         myPass =  encryptThisStringSHA512(myPass);
         contentValues.put(DBHelper.KEY_USER_ID, myPhone);
         contentValues.put(DBHelper.KEY_PASS_USERS, myPass);
-        contentValues.put(DBHelper.KEY_CITY_USERS, myCity);
+        contentValues.put(DBHelper.KEY_CITY_USERS, myCity.toLowerCase());
 
         database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
         saveIdAndPass(myPhone, myPass);

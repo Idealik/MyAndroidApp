@@ -7,10 +7,21 @@
     <string name="logOut">Log out</string>
     <string name="addServices">Add services</string>
     <string name="findServices">Find services</string>
+
     //Add service
     <string name="nameAddServiceTB">Name</string>
     <string name="costAddServiceTB">Cost</string>
     <string name="main_screen">Main screen</string>
     <string name="city">City</string>
     <string name="phone">Phone</string>
+
+    //Edit service
+    <string name="edit">Edit</string>
+
+    //tag id
+    //
+    <string name="selectedId">selectedId</string>
+    //
+    <string name="yearId">yearId</string>
+
 </resources>

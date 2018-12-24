@@ -31,8 +31,9 @@
         <activity android:name="com.example.ideal.myapplication.addService" />
         <activity android:name="com.example.ideal.myapplication.guestService" />
         <activity android:name="com.example.ideal.myapplication.mainScreen" />
-        <activity android:name="com.example.ideal.myapplication.myCalendar" />
         <activity android:name="com.example.ideal.myapplication.myTime" />
+        <activity android:name="com.example.ideal.myapplication.myCalendar" />
+        <activity android:name="com.example.ideal.myapplication.editService" />
 
         <provider
             android:name="com.android.tools.ir.server.InstantRunContentProvider"
