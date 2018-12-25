@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".addService">
+    tools:context=".addService"
+    android:theme="@style/allPages">
 
     <EditText
         android:id="@+id/nameEditServiceInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="85dp"
+        android:layout_gravity="center"
         android:layout_marginTop="33dp"
         android:layout_marginBottom="24dp"
         android:ems="10"
@@ -26,8 +27,8 @@
         android:id="@+id/costEditServiceInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="83dp"
         android:layout_marginTop="24dp"
+        android:layout_gravity="center"
         android:layout_marginBottom="26dp"
         android:ems="10"
         android:inputType="textPersonName"
@@ -41,7 +42,7 @@
         android:id="@+id/descriptionEditServiceInput"
         android:layout_width="312dp"
         android:layout_height="233dp"
-        android:layout_marginLeft="34dp"
+        android:layout_gravity="center"
         android:layout_marginTop="13dp"
         android:layout_marginBottom="17dp"
         android:ems="10"
