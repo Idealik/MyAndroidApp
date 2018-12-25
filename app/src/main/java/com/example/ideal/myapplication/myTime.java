@@ -26,6 +26,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
 
     String statusUser;
     String userId;
+    String workingDaysId;
     boolean hasCurrentHours;
 
     Button[][] timeBtns;
@@ -73,13 +74,13 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
     }
 
     private void checkCurrentTimes() {
-        String workingDaysId = String.valueOf(getIntent().getLongExtra(WORKING_DAYS_ID, -1));
+        workingDaysId = String.valueOf(getIntent().getLongExtra(WORKING_DAYS_ID, -1));
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         Cursor cursor = database.query(
                 DBHelper.TABLE_WORKING_TIME,
                 new String[]{DBHelper.KEY_TIME_WORKING_TIME,DBHelper.KEY_USER_ID},
-                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ?",
+                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?",
                 new String[]{workingDaysId},
                 null,
                 null,
@@ -212,7 +213,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         Cursor cursor = database.query(
                 DBHelper.TABLE_WORKING_TIME,
                 new String[]{DBHelper.KEY_TIME_WORKING_TIME},
-                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ? ",
+                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
                 new String[]{String.valueOf(workingDaysId)},
                 null,
                 null,
@@ -224,7 +225,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
             if(!hasTimeForWorker(cursor, time)) {
                 contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, time);
                 contentValues.put(DBHelper.KEY_USER_ID,"0");
-                contentValues.put(DBHelper.KEY_TIME_WORKING_DAYS_ID, workingDaysId);
+                contentValues.put(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME, workingDaysId);
 
                 database.insert(DBHelper.TABLE_WORKING_TIME,null,contentValues);
             }
@@ -252,7 +253,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         Cursor cursor = database.query(
                 DBHelper.TABLE_WORKING_TIME,
                 new String[]{DBHelper.KEY_TIME_WORKING_TIME},
-                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ? ",
+                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
                 new String[]{String.valueOf(workingDaysId)},
                 null,
                 null,
@@ -266,8 +267,8 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
             Log.d(TAG, "In has time");
             contentValues.put(DBHelper.KEY_USER_ID, userId);
             database.update(DBHelper.TABLE_WORKING_TIME, contentValues,
-                    DBHelper.KEY_TIME_WORKING_TIME + " = ?",
-                    new String []{time});
+                    DBHelper.KEY_TIME_WORKING_TIME + " = ? AND " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? " ,
+                    new String []{time, String.valueOf(workingDaysId)});
         }
         readDB(database);
         workingHours.clear();
@@ -282,7 +283,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         Cursor cursor = database.query(
                 DBHelper.TABLE_WORKING_TIME,
                 new String[]{DBHelper.KEY_TIME_WORKING_TIME},
-                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ? ",
+                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
                 new String[]{String.valueOf(workingDaysId)},
                 null,
                 null,
@@ -294,7 +295,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
                 database.delete(
                         DBHelper.TABLE_WORKING_TIME,
                         DBHelper.KEY_TIME_WORKING_TIME + " = ? AND "
-                                + DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ?",
+                                + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?",
                         new String[]{time, String.valueOf(workingDaysId)});
             }
         }
@@ -316,7 +317,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
 
         if(cursor.moveToFirst()){
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexWorkingDayId = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_DAYS_ID);
+            int indexWorkingDayId = cursor.getColumnIndex(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME);
             int indexUserId = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
             int indexWorkingTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
 

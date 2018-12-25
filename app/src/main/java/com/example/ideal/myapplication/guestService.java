@@ -17,6 +17,9 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     private final String FILE_NAME = "Info";
     private final String TAG = "DBInf";
     private final String SERVICE_ID = "service id";
+    private final String NAME_SERVICE = "name service";
+    private final String COST_SERVICE = "cost service";
+    private final String DESCRIPTION_SERVICE = "description service";
     private final String STATUS_USER_BY_SERVICE = "status user";
 
     Boolean isMyService = false;
@@ -25,6 +28,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     TextView costText;
     TextView descriptionText;
 
+    Button editScheduleBtn;
     Button editServiceBtn;
 
     DBHelper dbHelper;
@@ -38,6 +42,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         costText = findViewById(R.id.costGuestServiceText);
         descriptionText = findViewById(R.id.descriptionGuestServiceText);
 
+        editScheduleBtn = findViewById(R.id.editScheduleGuestServiceBtn);
         editServiceBtn = findViewById(R.id.editServiceGuestServiceBtn);
 
         dbHelper = new DBHelper(this);
@@ -50,28 +55,36 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         isMyService = isMyService(serviceId,userId);
 
         if(isMyService){
-            editServiceBtn.setText("Редактировать сервис");
+            editScheduleBtn.setText("Редактировать расписание");
         }
         else {
-            editServiceBtn.setText("Расписание");
+            editScheduleBtn.setText("Расписание");
         }
 
+        if(isMyService){
+            editServiceBtn.setVisibility(View.VISIBLE);
+            editServiceBtn.setText("Редактировать сервис");
+        }
+        editScheduleBtn.setOnClickListener(this);
         editServiceBtn.setOnClickListener(this);
+
     }
-
-
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.editServiceGuestServiceBtn:
+            case R.id.editScheduleGuestServiceBtn:
                 if(isMyService){
-                    goToMyEditService("worker");
+                    goToMyCalendar("worker");
                 }
                 else {
                     goToMyCalendar("user");
                 }
-
+                break;
+            case R.id.editServiceGuestServiceBtn:
+                goToEditService();
+            break;
+            default: break;
         }
     }
 
@@ -141,14 +154,17 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void goToMyEditService(String status) {
+    private void goToEditService() {
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-        Log.d(TAG, serviceId + " ");
-        Log.d(TAG, status + " ");
+        String name = nameText.getText().toString();
+        String cost = costText.getText().toString();
+        String description = descriptionText.getText().toString();
 
         Intent intent = new Intent(this, editService.class);
         intent.putExtra(SERVICE_ID, serviceId);
-        intent.putExtra(STATUS_USER_BY_SERVICE, status);
+        intent.putExtra(NAME_SERVICE, name);
+        intent.putExtra(COST_SERVICE, cost);
+        intent.putExtra(DESCRIPTION_SERVICE, description);
 
         startActivity(intent);
     }

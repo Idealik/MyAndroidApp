@@ -56,7 +56,6 @@ public class secondCalendar extends AppCompatActivity implements View.OnClickLis
         // получаем статус, чтобы определить, кто зашел, worker or user
         statusUser = getIntent().getStringExtra(STATUS_USER_BY_SERVICE);
 
-
         createCalendar();
 
         if(statusUser.equals("user")){
@@ -85,8 +84,6 @@ public class secondCalendar extends AppCompatActivity implements View.OnClickLis
 
         nextBtn.setOnClickListener(this);
     }
-
-
 
     private void createCalendar() {
         Calendar calendar = Calendar.getInstance();
@@ -200,7 +197,6 @@ public class secondCalendar extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
-
         return false;
     }
 
@@ -210,7 +206,7 @@ public class secondCalendar extends AppCompatActivity implements View.OnClickLis
         Cursor cursor = database.query(
                 DBHelper.TABLE_WORKING_TIME,
                 new String[]{DBHelper.KEY_ID},
-                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ? ",
+                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
                 new String[]{String.valueOf(dayId)},
                 null,
                 null,

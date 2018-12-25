@@ -738,6 +738,7 @@ id descriptionText
 id dimensions
 id direct
 id disableHome
+id editScheduleGuestServiceBtn
 id editServiceEditServiceBtn
 id editServiceGuestServiceBtn
 id edit_query

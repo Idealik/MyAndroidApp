@@ -15,7 +15,9 @@ public class editService extends AppCompatActivity implements View.OnClickListen
 
     private final String TAG = "DBInf";
     private final String SERVICE_ID = "service id";
-    private final String STATUS_USER_BY_SERVICE = "status user";
+    private final String NAME_SERVICE = "name service";
+    private final String COST_SERVICE = "cost service";
+    private final String DESCRIPTION_SERVICE = "description service";
 
     long serviceId;
 
@@ -41,11 +43,14 @@ public class editService extends AppCompatActivity implements View.OnClickListen
         costServiceInput = (EditText) findViewById(R.id.costEditServiceInput);
         descriptonServiceInput = (EditText) findViewById(R.id.descriptionEditServiceInput);
 
+        nameServiceInput.setText(getIntent().getStringExtra(NAME_SERVICE));
+        costServiceInput.setText(getIntent().getStringExtra(COST_SERVICE));
+        descriptonServiceInput.setText(getIntent().getStringExtra(DESCRIPTION_SERVICE));
+
         dbHelper = new DBHelper(this);
 
         editServicesBtn.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -53,7 +58,7 @@ public class editService extends AppCompatActivity implements View.OnClickListen
 
             case R.id.editServiceEditServiceBtn:
                 editServiceInDataBase();
-                goToMyCalendar();
+                goToMyProfile();
                 break;
 
                 default:
@@ -74,22 +79,15 @@ public class editService extends AppCompatActivity implements View.OnClickListen
         if(name.length()!=0) contentValues.put(DBHelper.KEY_NAME_SERVICES, name);
         if(cost.length()!=0) contentValues.put(DBHelper.KEY_MIN_COST_SERVICES, cost);
         if(description.length()!=0) contentValues.put(DBHelper.KEY_DESCRIPTION_SERVICES, description);
-
-        database.update(DBHelper.TABLE_CONTACTS_SERVICES, contentValues,
-                DBHelper.KEY_ID + " = ?",
-                new String []{String.valueOf(serviceId)});
+        if(contentValues.size()>0) {
+            database.update(DBHelper.TABLE_CONTACTS_SERVICES, contentValues,
+                    DBHelper.KEY_ID + " = ?",
+                    new String[]{String.valueOf(serviceId)});
+        }
     }
 
-    private void goToMyCalendar() {
-        String statusUser = getIntent().getStringExtra(STATUS_USER_BY_SERVICE);
-
-        Log.d(TAG, serviceId + " ");
-        Log.d(TAG, statusUser + " ");
-
-        Intent intent = new Intent(this, myCalendar.class);
-        intent.putExtra(SERVICE_ID, serviceId);
-        intent.putExtra(STATUS_USER_BY_SERVICE, statusUser);
-
+    private void goToMyProfile() {
+        Intent intent = new Intent(this, profile.class);
         startActivity(intent);
     }
 }

@@ -61,7 +61,6 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
         // получаем статус, чтобы определить, кто зашел, worker or user
         statusUser = getIntent().getStringExtra(STATUS_USER_BY_SERVICE);
 
-
         createCalendar();
         checkOrder();
 
@@ -117,25 +116,27 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
     private String getOrderDate() {
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-
+        Log.d(TAG,"SERVICE ID"+ serviceId);
         String userId = getUserId();
         String sqlQuery =
                 "SELECT " + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_DATE_WORKING_DAYS
                         + " FROM " + DBHelper.TABLE_WORKING_TIME + ", " + DBHelper.TABLE_WORKING_DAYS
                         + " WHERE " + DBHelper.KEY_SERVICE_ID_WORKING_DAYS + " = ? AND "
-                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_TIME_WORKING_DAYS_ID + " AND "
-                        + DBHelper.KEY_USER_ID + " = ? ";
+                        + DBHelper.KEY_USER_ID + " = ? "
+                        + " AND "
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME ;
+        //берем день и время дня,, где id сервиса дня равно текущему и айди юзера записи дня равно текущему
         Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(serviceId), userId});
 
         if(cursor.moveToFirst()) {
             int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
             String orderDate = cursor.getString(indexDate);
+            Log.d(TAG, "GETOREDER DATE: " + orderDate);
             return orderDate;
         } else {
             return "";
         }
     }
-
 
     private void createCalendar() {
         Calendar calendar = Calendar.getInstance();
@@ -258,7 +259,7 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
         Cursor cursor = database.query(
                 DBHelper.TABLE_WORKING_TIME,
                 new String[]{DBHelper.KEY_ID},
-                DBHelper.KEY_TIME_WORKING_DAYS_ID + " = ? ",
+                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
                 new String[]{String.valueOf(dayId)},
                 null,
                 null,

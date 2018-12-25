@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final  int DATABASE_VERSION = 17;
+    public static final  int DATABASE_VERSION = 20;
     public static final String DATABASE_NAME = "MyFirstDB";
     //tables name
     public static final String TABLE_CONTACTS_USERS = "users";
@@ -35,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // working time
     public  static final  String KEY_TIME_WORKING_TIME = "time";
-    public  static final  String KEY_TIME_WORKING_DAYS_ID = "id_Working_Days";
+    public  static final  String KEY_WORKING_DAYS_ID_WORKING_TIME = "id_Working_Days";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -70,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_ID + " integer primary key,"
                 + KEY_TIME_WORKING_TIME + " text,"
                 + KEY_USER_ID + " text,"
-                + KEY_TIME_WORKING_DAYS_ID + " integer"
+                + KEY_WORKING_DAYS_ID_WORKING_TIME + " integer"
                 + ")";
 
 
