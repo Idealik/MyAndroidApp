@@ -6,11 +6,13 @@ INJECTED from C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\src\main\AndroidMan
 INJECTED from C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-30:12
 MERGED from [com.android.support:appcompat-v7:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\appcompat-v7-28.0.0.aar\325bb812408cc9e00cd850bf07474124\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\582c702f7cef9abe6f1ae36616764e11\AndroidManifest.xml:2:1-11:12
+MERGED from [com.android.support:support-v4:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-v4-28.0.0.aar\e52c5c77017ffd53e772645aea72bb9c\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:support-fragment:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-fragment-28.0.0.aar\afd13d8702f0c32bb23bfab9ea7bc773\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:animated-vector-drawable:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-28.0.0.aar\089f78dc55e2f6fc80f3ef7838b9bf7a\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:support-core-ui:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-core-ui-28.0.0.aar\9e8a7cc07a921e07fe170d4cf5bd6f4a\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:support-core-utils:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-core-utils-28.0.0.aar\3cf746f486158b622889c71be47c122a\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:support-vector-drawable:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-28.0.0.aar\e96eab1036a4aca56d80e469f3201c31\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-media-compat:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-media-compat-28.0.0.aar\6aaf07ffae12852a35bc5a15107e61d2\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:loader:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\loader-28.0.0.aar\d8fe64e4397958085236310fb3409724\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:viewpager:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\viewpager-28.0.0.aar\d2e46ca8accf986d0429118f1e68d02a\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:coordinatorlayout:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\coordinatorlayout-28.0.0.aar\cb2fbfde39d87203b04a862bfcfdedb2\AndroidManifest.xml:17:1-22:12
@@ -27,10 +29,10 @@ MERGED from [com.android.support:documentfile:28.0.0] C:\Users\Ideal\.gradle\cac
 MERGED from [com.android.support:localbroadcastmanager:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\localbroadcastmanager-28.0.0.aar\b5c8f6d913455c1858a4fffe73d79a57\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:print:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\print-28.0.0.aar\6c614f6b9a5ddad8f75fb988eed1e1d4\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.lifecycle:viewmodel:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.1.aar\050999789ca9306a112de4371ce98a91\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\interpolator-28.0.0.aar\f8952b0a1ecc1abd7967bed3e1894162\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.lifecycle:livedata:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\livedata-1.1.1.aar\1158ac3bccad5f91834ae0afe41b553a\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.1.aar\884ef877d7293a3eb747ffe6e6bb71e7\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\runtime-1.1.1.aar\fe81f2aecc6346ef512b2587df6ee850\AndroidManifest.xml:17:1-22:12
-MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\interpolator-28.0.0.aar\f8952b0a1ecc1abd7967bed3e1894162\AndroidManifest.xml:17:1-22:12
 INJECTED from C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-30:12
 INJECTED from C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-30:12
 INJECTED from C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\src\main\AndroidManifest.xml:2:1-30:12
@@ -128,6 +130,8 @@ MERGED from [com.android.support:appcompat-v7:28.0.0] C:\Users\Ideal\.gradle\cac
 MERGED from [com.android.support:appcompat-v7:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\appcompat-v7-28.0.0.aar\325bb812408cc9e00cd850bf07474124\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\582c702f7cef9abe6f1ae36616764e11\AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\582c702f7cef9abe6f1ae36616764e11\AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:support-v4:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-v4-28.0.0.aar\e52c5c77017ffd53e772645aea72bb9c\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-v4-28.0.0.aar\e52c5c77017ffd53e772645aea72bb9c\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-fragment:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-fragment-28.0.0.aar\afd13d8702f0c32bb23bfab9ea7bc773\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-fragment:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-fragment-28.0.0.aar\afd13d8702f0c32bb23bfab9ea7bc773\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:animated-vector-drawable:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-28.0.0.aar\089f78dc55e2f6fc80f3ef7838b9bf7a\AndroidManifest.xml:20:5-44
@@ -138,6 +142,8 @@ MERGED from [com.android.support:support-core-utils:28.0.0] C:\Users\Ideal\.grad
 MERGED from [com.android.support:support-core-utils:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-core-utils-28.0.0.aar\3cf746f486158b622889c71be47c122a\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-vector-drawable:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-28.0.0.aar\e96eab1036a4aca56d80e469f3201c31\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-vector-drawable:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-vector-drawable-28.0.0.aar\e96eab1036a4aca56d80e469f3201c31\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-media-compat-28.0.0.aar\6aaf07ffae12852a35bc5a15107e61d2\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\support-media-compat-28.0.0.aar\6aaf07ffae12852a35bc5a15107e61d2\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:loader:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\loader-28.0.0.aar\d8fe64e4397958085236310fb3409724\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:loader:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\loader-28.0.0.aar\d8fe64e4397958085236310fb3409724\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:viewpager:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\viewpager-28.0.0.aar\d2e46ca8accf986d0429118f1e68d02a\AndroidManifest.xml:20:5-44
@@ -170,14 +176,14 @@ MERGED from [com.android.support:print:28.0.0] C:\Users\Ideal\.gradle\caches\tra
 MERGED from [com.android.support:print:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\print-28.0.0.aar\6c614f6b9a5ddad8f75fb988eed1e1d4\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.lifecycle:viewmodel:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.1.aar\050999789ca9306a112de4371ce98a91\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.lifecycle:viewmodel:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.1.aar\050999789ca9306a112de4371ce98a91\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\interpolator-28.0.0.aar\f8952b0a1ecc1abd7967bed3e1894162\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\interpolator-28.0.0.aar\f8952b0a1ecc1abd7967bed3e1894162\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.lifecycle:livedata:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\livedata-1.1.1.aar\1158ac3bccad5f91834ae0afe41b553a\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.lifecycle:livedata:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\livedata-1.1.1.aar\1158ac3bccad5f91834ae0afe41b553a\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.1.aar\884ef877d7293a3eb747ffe6e6bb71e7\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.1.aar\884ef877d7293a3eb747ffe6e6bb71e7\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\runtime-1.1.1.aar\fe81f2aecc6346ef512b2587df6ee850\AndroidManifest.xml:20:5-44
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\runtime-1.1.1.aar\fe81f2aecc6346ef512b2587df6ee850\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\interpolator-28.0.0.aar\f8952b0a1ecc1abd7967bed3e1894162\AndroidManifest.xml:20:5-44
-MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Ideal\.gradle\caches\transforms-1\files-1.1\interpolator-28.0.0.aar\f8952b0a1ecc1abd7967bed3e1894162\AndroidManifest.xml:20:5-44
 INJECTED from C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\src\main\AndroidManifest.xml
 INJECTED from C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\src\main\AndroidManifest.xml
 	android:targetSdkVersion

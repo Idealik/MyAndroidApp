@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
 
-import com.example.ideal.myapplication.fragments.foundElement;
+import com.example.ideal.myapplication.fragments.foundServiceElement;
 
 public class mainScreen extends AppCompatActivity {
 
@@ -25,7 +25,7 @@ public class mainScreen extends AppCompatActivity {
 
     LinearLayout resultLayout;
 
-    private foundElement fElement;
+    private foundServiceElement fElement;
     private FragmentManager manager;
     private FragmentTransaction transaction;
 
@@ -35,7 +35,7 @@ public class mainScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_screen);
 
-        resultLayout = findViewById(R.id.resultsLayout);
+        resultLayout = findViewById(R.id.resultsMainScreenLayout);
 
         manager = getSupportFragmentManager();
 
@@ -81,33 +81,42 @@ public class mainScreen extends AppCompatActivity {
         return city;
     }
 
-
     private  void getServicesInThisCity(SQLiteDatabase database,String userCity){
         int limitOfService = 10; //максимальное количество выводимых предложений
         //запрос в бд сравнивает номера в табилце юзер и сервис, а также учитывает город
         String sqlQuery =
-        "SELECT " + DBHelper.TABLE_CONTACTS_SERVICES + ".*"
-               + " FROM " + DBHelper.TABLE_CONTACTS_USERS + " , " + DBHelper.TABLE_CONTACTS_SERVICES
-               + " WHERE " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID + " = "
-               + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID
-               + " AND LOWER(" + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_CITY_USERS + ") = ?";
-
-        Cursor cursor = database.rawQuery(sqlQuery, new String[] {userCity.toLowerCase()});
-        if(cursor.moveToFirst()){
+                "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
+                        + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
+                        + ", " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES
+                        + ", " + DBHelper.KEY_MIN_COST_SERVICES + ", " + DBHelper.KEY_ID
+                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", " + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE " + "LOWER(" + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_CITY_USERS + ") = ?"
+                        + " AND "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
+                        " = "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
+             ;
+             Cursor cursor = database.rawQuery(sqlQuery, new String[] {userCity.toLowerCase()});
+        if (cursor.moveToFirst()) {
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
-            int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
-            int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
+            int indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
 
+            int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
+            int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
             int countOfFoundServices = 0;
-            do{
+            do {
                 //  формирую сообщения, в будущем тут будем формировать объект
                 String foundId = cursor.getString(indexId);
-                String foundName = cursor.getString(indexName);
+                String foundNameUser = cursor.getString(indexNameUser);
+                String foundSurname = cursor.getString(indexSurname);
+                String foundCity = cursor.getString(indexCity);
+                String foundNameService = cursor.getString(indexNameService);
                 String foundCost = cursor.getString(indexMinCost);
-                String foundDescription = cursor.getString(indexDescription);
 
-               // addToScreen(foundId, foundName, foundCost, foundDescription);
+                addToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+
                 countOfFoundServices++;
             }while (cursor.moveToNext() && countOfFoundServices < limitOfService);
         }
@@ -117,14 +126,14 @@ public class mainScreen extends AppCompatActivity {
         cursor.close();
     }
 
-   /* private void addToScreen(String id, String name, String cost, String description) {
+    private void addToScreen(String id, String foundNameUser, String foundSurname, String foundCity,
+                             String foundNameService, String foundCost ) {
 
-        resultLayout.removeAllViews();
-
-        fElement = new foundElement(id, name, cost, description);
+        fElement = new foundServiceElement(id, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
 
         transaction = manager.beginTransaction();
-        transaction.add(R.id.resultsLayout, fElement);
+        transaction.add(R.id.resultsMainScreenLayout, fElement);
         transaction.commit();
-    }*/
+    }
+
 }

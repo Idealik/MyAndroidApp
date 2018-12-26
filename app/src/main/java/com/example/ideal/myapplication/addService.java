@@ -115,7 +115,6 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         intent.putExtra(STATUS_USER_BY_SERVICE, status);
 
         startActivity(intent);
-        finish();
     }
 }
 

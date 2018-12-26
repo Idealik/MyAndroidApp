@@ -5,24 +5,24 @@
     build-mode="COLD"
     density="420dpi"
     format="10"
-    ir-eligibility="FIELD_TYPE_CHANGE"
+    ir-eligibility="COMPATIBLE"
     plugin-version="3.2.1"
-    timestamp="1545812835479"
+    timestamp="1545828976214"
     token="8444101842641681500"
     verifier="COLD_SWAP_REQUESTED" >
 
     <task
         name="javac"
-        duration="2146" />
+        duration="7750" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="25" />
+        duration="1936" />
     <task
         name="verifier"
-        duration="5" />
+        duration="285" />
 
     <artifact
         location="C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
@@ -30,7 +30,7 @@
 
     <build
         build-mode="FULL"
-        timestamp="1545812479350"
+        timestamp="1545828634368"
         verifier="FULL_BUILD_REQUESTED" >
         <artifact
             location="C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
@@ -74,8 +74,8 @@
     </build>
     <build
         build-mode="COLD"
-        ir-eligibility="FIELD_TYPE_CHANGE"
-        timestamp="1545812835479"
+        ir-eligibility="COMPATIBLE"
+        timestamp="1545828976214"
         verifier="COLD_SWAP_REQUESTED" >
         <artifact
             location="C:\Users\Ideal\Desktop\myProj\MyAndroidApp\app\build\intermediates\split-apk\debug\slices\slice_6.apk"

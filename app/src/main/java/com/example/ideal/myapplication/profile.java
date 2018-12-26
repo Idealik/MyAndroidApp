@@ -8,12 +8,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
-import com.example.ideal.myapplication.fragments.foundElement;
+import com.example.ideal.myapplication.fragments.foundOrderElement;
+import com.example.ideal.myapplication.fragments.foundServiceElement;
 
 public class profile extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,12 +31,18 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     Button addServicesBtn;
     Button mainScreenBtn;
 
-    LinearLayout resultLayout;
+    ScrollView servicesScroll;
+    ScrollView ordersScroll;
+    LinearLayout servicesLayout;
+    LinearLayout ordersLayout;
+
+    SwitchCompat servicesOrOrdersSwitch;
 
     SharedPreferences sPref;
     DBHelper dbHelper;
 
-    private foundElement fElement;
+    private foundServiceElement fServiceElement;
+    private foundOrderElement fOrderElement;
     private FragmentManager manager;
     private FragmentTransaction transaction;
 
@@ -46,7 +56,13 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         addServicesBtn = (Button) findViewById(R.id.addServicesProfileBtn);
         mainScreenBtn = (Button) findViewById(R.id.mainScreenProfileBtn);
 
-        resultLayout = findViewById(R.id.resultProfileLayout);
+        servicesOrOrdersSwitch = findViewById(R.id.servicesOrOrdersProfileSwitch);
+
+        servicesScroll = findViewById(R.id.servicesProfileScroll);
+        ordersScroll = findViewById(R.id.orderProfileScroll);
+        servicesLayout = findViewById(R.id.servicesProfileLayout);
+        ordersLayout = findViewById(R.id.ordersProfileLayout);
+
 
         logOutBtn.setOnClickListener(this);
         findServicesBtn.setOnClickListener(this);
@@ -57,7 +73,30 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
 
         manager = getSupportFragmentManager();
 
-        createMainScreen();
+        createServicesList();
+        createOrdersList();
+
+        servicesLayout.setVisibility(View.INVISIBLE);
+        servicesScroll.setVisibility(View.INVISIBLE);
+
+        servicesOrOrdersSwitch.setOnCheckedChangeListener(new SwitchCompat.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    buttonView.setText("My services");
+                    ordersLayout.setVisibility(View.INVISIBLE);
+                    ordersScroll.setVisibility(View.INVISIBLE);
+                    servicesLayout.setVisibility(View.VISIBLE);
+                    servicesScroll.setVisibility(View.VISIBLE);
+                } else {
+                    buttonView.setText("My orders");
+                    servicesLayout.setVisibility(View.INVISIBLE);
+                    servicesScroll.setVisibility(View.INVISIBLE);
+                    ordersLayout.setVisibility(View.VISIBLE);
+                    ordersScroll.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
@@ -81,15 +120,27 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void createMainScreen(){
+    private void createOrdersList(){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         //получаем id пользователя
         long userId = getUserId();
 
         //получаем все сервисы, которые пренадлежат юзеру
-        getMyServicesInThisCity(database, userId);
+        getMyOrders(database, userId);
     }
+
+    private void createServicesList(){
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        //получаем id пользователя
+        long userId = getUserId();
+
+        //получаем все сервисы, которые пренадлежат юзеру
+        getMyServices(database, userId);
+    }
+
+
 
     //получить id-phone пользователя
     private  long getUserId(){
@@ -99,13 +150,54 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         return userId;
     }
 
-    private void getMyServicesInThisCity(SQLiteDatabase database, long userId) {
+    private void getMyOrders(SQLiteDatabase database, long userId) {
+
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + ", "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES + ", "
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_DATE_WORKING_DAYS + ", "
+                        + DBHelper.TABLE_WORKING_TIME + "." + DBHelper.KEY_TIME_WORKING_TIME
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + ", "
+                        + DBHelper.TABLE_WORKING_DAYS + ", "
+                        + DBHelper.TABLE_WORKING_TIME
+                        + " WHERE "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_SERVICE_ID_WORKING_DAYS
+                        + " AND "
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME
+                        + " AND "
+                        + DBHelper.TABLE_WORKING_TIME + "." + DBHelper.KEY_USER_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(userId)});
+
+        if(cursor.moveToFirst()){
+            int indexServiceId = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int indexServiceName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
+            int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
+            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
+
+            do{
+                String foundId = cursor.getString(indexServiceId);
+                String foundName = cursor.getString(indexServiceName);
+                String foundDate = cursor.getString(indexDate);
+                String foundTime = cursor.getString(indexTime);
+
+                addOrderToScreen(foundId, foundName, foundDate, foundTime);
+            }while (cursor.moveToNext());
+        }
+        else {
+            Log.d(TAG, "Cursor is empty");
+        }
+        cursor.close();
+    }
+
+    private void getMyServices(SQLiteDatabase database, long userId) {
         // создаем это в 3х местах может запариться и написать олтдельный класс?
 
         // нужно вернуть, имя, фамилию, город, название услуги, цену, оценку (пока без оценки)
         // используем 2 таблицы - юзеры и сервисы
-        // связываем их по номеру телефона юзеров
-
+        // связываем их по номеру телефона юзеров, уточняем юзера по его id
         String sqlQuery =
                 "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
                         + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
@@ -134,14 +226,13 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
                 //  формирую сообщения, в будущем тут будем формировать объект
                 String foundId = cursor.getString(indexId);
                 String foundNameUser= cursor.getString(indexNameUser);
-                Log.d(TAG, "FOUND NAME" + foundNameUser);
                 String foundSurname = cursor.getString(indexSurname);
                 String foundCity = cursor.getString(indexCity);
                 String foundNameService = cursor.getString(indexNameService);
                 String foundCost = cursor.getString(indexMinCost);
 
 
-                addToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+                addSeviceToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
             }while (cursor.moveToNext());
         }
         else {
@@ -150,63 +241,122 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         cursor.close();
     }
 
+    private void addSeviceToScreen(String id, String foundNameUser, String foundSurname, String foundCity,
+                                   String foundNameService, String foundCost ) {
+        fServiceElement = new foundServiceElement(id, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+
+        transaction = manager.beginTransaction();
+        transaction.add(R.id.servicesProfileLayout, fServiceElement);
+        transaction.commit();
+    }
+
+    private void addOrderToScreen(String id, String name, String date, String time) {
+        fOrderElement = new foundOrderElement(id, name, date, time);
+
+        transaction = manager.beginTransaction();
+        transaction.add(R.id.ordersProfileLayout, fOrderElement);
+        transaction.commit();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        int visibleCount = resultLayout.getChildCount();
+        addNewOrders();
+        addNewServices();
+    }
+
+    private void addNewServices() {
+        int visibleCount = servicesLayout.getChildCount();
         long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        String sqlQuery =
-                "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
-                        + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
-                        + ", " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES
-                        + ", " + DBHelper.KEY_MIN_COST_SERVICES + ", " + DBHelper.KEY_ID
-                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", " + DBHelper.TABLE_CONTACTS_USERS
-                        + " WHERE " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID + " = ?"
-                        + " AND "
-                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
-                        " = "
-                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
+        Cursor cursor = database.query(
+                DBHelper.TABLE_CONTACTS_SERVICES,
+                new String[]{DBHelper.KEY_ID, DBHelper.KEY_NAME_SERVICES, DBHelper.KEY_MIN_COST_SERVICES, DBHelper.KEY_DESCRIPTION_SERVICES},
+                DBHelper.KEY_USER_ID + " = ? ",
+                new String[]{String.valueOf(userId)},
+                null,
+                null,
+                null,
+                null);
 
-        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(userId)});
+        if(cursor.getCount() > visibleCount) {
+            if(cursor.moveToLast()){
+                int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
+                int indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+                int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+                int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
 
-        if (cursor.getCount() > visibleCount) {
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
-            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
-            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+                int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
+                int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
 
-            int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
-            int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
+                int countOfNewOrders = 0;
 
-            do {
-                //  формирую сообщения, в будущем тут будем формировать объект
-                String foundId = cursor.getString(indexId);
-                String foundNameUser = cursor.getString(indexNameUser);
-                String foundSurname = cursor.getString(indexSurname);
-                String foundCity = cursor.getString(indexCity);
-                String foundNameService = cursor.getString(indexNameService);
-                String foundCost = cursor.getString(indexMinCost);
-                Log.d(TAG , "NAME USER" + foundNameUser);
+                do{
+                    //  формирую сообщения, в будущем тут будем формировать объект
+                    String foundId = cursor.getString(indexId);
+                    String foundNameUser= cursor.getString(indexNameUser);
+                    String foundSurname = cursor.getString(indexSurname);
+                    String foundCity = cursor.getString(indexCity);
+                    String foundNameService = cursor.getString(indexNameService);
+                    String foundCost = cursor.getString(indexMinCost);
 
-                addToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+                    addSeviceToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
 
-             }while (cursor.moveToNext());
+                    countOfNewOrders++;
+                }while (cursor.moveToPrevious() && countOfNewOrders<(cursor.getCount() - visibleCount));
+            }
         }
         cursor.close();
     }
 
-    private void addToScreen(String id, String foundNameUser, String foundSurname, String foundCity,
-                             String foundNameService, String foundCost ) {
+    private void addNewOrders() {
+        int visibleCount = ordersLayout.getChildCount();
+        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
-        Log.d(TAG , "NAME USER" + foundNameUser);
-        fElement = new foundElement(id, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + ", "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES + ", "
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_DATE_WORKING_DAYS + ", "
+                        + DBHelper.TABLE_WORKING_TIME + "." + DBHelper.KEY_TIME_WORKING_TIME
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + ", "
+                        + DBHelper.TABLE_WORKING_DAYS + ", "
+                        + DBHelper.TABLE_WORKING_TIME
+                        + " WHERE "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_SERVICE_ID_WORKING_DAYS
+                        + " AND "
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME
+                        + " AND "
+                        + DBHelper.TABLE_WORKING_TIME + "." + DBHelper.KEY_USER_ID + " = ?";
 
-        transaction = manager.beginTransaction();
-        transaction.add(R.id.resultProfileLayout, fElement);
-        transaction.commit();
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(userId)});
+
+        if(cursor.getCount() > visibleCount) {
+            if(cursor.moveToLast()){
+                int indexServiceId = cursor.getColumnIndex(DBHelper.KEY_ID);
+                int indexServiceName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
+                int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
+                int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
+
+                int countOfNewOrders = 0;
+
+                do{
+                    String foundId = cursor.getString(indexServiceId);
+                    String foundName = cursor.getString(indexServiceName);
+                    String foundDate = cursor.getString(indexDate);
+                    String foundTime = cursor.getString(indexTime);
+
+                    addOrderToScreen(foundId, foundName, foundDate, foundTime);
+
+                    countOfNewOrders++;
+                }while (cursor.moveToPrevious() && countOfNewOrders<(cursor.getCount() - visibleCount));
+            }
+        }
+        cursor.close();
     }
 
     //Анулировать статус
