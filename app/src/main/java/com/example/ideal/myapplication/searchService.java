@@ -57,10 +57,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
         createMainScreen();
 
-
         findBtn.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -112,7 +109,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         return city;
     }
 
-
     private  void getServicesInThisCity(SQLiteDatabase database,String userCity){
         int limitOfService = 10; //максимальное количество выводимых предложений
         //запрос в бд сравнивает номера в табилце юзер и сервис, а также учитывает город
@@ -138,7 +134,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                 String foundCost = cursor.getString(indexMinCost);
                 String foundDescription = cursor.getString(indexDescription);
 
-                addToScreen(foundId, foundName, foundCost, foundDescription);
+              //  addToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
                 countOfFoundServices++;
             }while (cursor.moveToNext() && countOfFoundServices < limitOfService);
         }
@@ -176,7 +172,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                     String foundCost = cursor.getString(indexMinCost);
                     String foundDescription = cursor.getString(indexDescription);
                     //  формируем объект layout c некоторыми элементами
-                    addToScreen(foundId, foundName, foundCost, foundDescription);
+                    //addToScreen(foundId, foundName, foundCost, foundDescription);
                 }
             }while (cursor.moveToNext());
         }
@@ -186,14 +182,12 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         cursor.close();
     }
 
-    private void addToScreen(String id, String name, String cost, String description) {
-
-        resultLayout.removeAllViews();
-
-        fElement = new foundElement(id, name, cost, description);
+    private void addToScreen(String id, String foundNameUser, String foundSurname, String foundCity,
+                             String foundNameService, String foundCost ) {
+        fElement = new foundElement(id, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
 
         transaction = manager.beginTransaction();
-        transaction.add(R.id.resultSearchServiceLayout, fElement);
+        transaction.add(R.id.resultProfileLayout, fElement);
         transaction.commit();
     }
 

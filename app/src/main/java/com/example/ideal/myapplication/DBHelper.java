@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final  int DATABASE_VERSION = 20;
+    public static final  int DATABASE_VERSION = 22;
     public static final String DATABASE_NAME = "MyFirstDB";
     //tables name
     public static final String TABLE_CONTACTS_USERS = "users";
@@ -18,14 +18,20 @@ public class DBHelper extends SQLiteOpenHelper {
     public  static final  String KEY_ID = "_id";
 
     // users
-    public  static final  String KEY_USER_ID = "_userId";
-    public  static final  String KEY_PASS_USERS = "pass";
+    public  static final  String KEY_USER_ID = "phone";
+    public  static final  String KEY_NAME_USERS = "user_name";
+    public  static final  String KEY_SURNAME_USERS = "surname";
     public  static final  String KEY_CITY_USERS = "city";
+    public  static final  String KEY_PASS_USERS = "pass";
+    public  static final  String KEY_RATING_USERS = "user_rating";
+    public  static final  String KEY_BIRTHDAY_USERS = "birthday";
+    public  static final  String KEY_COUNT_OF_RATES_USERS = "count_of_rates";
+    public  static final  String KEY_PHOTO_LINK_USERS = "photo_link";
 
     //services
-    public  static final  String KEY_NAME_SERVICES = "name";
+    public  static final  String KEY_NAME_SERVICES = "service_name";
     public  static final  String KEY_DESCRIPTION_SERVICES = "description";
-    public  static final  String KEY_RATING_SERVICES = "rating";
+    public  static final  String KEY_RATING_SERVICES = "service_rating";
     public  static final  String KEY_COUNT_OF_RATES_SERVICES = "count_of_rates";
     public  static final  String KEY_MIN_COST_SERVICES = "minCost";
 
@@ -47,8 +53,14 @@ public class DBHelper extends SQLiteOpenHelper {
         String users = "create table "+ TABLE_CONTACTS_USERS
                 + "("
                 + KEY_USER_ID + " integer primary key,"
+                + KEY_NAME_USERS + " text,"
+                + KEY_SURNAME_USERS + " text,"
                 + KEY_PASS_USERS + " text,"
-                + KEY_CITY_USERS + " text"
+                + KEY_CITY_USERS + " text,"
+                + KEY_RATING_USERS + " text,"
+                + KEY_BIRTHDAY_USERS + " text,"
+                + KEY_COUNT_OF_RATES_USERS + " text,"
+                + KEY_PHOTO_LINK_USERS + " text"
                 + ")";
         String services = "create table "+ TABLE_CONTACTS_SERVICES
                 + "(" + KEY_ID + " integer primary key,"

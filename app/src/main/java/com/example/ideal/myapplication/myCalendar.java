@@ -119,12 +119,13 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
         Log.d(TAG,"SERVICE ID"+ serviceId);
         String userId = getUserId();
         String sqlQuery =
-                "SELECT " + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_DATE_WORKING_DAYS
-                        + " FROM " + DBHelper.TABLE_WORKING_TIME + ", " + DBHelper.TABLE_WORKING_DAYS
-                        + " WHERE " + DBHelper.KEY_SERVICE_ID_WORKING_DAYS + " = ? AND "
-                        + DBHelper.KEY_USER_ID + " = ? "
-                        + " AND "
-                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME ;
+            "SELECT " + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_DATE_WORKING_DAYS
+                    + " FROM " + DBHelper.TABLE_WORKING_TIME + ", " + DBHelper.TABLE_WORKING_DAYS
+                    + " WHERE " + DBHelper.KEY_SERVICE_ID_WORKING_DAYS + " = ? AND "
+                    + DBHelper.KEY_USER_ID + " = ? "
+                    + " AND "
+                    + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME ;
+
         //берем день и время дня,, где id сервиса дня равно текущему и айди юзера записи дня равно текущему
         Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(serviceId), userId});
 

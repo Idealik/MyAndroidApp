@@ -88,10 +88,8 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         long userId = getUserId();
 
         //получаем все сервисы, которые пренадлежат юзеру
-        getMyServices(database, userId);
+        getMyServicesInThisCity(database, userId);
     }
-
-
 
     //получить id-phone пользователя
     private  long getUserId(){
@@ -101,46 +99,55 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         return userId;
     }
 
-    private void getMyServices(SQLiteDatabase database, long userId) {
+    private void getMyServicesInThisCity(SQLiteDatabase database, long userId) {
+        // создаем это в 3х местах может запариться и написать олтдельный класс?
 
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_SERVICES,
-                new String[]{DBHelper.KEY_ID, DBHelper.KEY_NAME_SERVICES, DBHelper.KEY_MIN_COST_SERVICES, DBHelper.KEY_DESCRIPTION_SERVICES},
-                DBHelper.KEY_USER_ID + " = ? ",
-                new String[]{String.valueOf(userId)},
-                null,
-                null,
-                null,
-                null);
+        // нужно вернуть, имя, фамилию, город, название услуги, цену, оценку (пока без оценки)
+        // используем 2 таблицы - юзеры и сервисы
+        // связываем их по номеру телефона юзеров
+
+        String sqlQuery =
+                "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
+                        + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
+                        + ", " +  DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES
+                        + ", " + DBHelper.KEY_MIN_COST_SERVICES + ", " + DBHelper.KEY_ID
+                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", " + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID + " = ?"
+                        + " AND "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
+                        " = "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
+
+        Log.d(TAG, "query " + sqlQuery);
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(userId)});
 
         if(cursor.moveToFirst()){
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
+            int indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+
+            int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
-            int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
 
             do{
                 //  формирую сообщения, в будущем тут будем формировать объект
                 String foundId = cursor.getString(indexId);
-                String foundName = cursor.getString(indexName);
+                String foundNameUser= cursor.getString(indexNameUser);
+                Log.d(TAG, "FOUND NAME" + foundNameUser);
+                String foundSurname = cursor.getString(indexSurname);
+                String foundCity = cursor.getString(indexCity);
+                String foundNameService = cursor.getString(indexNameService);
                 String foundCost = cursor.getString(indexMinCost);
-                String foundDescription = cursor.getString(indexDescription);
 
-                addToScreen(foundId, foundName, foundCost, foundDescription);
+
+                addToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
             }while (cursor.moveToNext());
         }
         else {
-            Log.d(TAG, "DB is empty");
+            Log.d(TAG, "CURSOR IS EMPTY");
         }
         cursor.close();
-    }
-
-    private void addToScreen(String id, String name, String cost, String description) {
-        fElement = new foundElement(id, name, cost, description);
-
-        transaction = manager.beginTransaction();
-        transaction.add(R.id.resultProfileLayout, fElement);
-        transaction.commit();
     }
 
     @Override
@@ -151,33 +158,55 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_SERVICES,
-                new String[]{DBHelper.KEY_ID, DBHelper.KEY_NAME_SERVICES, DBHelper.KEY_MIN_COST_SERVICES, DBHelper.KEY_DESCRIPTION_SERVICES},
-                DBHelper.KEY_USER_ID + " = ? ",
-                new String[]{String.valueOf(userId)},
-                null,
-                null,
-                null,
-                null);
+        String sqlQuery =
+                "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
+                        + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
+                        + ", " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES
+                        + ", " + DBHelper.KEY_MIN_COST_SERVICES + ", " + DBHelper.KEY_ID
+                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", " + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID + " = ?"
+                        + " AND "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
+                        " = "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
 
-        if(cursor.getCount() > visibleCount) {
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(userId)});
+
+        if (cursor.getCount() > visibleCount) {
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
+            int indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+
+            int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
-            int indexDescription = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTION_SERVICES);
 
-            if(cursor.moveToLast()) {
+            do {
+                //  формирую сообщения, в будущем тут будем формировать объект
                 String foundId = cursor.getString(indexId);
-                String foundName = cursor.getString(indexName);
+                String foundNameUser = cursor.getString(indexNameUser);
+                String foundSurname = cursor.getString(indexSurname);
+                String foundCity = cursor.getString(indexCity);
+                String foundNameService = cursor.getString(indexNameService);
                 String foundCost = cursor.getString(indexMinCost);
-                String foundDescription = cursor.getString(indexDescription);
+                Log.d(TAG , "NAME USER" + foundNameUser);
 
-                addToScreen(foundId, foundName, foundCost, foundDescription);
-            }
+                addToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+
+             }while (cursor.moveToNext());
         }
-
         cursor.close();
+    }
+
+    private void addToScreen(String id, String foundNameUser, String foundSurname, String foundCity,
+                             String foundNameService, String foundCost ) {
+
+        Log.d(TAG , "NAME USER" + foundNameUser);
+        fElement = new foundElement(id, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+
+        transaction = manager.beginTransaction();
+        transaction.add(R.id.resultProfileLayout, fElement);
+        transaction.commit();
     }
 
     //Анулировать статус

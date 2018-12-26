@@ -25,16 +25,14 @@ public class registration extends AppCompatActivity implements View.OnClickListe
     final String PASS = "pass";
     final String FILE_NAME = "Info";
 
-    boolean status;
-
     Button registrateBtn;
-    Button readBtn;
-    Button deleteBtn;
     Button loginBtn;
 
+    EditText nameInput;
+    EditText surnameInput;
+    EditText cityInput;
     EditText phoneInput;
     EditText passInput;
-    EditText cityInput;
 
     DBHelper dbHelper;          //База Данных
     SharedPreferences sPref;    //класс для работы с записью в файлы
@@ -45,10 +43,10 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.registration);
 
         registrateBtn = (Button) findViewById(R.id.registrateRegistrationBtn);
-        readBtn = (Button) findViewById(R.id.readRegistrationBtn);
-        deleteBtn = (Button) findViewById(R.id.deleteRegistrationBtn);
         loginBtn = (Button) findViewById(R.id.loginRegistrationBtn);
 
+        nameInput = (EditText) findViewById(R.id.nameRegistrationInput);
+        surnameInput = (EditText) findViewById(R.id.surnameRegistrationInput);
         phoneInput = (EditText) findViewById(R.id.phoneRegistrationInput);
         passInput = (EditText) findViewById(R.id.passRegistrationInput);
         cityInput = (EditText) findViewById(R.id.cityRegistrationInput);
@@ -56,8 +54,6 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         dbHelper = new DBHelper(this);
 
         registrateBtn.setOnClickListener(this);
-        readBtn.setOnClickListener(this);
-        deleteBtn.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
     }
 
@@ -67,14 +63,16 @@ public class registration extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()){
             case R.id.registrateRegistrationBtn:
+                String myName = nameInput.getText().toString();
+                String mySurname = surnameInput.getText().toString();
+                String myCity = cityInput.getText().toString();
                 String myPhone = phoneInput.getText().toString();
                 String myPass = passInput.getText().toString();
-                String myCity = cityInput.getText().toString();
 
                 if(isFullInputs(myPhone,myPass,myCity)){
                     if(isStrongPassword(myPass)) {
                         if(isFreePhone(database, myPhone)) {
-                            registration(database, myPhone, myPass,myCity);
+                            registration(database, myName, mySurname, myPhone, myPass, myCity);
                             goToProfile();
                         } else {
                             Toast.makeText(
@@ -97,14 +95,6 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
 
-            case R.id.readRegistrationBtn:
-                readDB(database);
-                break;
-
-            case R.id.deleteRegistrationBtn:
-                deleteDB(database);
-                break;
-
             case R.id.loginRegistrationBtn:
                 goToAuthorization();
                 break;
@@ -114,9 +104,14 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void registration(SQLiteDatabase database, String myPhone, String myPass, String myCity){
+    private void registration(SQLiteDatabase database, String myName, String mySurname,
+                              String myPhone, String myPass, String myCity){
+
         ContentValues contentValues = new ContentValues();
-        myPass =  encryptThisStringSHA512(myPass);
+         myPass =  encryptThisStringSHA512(myPass);
+        // добавить проверку на непустые поля
+        contentValues.put(DBHelper.KEY_NAME_USERS, myName);
+        contentValues.put(DBHelper.KEY_SURNAME_USERS, mySurname);
         contentValues.put(DBHelper.KEY_USER_ID, myPhone);
         contentValues.put(DBHelper.KEY_PASS_USERS, myPass);
         contentValues.put(DBHelper.KEY_CITY_USERS, myCity.toLowerCase());
@@ -125,7 +120,8 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         saveIdAndPass(myPhone, myPass);
         saveStatus();
 
-        Log.d(TAG, "reg was successfull");
+        readDB(database);
+        Log.d(TAG, "reg was successful");
     }
 
     protected boolean isStrongPassword(String myPass) {
@@ -153,7 +149,6 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                     return  false;
                 }
             }while (cursor.moveToNext());
-
         }
         cursor.close();
         return  true;
@@ -165,47 +160,6 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         if(city.trim().equals("") ) return false;
 
         return  true;
-    }
-    private void readDB(SQLiteDatabase database){
-        String msg = "";
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_USERS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        if(cursor.moveToFirst()){
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
-            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
-
-            do{
-                msg +=
-                        "\t Number = " + cursor.getString(indexPhone)
-                                + "\t Pass = " + cursor.getString(indexPass)
-                                + "\t City = " + cursor.getString(indexCity)
-                                + " \n";
-                Log.d(TAG, " \t" + cursor.getString(indexPhone)
-                        + " \t" + cursor.getString(indexPass)
-                        + " \t" + cursor.getString(indexCity)
-                        + " ");
-            }while (cursor.moveToNext());
-
-            Log.d(TAG, " \nFull msg \n" + msg);
-        }
-        else {
-            Log.d(TAG, "DB is empty");
-        }
-        cursor.close();
-    }
-
-    private  void deleteDB(SQLiteDatabase database){
-        database.delete(DBHelper.TABLE_CONTACTS_USERS,null,null);
-        Log.d(TAG, "DB was deleted");
     }
 
     private void saveStatus() {
@@ -253,6 +207,39 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void readDB(SQLiteDatabase database){
+        Cursor cursor = database.query(
+                DBHelper.TABLE_CONTACTS_USERS,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        if(cursor.moveToFirst()){
+            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
+            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+
+            do{
+                Log.d(TAG, " \t" + cursor.getString(indexPhone)
+                        + " \t" + cursor.getString(indexPass)
+                        + " \t" + cursor.getString(indexCity)
+                        + " \t" + cursor.getString(indexName)
+                        + " \t" + cursor.getString(indexSurname)
+                        + " ");
+            }while (cursor.moveToNext());
+        }
+        else {
+            Log.d(TAG, "DB is empty");
+        }
+        cursor.close();
     }
 
     private  void goToProfile(){

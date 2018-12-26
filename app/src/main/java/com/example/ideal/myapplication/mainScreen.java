@@ -107,7 +107,7 @@ public class mainScreen extends AppCompatActivity {
                 String foundCost = cursor.getString(indexMinCost);
                 String foundDescription = cursor.getString(indexDescription);
 
-                addToScreen(foundId, foundName, foundCost, foundDescription);
+               // addToScreen(foundId, foundName, foundCost, foundDescription);
                 countOfFoundServices++;
             }while (cursor.moveToNext() && countOfFoundServices < limitOfService);
         }
@@ -117,7 +117,7 @@ public class mainScreen extends AppCompatActivity {
         cursor.close();
     }
 
-    private void addToScreen(String id, String name, String cost, String description) {
+   /* private void addToScreen(String id, String name, String cost, String description) {
 
         resultLayout.removeAllViews();
 
@@ -126,5 +126,5 @@ public class mainScreen extends AppCompatActivity {
         transaction = manager.beginTransaction();
         transaction.add(R.id.resultsLayout, fElement);
         transaction.commit();
-    }
+    }*/
 }

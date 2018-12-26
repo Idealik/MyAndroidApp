@@ -17,27 +17,26 @@
 
     <EditText
         android:layout_gravity="center"
-        android:id="@+id/phoneRegistrationInput"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="45dp"
-        android:layout_height="43dp"
-        android:ems="10"
-        android:textColorHint="@color/lightText"
-        android:backgroundTint="@color/lightText"
-        android:hint="@string/phone"
-        android:inputType="phone" />
-
-    <EditText
-        android:layout_gravity="center"
-        android:id="@+id/passRegistrationInput"
+        android:id="@+id/nameRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Pass"
+        android:layout_marginTop="45dp"
         android:textColorHint="@color/lightText"
         android:backgroundTint="@color/lightText"
-        android:inputType="textPassword" />
+        android:hint="@string/nameRegistration"
+        android:inputType="textPersonName"/>
 
+    <EditText
+        android:layout_gravity="center"
+        android:id="@+id/surnameRegistrationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textColorHint="@color/lightText"
+        android:backgroundTint="@color/lightText"
+        android:hint="@string/surnameRegistration"
+        android:inputType="textPersonName"/>
 
     <EditText
         android:layout_gravity="center"
@@ -47,8 +46,30 @@
         android:ems="10"
         android:textColorHint="@color/lightText"
         android:backgroundTint="@color/lightText"
-        android:hint="@string/city"
+        android:hint="@string/cityRegistration"
         android:inputType="textPersonName"/>
+
+    <EditText
+        android:layout_gravity="center"
+        android:id="@+id/phoneRegistrationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="43dp"
+        android:ems="10"
+        android:textColorHint="@color/lightText"
+        android:backgroundTint="@color/lightText"
+        android:hint="@string/phoneRegistration"
+        android:inputType="phone" />
+
+    <EditText
+        android:layout_gravity="center"
+        android:id="@+id/passRegistrationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/passwordRegistration"
+        android:textColorHint="@color/lightText"
+        android:backgroundTint="@color/lightText"
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/registrateRegistrationBtn"
@@ -62,22 +83,12 @@
         android:textStyle="bold"/>
 
     <Button
-        android:id="@+id/readRegistrationBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="@string/readDB"/>
-
-    <Button
-        android:id="@+id/deleteRegistrationBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="@string/delUser" />
-
-    <Button
         android:id="@+id/loginRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Authorization" />
+        android:text="@string/logInRegistration"
+        android:layout_gravity="center"
+        />
 
 
 

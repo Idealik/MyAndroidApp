@@ -76,7 +76,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
 
         switch (v.getId()){
             case R.id.logInAuthorizationBtn:
-                readDB(database);
                 //Проверка пароля и логина
                 // тут хэш, чтобы не хэшировать 2 раза то, что получаем из файла
                 myPass = encryptThisStringSHA512(myPass);
@@ -138,34 +137,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         return  false;
     }
 
-    private void readDB(SQLiteDatabase database){
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_USERS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        if(cursor.moveToFirst()){
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
-
-            do{
-                Log.d(TAG," " + cursor.getString(indexPhone)
-                        + " " + cursor.getString(indexPass)
-                        + " ");
-
-            }while (cursor.moveToNext());
-        }
-        else {
-            Log.d(TAG, "DB is empty");
-        }
-        cursor.close();
-    }
-
     private boolean getStatus() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         boolean result = sPref.getBoolean(STATUS, false);
@@ -185,7 +156,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
     private String getUserPass() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         String pass = sPref.getString(PASS, "-");
-        Log.d(TAG, pass);
         return  pass;
     }
 
@@ -196,7 +166,6 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         editor.apply();
     }
     private void saveIdAndPass(String phone, String pass) {
-        Log.d(TAG,pass);
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(PHONE, phone);

@@ -8,6 +8,14 @@
     <string name="addServices">Add services</string>
     <string name="findServices">Find services</string>
 
+    //registration
+    <string name="nameRegistration">Имя</string>
+    <string name="surnameRegistration">Фамилия</string>
+    <string name="cityRegistration">Город</string>
+    <string name="phoneRegistration">Номер телефона</string>
+    <string name="passwordRegistration">Пароль</string>
+    <string name="logInRegistration">Войти</string>
+
     //Add service
     <string name="nameAddServiceTB">Name</string>
     <string name="costAddServiceTB">Cost</string>
@@ -19,9 +27,8 @@
     <string name="edit">Edit</string>
 
     //tag id
-    //
     <string name="selectedId">selectedId</string>
-    //
     <string name="yearId">yearId</string>
+    <string name="BunBeauty">BunBeauty</string>
 
 </resources>

@@ -25,21 +25,27 @@ public class foundElement extends Fragment implements View.OnClickListener {
 
     final String SERVICE_ID = "service id";
 
-    TextView nameText;
+    TextView nameUserText;
+    TextView surname;
+    TextView city;
+    TextView nameServiceText;
     TextView costText;
-    TextView descriptionText;
 
     String idString;
-    String nameString;
+    String nameUserString;
+    String surnameString;
+    String cityString;
+    String nameServiceString;
     String costString;
-    String descriptionString;
 
     @SuppressLint("ValidFragment")
-    public foundElement(String id, String name, String cost, String description) {
+    public foundElement(String id, String nameUser, String surname, String city, String nameService, String cost) {
         idString = id;
-        nameString = name;
+        nameUserString = nameUser;
+        surnameString = surname;
+        cityString = city;
+        nameServiceString = nameService;
         costString = cost;
-        descriptionString = description;
     }
 
     @Override
@@ -49,22 +55,28 @@ public class foundElement extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //super.onViewCreated(view, savedInstanceState);
 
-        nameText = view.findViewById(R.id.nameText);
+        nameUserText = view.findViewById(R.id.nameUserText);
+        surname = view.findViewById(R.id.surnmaeText);
+        city = view.findViewById(R.id.cityText);
+        nameServiceText = view.findViewById(R.id.nameServiceText);
         costText = view.findViewById(R.id.costText);
-        descriptionText = view.findViewById(R.id.descriptionText);
 
-        nameText.setOnClickListener(this);
+        nameUserText.setOnClickListener(this);
+        surname.setOnClickListener(this);
+        city.setOnClickListener(this);
+        nameServiceText.setOnClickListener(this);
         costText.setOnClickListener(this);
-        descriptionText.setOnClickListener(this);
         setData();
     }
 
     private void setData() {
-        nameText.setText(nameString + " ");
+        nameUserText.setText(nameUserString + " ");
+        surname.setText(surnameString + " ");
+        city.setText(cityString + " ");
+        surname.setText(surnameString + " ");
+        nameServiceText.setText(nameServiceString + " ");
         costText.setText(costString + " ");
-        descriptionText.setText(descriptionString + " ");
     }
 
 
