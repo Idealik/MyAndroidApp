@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
+    android:orientation="vertical"
     tools:context=".authorization">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/phoneAuthorizationInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:srcCompat="@drawable/bun_beauty" />
 
     <EditText
         android:id="@+id/phoneAuthorizationInput"
-        android:layout_width="240dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
-        android:layout_marginTop="147dp"
-        android:layout_marginEnd="85dp"
-        android:layout_marginRight="85dp"
-        android:ems="10"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:backgroundTint="@color/lightText"
+        android:ems="10"
         android:hint="Phone"
-        android:textColorHint="@color/lightText"
+        android:inputType="phone"
         android:textColor="@color/white"
-        android:singleLine="false"
+        android:textColorHint="@color/lightText"
         app:layout_constraintBottom_toTopOf="@+id/passAuthorizationInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,12 +41,9 @@
 
     <EditText
         android:id="@+id/passAuthorizationInput"
-        android:layout_width="240dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
-        android:layout_marginEnd="85dp"
-        android:layout_marginRight="85dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:ems="10"
         android:textColor="@color/white"
         android:textColorHint="@color/lightText"
@@ -48,13 +57,10 @@
 
     <Button
         android:id="@+id/logInAuthorizationBtn"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="77dp"
-        android:layout_marginLeft="77dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="76dp"
-        android:layout_marginRight="76dp"
         android:background="@drawable/log_in"
         app:layout_constraintBottom_toTopOf="@+id/registrationAuthorizationBtn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,34 +69,15 @@
 
     <Button
         android:id="@+id/registrationAuthorizationBtn"
+        android:layout_gravity="center"
         android:layout_width="108dp"
         android:layout_height="22dp"
-        android:layout_marginStart="131dp"
-        android:layout_marginLeft="131dp"
         android:layout_marginTop="23dp"
-        android:layout_marginEnd="131dp"
-        android:layout_marginRight="131dp"
-        android:layout_marginBottom="100dp"
         android:background="@drawable/registration"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logInAuthorizationBtn" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginLeft="52dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginRight="52dp"
-        app:layout_constraintBottom_toTopOf="@+id/phoneAuthorizationInput"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:srcCompat="@drawable/bun_beauty" />
-</android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

@@ -712,7 +712,6 @@ id beginning
 id blocking
 id bottom
 id buttonPanel
-id calendarCalendar
 id cancel_action
 id center
 id center_horizontal
@@ -727,7 +726,6 @@ id clip_vertical
 id collapseActionView
 id content
 id contentPanel
-id continueMyCalendarBtn
 id continueMyCalendarBtn2
 id costAddServiceInput
 id costEditServiceInput
@@ -838,6 +836,7 @@ id search_src_text
 id search_voice_btn
 id select_dialog_listview
 id serviceNameFoundServiceElementText
+id serviceNameFoundServiceProfileElementText
 id servicesOrOrdersProfileSwitch
 id servicesProfileLayout
 id servicesProfileScroll
@@ -918,7 +917,7 @@ layout authorization
 layout edit_service
 layout found_order_element
 layout found_service_element
-layout fragment_found_service_profile_element
+layout found_service_profile_element
 layout guest_service
 layout main_screen
 layout my_calendar
@@ -941,7 +940,6 @@ layout notification_template_part_time
 layout profile
 layout registration
 layout search_service
-layout second_calendar
 layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material

@@ -14,17 +14,10 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.DoubleSummaryStatistics;
 
 public class myCalendar extends AppCompatActivity implements View.OnClickListener {
 
@@ -50,7 +43,7 @@ public class myCalendar extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.second_calendar);
+        setContentView(R.layout.my_calendar);
 
         mainLayout = findViewById(R.id.mainMyCalendarLayout);
         nextBtn = findViewById(R.id.continueMyCalendarBtn2);

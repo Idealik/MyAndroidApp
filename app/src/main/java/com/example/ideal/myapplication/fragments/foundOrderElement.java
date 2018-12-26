@@ -43,7 +43,6 @@ public class foundOrderElement extends Fragment implements View.OnClickListener 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //super.onViewCreated(view, savedInstanceState);
 
         nameText = view.findViewById(R.id.nameFoundOrderElementText);
         dateText = view.findViewById(R.id.costFoundOrderElementText);

@@ -17,6 +17,8 @@
 
     <EditText
         android:layout_gravity="center"
+        android:inputType="textCapWords"
+        android:textColor="@color/white"
         android:id="@+id/nameRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,36 +26,38 @@
         android:layout_marginTop="45dp"
         android:textColorHint="@color/lightText"
         android:backgroundTint="@color/lightText"
-        android:hint="@string/nameRegistration"
-        android:inputType="textPersonName"/>
+        android:hint="@string/nameRegistration" />
 
     <EditText
         android:layout_gravity="center"
         android:id="@+id/surnameRegistrationInput"
+        android:inputType="textPersonName|textCapWords"
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:textColorHint="@color/lightText"
         android:backgroundTint="@color/lightText"
-        android:hint="@string/surnameRegistration"
-        android:inputType="textPersonName"/>
+        android:hint="@string/surnameRegistration" />
 
     <EditText
         android:layout_gravity="center"
         android:id="@+id/cityRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:ems="10"
         android:textColorHint="@color/lightText"
         android:backgroundTint="@color/lightText"
         android:hint="@string/cityRegistration"
-        android:inputType="textPersonName"/>
+        android:inputType="textPersonName|textCapWords"/>
 
     <EditText
         android:layout_gravity="center"
         android:id="@+id/phoneRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="43dp"
+        android:textColor="@color/white"
         android:ems="10"
         android:textColorHint="@color/lightText"
         android:backgroundTint="@color/lightText"
@@ -65,6 +69,7 @@
         android:id="@+id/passRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:ems="10"
         android:hint="@string/passwordRegistration"
         android:textColorHint="@color/lightText"
