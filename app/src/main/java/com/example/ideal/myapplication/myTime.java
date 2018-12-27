@@ -7,11 +7,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -27,6 +29,8 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
     String statusUser;
     String userId;
     String workingDaysId;
+    int width;
+    int height;
     boolean hasCurrentHours;
 
     Button[][] timeBtns;
@@ -38,9 +42,13 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
     ArrayList<String> removedHours;
     ArrayList<String> currentHours;
 
+    SwitchCompat amOrPmMyTimeSwitch;
+
     DBHelper dbHelper;
     SharedPreferences sPref;
     RelativeLayout mainLayout;
+
+
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -58,17 +66,41 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         timeBtns = new Button[7][4];
         saveBtn = findViewById(R.id.saveMyTimeBtn);
 
+        amOrPmMyTimeSwitch = findViewById(R.id.amOrPmMyTimeSwitch);
+
         workingHours = new ArrayList<>();
         removedHours = new ArrayList<>();
         currentHours = new ArrayList<>();
 
         Display display = getWindowManager().getDefaultDisplay();
-        int width = display.getWidth();
-        int height = display.getHeight();
+         width = display.getWidth();
+         height = display.getHeight();
 
-        addButtonsOnScreen(width,height);
+        addButtonsOnScreen(width,height, false);
 
         checkCurrentTimes();
+
+        amOrPmMyTimeSwitch.setOnCheckedChangeListener(new SwitchCompat.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    buttonView.setText("Вторая половина дня");
+                    // сначала очищаем layout
+                    mainLayout.removeAllViews();
+                    // создаем кнопки с нужным временем
+                    addButtonsOnScreen(width,height,isChecked);
+                    checkCurrentTimes();
+
+                } else {
+                    buttonView.setText("Первая половина дня");
+                    // сначала очищаем layout
+                    mainLayout.removeAllViews();
+                    // создаем кнопки с нужным временем
+                    addButtonsOnScreen(width,height,isChecked);
+                    checkCurrentTimes();
+                }
+            }
+        });
 
         saveBtn.setOnClickListener(this);
     }
@@ -385,7 +417,9 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         return userId;
     }
 
-    private void addButtonsOnScreen(int width, int height){
+    private void addButtonsOnScreen(int width, int height, boolean isChecked){
+        int secondI = 1;
+        int nextHour = 12;
         for (int i=0; i<6; i++) {
             for (int j=0; j<4; j++) {
                 timeBtns[i][j]= new Button(this);
@@ -396,9 +430,18 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
                 timeBtns[i][j].setBackgroundResource(R.drawable.time_button);
                 timeBtns[i][j].setTag(R.string.selectedId, false);
                 timeBtns[i][j].setOnClickListener(this);
-                String hour = String.valueOf((i*4+j)/2);
-                String min = (j%2==0) ? "00":"30";
-                timeBtns[i][j].setText(hour + ":" + min);
+                if(!isChecked) {
+                    String hour = String.valueOf((i * 4 + j) / 2); // 0*4+0/2
+                    String min = (j % 2 == 0) ? "00" : "30";
+                    timeBtns[i][j].setText(hour + ":" + min);
+                }
+                else {
+                    String hour =  String.valueOf((secondI * nextHour));
+                    String min = (j % 2 == 0) ? "00" : "30";
+                    if(j == 1 || j == 3) nextHour++;
+                    timeBtns[i][j].setText(hour + ":" + min);
+
+                }
                 if(timeBtns[i][j].getParent() != null) {
                     ((ViewGroup)timeBtns[i][j].getParent()).removeView(timeBtns[i][j]);
                 }
@@ -406,4 +449,5 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
             }
         }
     }
+
 }

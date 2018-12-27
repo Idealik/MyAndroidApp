@@ -15,6 +15,9 @@ import android.widget.LinearLayout;
 
 import com.example.ideal.myapplication.fragments.foundServiceElement;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 public class searchService extends FragmentActivity implements View.OnClickListener {
     // сначала идут константы
     final String TAG = "DBInf";
@@ -154,61 +157,106 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
     // после нажатия на кнопку
     private void search() {
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        String[] enteredWords = searchLineSearchServiceInput.getText().toString().split(" ");
+        ArrayList<Long> resultId = new ArrayList<>();
+        ArrayList<Long> foundId = new ArrayList<>();
 
-        String searchingLine = searchLineSearchServiceInput.getText().toString();
-        Log.d(TAG, "search: ");
-        // нужно вернуть, имя, фамилию, город, название услуги, цену, оценку (пока без оценки)
-        // используем 2 таблицы - юзеры и сервисы
-        // связываем их по номеру телефона юзеров
-        //написать курсор, который возвращает с заданными параметрами
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor;
         String sqlQuery =
+                "SELECT "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + ", "
+                        + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID + " = "
+                        + DBHelper.TABLE_CONTACTS_SERVICES +"." + DBHelper.KEY_USER_ID
+                        + " AND ("
+                        + DBHelper.KEY_NAME_SERVICES + " = ?"
+                        + " OR "
+                        + DBHelper.KEY_NAME_USERS + " = ?"
+                        + " OR "
+                        + DBHelper.KEY_SURNAME_USERS + " = ?)";
+
+        for(String word : enteredWords) {
+            cursor = database.rawQuery(sqlQuery, new String[] {word, word, word});
+
+            if(cursor.moveToFirst()) {
+                int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
+
+                do {
+                    long id = cursor.getInt(indexId);
+                    if(!foundId.contains(id)) {
+                        foundId.add(id);
+                    }
+                } while (cursor.moveToNext());
+            }
+
+            if(foundId.isEmpty()) {
+                return;
+            } else {
+                if(resultId.isEmpty()) {
+                    for(long id : foundId) {
+                        resultId.add(id);
+                    }
+                } else {
+                    Log.d(TAG, resultId + " ");
+                    for(Iterator<Long> it = resultId.iterator(); it.hasNext(); ) {
+                        long id = it.next();
+                        if(!foundId.contains(id)) {
+                            it.remove();
+
+                            if(resultId.isEmpty()) {
+                                return;
+                            }
+                        }
+                    }
+                }
+                foundId.clear();
+            }
+
+        }
+
+        sqlQuery =
                 "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
-                        + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
-                        + ", " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES
-                        + ", " + DBHelper.KEY_MIN_COST_SERVICES + ", " + DBHelper.KEY_ID
-                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", " + DBHelper.TABLE_CONTACTS_USERS
-                        + " WHERE ( "
-                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + " = ? "
-                        + " OR " + DBHelper.KEY_SURNAME_USERS + " = ? "
-                        + " OR " + DBHelper.KEY_CITY_USERS + " = ? "
-                        + " OR " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES + " = ? "
-                        + " OR " + DBHelper.KEY_MIN_COST_SERVICES + " = ? "
-                        + ") AND "
+                        + DBHelper.KEY_SURNAME_USERS + ", "
+                        + DBHelper.KEY_CITY_USERS+ ", "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES + ", "
+                        + DBHelper.KEY_MIN_COST_SERVICES
+                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", "
+                        + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE " + DBHelper.KEY_ID + " = ?"
+                        + " AND "
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
                         " = "
                         + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
-        ;
-        Log.d(TAG, "query" + sqlQuery);
-        Cursor cursor = database.rawQuery(sqlQuery, searchingLine.split(" "));
 
-        if (cursor.moveToFirst()) {
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
-            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
-            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
 
-            int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
-            int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
 
-            // проверяем только по имени причем в нижнем регистре
-            do {
-                String foundId = cursor.getString(indexId);
+        int indexNameUser, indexSurname, indexCity, indexNameService, indexMinCost;
+        for(long id : resultId) {
+            cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(id)});
+
+            if (cursor.moveToFirst()) {
+                indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+                indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+                indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+
+                indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
+                indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
+
+                //  формирую сообщения, в будущем тут будем формировать объект
                 String foundNameUser = cursor.getString(indexNameUser);
                 String foundSurname = cursor.getString(indexSurname);
                 String foundCity = cursor.getString(indexCity);
                 String foundNameService = cursor.getString(indexNameService);
                 String foundCost = cursor.getString(indexMinCost);
-                Log.d(TAG, "in if");
 
-                //  формируем объект layout c некоторыми элементами
-                addToScreen(foundId, foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
-            }while (cursor.moveToNext());
+                addToScreen(String.valueOf(id), foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
+            }
         }
-        cursor.close();
     }
-
-
 
     private void addToScreen(String id, String foundNameUser, String foundSurname, String foundCity,
                              String foundNameService, String foundCost ) {

@@ -11,32 +11,36 @@
 
     <TextView
         android:id="@+id/nameGuestServiceText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="10dp"
         android:text="TextView"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/costGuestServiceText"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="16dp" />
 
     <TextView
         android:id="@+id/costGuestServiceText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:layout_marginBottom="22dp"
+        android:layout_marginTop="10dp"
         android:text="TextView"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/descriptionGuestServiceText"
         app:layout_constraintTop_toBottomOf="@+id/nameGuestServiceText"
         tools:layout_editor_absoluteX="16dp" />
 
     <TextView
         android:id="@+id/descriptionGuestServiceText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="TextView"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/costGuestServiceText"
         tools:layout_editor_absoluteX="16dp" />
 
@@ -46,6 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="invisible"
+        android:layout_marginTop="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -53,6 +58,7 @@
         android:id="@+id/editScheduleGuestServiceBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:layout_gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

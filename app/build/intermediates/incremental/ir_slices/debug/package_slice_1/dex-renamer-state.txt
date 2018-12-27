@@ -1,4 +1,4 @@
-#Tue Dec 25 17:55:31 MSK 2018
-base.0=C\:\\Users\\Ideal\\Desktop\\myProj\\MyAndroidApp\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\1
+#Thu Dec 27 23:40:41 MSK 2018
+base.0=C\:\\Users\\Ideal\\Desktop\\myProj\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\1
 path.0=classes.dex
 renamed.0=classes.dex
