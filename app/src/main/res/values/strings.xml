@@ -3,10 +3,10 @@
     <string name="readDB">Read db</string>
     <string name="regUser">Зарегестрироваться</string>
     <string name="delUser">Del user</string>
-    <string name="goToAuthor">Authorization</string>
+    <string name="goToAuthor">Авторизация</string>
     <string name="logOut">Log out</string>
-    <string name="addServices">Add services</string>
-    <string name="findServices">Find services</string>
+    <string name="addServices">Добавить сервис</string>
+    <string name="findServices">Найти сервис</string>
 
     //registration
     <string name="nameRegistration">Имя</string>
@@ -17,21 +17,24 @@
     <string name="logInRegistration">Войти</string>
 
     //Add service
-    <string name="nameAddServiceTB">Name</string>
-    <string name="costAddServiceTB">Cost</string>
+    <string name="nameAddServiceTB">Имя</string>
+    <string name="costAddServiceTB">Цена</string>
     <string name="main_screen">Main screen</string>
-    <string name="city">City</string>
-    <string name="phone">Phone</string>
+    <string name="city">Город</string>
+    <string name="phone">Телефон</string>
 
     //Edit service
-    <string name="edit">Edit</string>
+    <string name="edit">Изменить</string>
+
+    //Edit profile
+    <string name="nameEditProfileInput">Имя</string>
+    <string name="surnameEditProfileInput">Фамилия</string>
+
 
     //tag id
     <string name="selectedId">selectedId</string>
     <string name="yearId">yearId</string>
     <string name="BunBeauty">BunBeauty</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

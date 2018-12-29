@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.example.ideal.myapplication.fragments.foundOrderElement;
 import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
@@ -30,6 +31,10 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     Button findServicesBtn;
     Button addServicesBtn;
     Button mainScreenBtn;
+
+    TextView nameText;
+    TextView surnameText;
+    TextView cityText;
 
     ScrollView servicesScroll;
     ScrollView ordersScroll;
@@ -63,6 +68,9 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         servicesLayout = findViewById(R.id.servicesProfileLayout);
         ordersLayout = findViewById(R.id.ordersProfileLayout);
 
+        nameText = findViewById(R.id.nameProfileText);
+        surnameText= findViewById(R.id.surnameProfileText);
+        cityText = findViewById(R.id.cityProfileText);
 
         logOutBtn.setOnClickListener(this);
         findServicesBtn.setOnClickListener(this);
@@ -75,6 +83,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
 
         createServicesList();
         createOrdersList();
+        createProfileData();
 
         servicesLayout.setVisibility(View.INVISIBLE);
         servicesScroll.setVisibility(View.INVISIBLE);
@@ -148,6 +157,34 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
         return userId;
+    }
+
+    private void createProfileData(){
+
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        String userId = String.valueOf(getUserId());
+        String sqlQuert =
+                "SELECT "
+                + DBHelper.KEY_NAME_USERS + ", "
+                + DBHelper.KEY_SURNAME_USERS + ", "
+                + DBHelper.KEY_CITY_USERS
+                + " FROM "
+                + DBHelper.TABLE_CONTACTS_USERS
+                + " WHERE "
+                + DBHelper.KEY_USER_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuert,new String[] {userId});
+
+        if(cursor.moveToFirst()){
+            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+            int indexCity = cursor . getColumnIndex(DBHelper.KEY_CITY_USERS);
+
+            Log.d(TAG, " ");
+            nameText.setText(cursor.getString(indexName));
+            surnameText.setText(cursor.getString(indexSurname));
+            cityText.setText(cursor.getString(indexCity));
+        }
     }
 
     private void getMyOrders(SQLiteDatabase database, long userId) {

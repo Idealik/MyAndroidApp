@@ -33,6 +33,7 @@
         <activity android:name="com.example.ideal.myapplication.myTime" />
         <activity android:name="com.example.ideal.myapplication.myCalendar" />
         <activity android:name="com.example.ideal.myapplication.editService" />
+        <activity android:name="com.example.ideal.myapplication.editProfile" />
     </application>
 
 </manifest>

@@ -24,7 +24,8 @@
         <activity android:name=".mainScreen" />
         <activity android:name=".myTime" />
         <activity android:name=".myCalendar" />
-        <activity android:name=".editService"></activity>
+        <activity android:name=".editService" />
+        <activity android:name=".editProfile"></activity>
     </application>
 
 </manifest>

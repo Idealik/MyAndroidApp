@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +9,7 @@
     android:theme="@style/allPages">
 
     <EditText
-        android:id="@+id/nameEditServiceInput"
+        android:id="@+id/nameEditProfileInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -19,7 +20,7 @@
         android:hint="@string/nameAddServiceTB" />
 
     <EditText
-        android:id="@+id/costEditServiceInput"
+        android:id="@+id/surnameEditProfileInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -27,26 +28,30 @@
         android:layout_marginBottom="26dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/costAddServiceTB" />
+        android:hint="@string/costAddServiceTB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/descriptionEditServiceInput"
-        android:layout_width="312dp"
-        android:layout_height="233dp"
+        android:id="@+id/cityEditProfileInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:layout_gravity="center"
-        android:layout_marginTop="13dp"
-        android:layout_marginBottom="17dp"
+        android:layout_marginBottom="26dp"
         android:ems="10"
-        android:inputType="textMultiLine" />
+        android:inputType="textPersonName"
+        android:hint="@string/cityRegistration"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/editServiceEditServiceBtn"
+        android:id="@+id/editProfileEditProfileBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="5dp"
         android:layout_gravity="center"
         android:text="@string/edit" />
-
 
 </LinearLayout>
