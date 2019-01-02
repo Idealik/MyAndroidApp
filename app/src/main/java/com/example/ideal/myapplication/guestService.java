@@ -49,11 +49,11 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
 
         dbHelper = new DBHelper(this);
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+        //получаем данные о сервисе
+        getDataAboutService(serviceId);
 
-        getData(serviceId);
         long userId = getUserId();
-        // спрашиваю мой сервис или нет?
-        // в переменной, чтобы использовать много где и постоянно не вызывать метод
+        // мой сервис или нет?
         isMyService = isMyService(serviceId,userId);
 
         if(isMyService){
@@ -77,6 +77,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.editScheduleGuestServiceBtn:
+                // если мой сервис, то иду, как воркер
                 if(isMyService){
                     goToMyCalendar("worker");
                 }
@@ -93,7 +94,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void getData(long serviceId) {
+    private void getDataAboutService(long serviceId) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         // получаем сервис с указанным ID
         String sqlQuery =
@@ -119,17 +120,14 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
 
     private boolean isMyService(long serviceId, long userId) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        //Картеж этого сервиса с id текущего пользователя
-        Cursor cursor = database.query(
-            DBHelper.TABLE_CONTACTS_SERVICES,
-            new String[]{DBHelper.KEY_NAME_SERVICES},
-            DBHelper.KEY_ID + " = ? AND " + DBHelper.KEY_USER_ID + " = ? ",
-            new String[]{String.valueOf(serviceId), String.valueOf(userId)},
-            null,
-            null,
-            null,
-            null);
+        // вернуть имя сервиса
+        // из таблицы Services
+        // где фиксированное serviceId и номер телефона пользователя
+        String sqlQuery =
+                "SELECT " + DBHelper.KEY_NAME_SERVICES
+                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
+                        + " WHERE " + DBHelper.KEY_ID + " = ? AND " + DBHelper.KEY_USER_ID + " = ? ";
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(serviceId), String.valueOf(userId)});
 
         // такой существует ?
         if(cursor.moveToFirst()) {

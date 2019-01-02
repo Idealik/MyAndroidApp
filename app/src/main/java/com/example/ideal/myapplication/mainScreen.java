@@ -14,7 +14,8 @@ import com.example.ideal.myapplication.fragments.foundServiceElement;
 
 public class mainScreen extends AppCompatActivity {
 
-    //добавить обнавление layot, чтобы сразу появлилсь новые сервисы!
+    // добавить, чтобы не было видно своих сервисов
+    // например номер юзера, возвращаемого сервиса не должен быть равен локальному
     final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
@@ -47,7 +48,6 @@ public class mainScreen extends AppCompatActivity {
 
     private void createMainScreen(){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-
         //получаем id пользователя
         String userId = getUserId();
         //получаем город юзера
@@ -65,15 +65,20 @@ public class mainScreen extends AppCompatActivity {
     }
 
     private String getUserCity(SQLiteDatabase database,String userId){
-        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_USERS,
-                new String[] {DBHelper.KEY_CITY_USERS},
-                DBHelper.KEY_USER_ID + " = ?",
-                new String[] {userId},
-                null, null, null);
+        // Получить город юзера
+        // Таблица Users
+        // с фиксированным userId
+        String sqlQuery =
+                "SELECT " + DBHelper.KEY_CITY_USERS
+                        + " FROM " + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE " + DBHelper.KEY_USER_ID + " = ?";
 
-        int indexCity= cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {userId});
 
-        String city="dubna"; // дефолтное значение
+        int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
+        // дефолтное значение
+        String city="dubna";
+
         if(cursor.moveToFirst()) {
             city = cursor.getString(indexCity);
         }
@@ -82,8 +87,11 @@ public class mainScreen extends AppCompatActivity {
     }
 
     private  void getServicesInThisCity(SQLiteDatabase database,String userCity){
-        int limitOfService = 10; //максимальное количество выводимых предложений
-        //запрос в бд сравнивает номера в табилце юзер и сервис, а также учитывает город
+        //максимальное количество выводимых предложений
+        int limitOfService = 10;
+        // вернуть имя юзера, фамилию, город, имя сервиса, цену, айди сервиса
+        // таблицы Services, Users
+        // связь таблиц и где фиксированный город
         String sqlQuery =
                 "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
                         + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
@@ -95,8 +103,9 @@ public class mainScreen extends AppCompatActivity {
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
                         " = "
                         + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
-             ;
+
              Cursor cursor = database.rawQuery(sqlQuery, new String[] {userCity.toLowerCase()});
+
         if (cursor.moveToFirst()) {
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexNameUser = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
@@ -107,7 +116,6 @@ public class mainScreen extends AppCompatActivity {
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
             int countOfFoundServices = 0;
             do {
-                //  формирую сообщения, в будущем тут будем формировать объект
                 String foundId = cursor.getString(indexId);
                 String foundNameUser = cursor.getString(indexNameUser);
                 String foundSurname = cursor.getString(indexSurname);

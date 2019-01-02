@@ -31,7 +31,6 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     static final String USER_CITY = "my city";
     final String SERVICE_ID = "service id";
 
-
     Button logOutBtn;
     Button findServicesBtn;
     Button addServicesBtn;
@@ -82,15 +81,21 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         dbHelper = new DBHelper(this);
 
         manager = getSupportFragmentManager();
+
         //получаем id пользователя
         long userId = getUserId();
+        // получаем сервис пользователя, если он заходит к себе в профиль, то -1
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-
         Log.d(TAG, "Before if user id = " + userId + "  sI = " + serviceId);
+
+        // идет проверка, относится ли этот сервис к пользователю, чтобы дать соответствующий функционал
         if(isMyService(serviceId,userId)){
             // если это мой сервис - значит мой профиль
+            // создаем свои сервисы
             createServicesList(userId);
+            // создаем список записей
             createOrdersList(userId);
+            // добавляем данные о пользователе
             createProfileData(userId);
             servicesLayout.setVisibility(View.INVISIBLE);
             servicesScroll.setVisibility(View.INVISIBLE);
@@ -117,7 +122,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             editProfileBtn.setOnClickListener(this);
 
         }else {
-            //прячем функционал, доступный на своем профиле
+            //прячем функционал, мы же на чужом профиле
             servicesOrOrdersSwitch.setVisibility(View.INVISIBLE);
             addServicesBtn.setVisibility(View.INVISIBLE);
             editProfileBtn.setVisibility(View.INVISIBLE);
@@ -167,19 +172,6 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void createOrdersList(Long userId){
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        //получаем все сервисы, которые пренадлежат юзеру
-        getMyOrders(database, userId);
-    }
-
-    private void createServicesList(long userId){
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        //получаем все сервисы, которые пренадлежат юзеру
-        getMyServices(database, userId);
-    }
-
     private boolean isMyService(long serviceId, long userId) {
         //значит мы зашли сразу в профиль свой и это владелец
         if(serviceId == -1) return true;
@@ -204,80 +196,9 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             return false;
         }
     }
-
-
-    //получить id-phone пользователя
-    private  long getUserId(){
-        // возваращает id текущего пользователя
-        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
-
-        return userId;
-    }
-
-    private long getUserId(Long serviceId){
-        //возвращает id юзера указанного сервиса
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
-        // нужно вернуть: userID из Users
-        // используем таблицы: Services and Users
-        // Условие: по заданному serviceID
-        String sqlQuery =
-                "SELECT "
-                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID
-                        + " FROM "
-                        + DBHelper.TABLE_CONTACTS_USERS + ", "
-                        + DBHelper.TABLE_CONTACTS_SERVICES
-                        + " WHERE "
-                        + DBHelper.TABLE_CONTACTS_SERVICES +"." + DBHelper.KEY_ID + " = ?"
-                        + " AND "
-                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
-                        " = "
-                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
-
-        Cursor cursor = database.rawQuery(sqlQuery,new String[] {String.valueOf(serviceId)});
-
-        Long userId;
-
-        if(cursor.moveToFirst()){
-            int indexUserId = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-
-            userId = cursor.getLong(indexUserId);
-        }
-        else {
-            //при присвоении значения лонг, надо добюавлять "L"
-            userId = -1L; // но такого быть не может
-        }
-
-        return userId;
-    }
-
-    private void createProfileData(Long _userId){
-
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
-        String userId = String.valueOf(_userId);
-        String sqlQuery =
-                "SELECT "
-                + DBHelper.KEY_NAME_USERS + ", "
-                + DBHelper.KEY_SURNAME_USERS + ", "
-                + DBHelper.KEY_CITY_USERS
-                + " FROM "
-                + DBHelper.TABLE_CONTACTS_USERS
-                + " WHERE "
-                + DBHelper.KEY_USER_ID + " = ?";
-
-        Cursor cursor = database.rawQuery(sqlQuery,new String[] {userId});
-
-        if(cursor.moveToFirst()){
-            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
-            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
-            int indexCity = cursor . getColumnIndex(DBHelper.KEY_CITY_USERS);
-            nameText.setText(cursor.getString(indexName));
-            surnameText.setText(cursor.getString(indexSurname));
-            cityText.setText(cursor.getString(indexCity));
-        }
-    }
-
-    private void getMyOrders(SQLiteDatabase database, long userId) {
+    //получаем все заказы, которые принадлежат юзеру
+    private void createOrdersList(Long userId){
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         String sqlQuery =
                 "SELECT "
@@ -313,13 +234,13 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
                 addOrderToScreen(foundId, foundName, foundDate, foundTime);
             }while (cursor.moveToNext());
         }
-        else {
-            Log.d(TAG, "Cursor is empty");
-        }
         cursor.close();
     }
 
-    private void getMyServices(SQLiteDatabase database, long userId) {
+    //получаем все сервисы, которые пренадлежат юзеру
+    private void createServicesList(long userId){
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
         // нужно вернуть, имя, фамилию, город, название услуги, цену, оценку (пока без оценки)
         // используем 2 таблицы - юзеры и сервисы
         // связываем их по номеру телефона юзеров, уточняем юзера по его id
@@ -339,31 +260,80 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
                 //  формирую сообщения, в будущем тут будем формировать объект
                 String foundId = cursor.getString(indexId);
                 String foundNameService = cursor.getString(indexNameService);
-
-
                 addServiceToScreen(foundId, foundNameService);
             }while (cursor.moveToNext());
-        }
-        else {
-            Log.d(TAG, "CURSOR IS EMPTY");
         }
         cursor.close();
     }
 
-    private void addServiceToScreen(String id, String foundNameService) {
-        fServiceElement = new foundServiceProfileElement(id, foundNameService);
+    //получить id-phone пользователя
+    private  long getUserId(){
+        // возваращает id текущего пользователя
+        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
+        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
-        transaction = manager.beginTransaction();
-        transaction.add(R.id.servicesProfileLayout, fServiceElement);
-        transaction.commit();
+        return userId;
     }
 
-    private void addOrderToScreen(String id, String name, String date, String time) {
-        fOrderElement = new foundOrderElement(id, name, date, time);
+    //возвращает id юзера указанного сервиса
+    private long getUserId(Long serviceId){
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        // нужно вернуть: userID из Users
+        // используем таблицы: Services and Users
+        // Условие: по заданному serviceID
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_USERS + ", "
+                        + DBHelper.TABLE_CONTACTS_SERVICES
+                        + " WHERE "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + " = ?"
+                        + " AND "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
+                        " = "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
 
-        transaction = manager.beginTransaction();
-        transaction.add(R.id.ordersProfileLayout, fOrderElement);
-        transaction.commit();
+        Cursor cursor = database.rawQuery(sqlQuery,new String[] {String.valueOf(serviceId)});
+
+        Long userId;
+
+        if(cursor.moveToFirst()){
+            int indexUserId = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+            userId = cursor.getLong(indexUserId);
+        }
+        else {
+            //при присвоении значения лонг, надо добюавлять "L"
+            userId = -1L; // но такого быть не может
+        }
+
+        return userId;
+    }
+    // получаем данные о пользователе и отображаем в прфоиле
+    private void createProfileData(Long _userId){
+
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        String userId = String.valueOf(_userId);
+        String sqlQuery =
+                "SELECT "
+                + DBHelper.KEY_NAME_USERS + ", "
+                + DBHelper.KEY_SURNAME_USERS + ", "
+                + DBHelper.KEY_CITY_USERS
+                + " FROM "
+                + DBHelper.TABLE_CONTACTS_USERS
+                + " WHERE "
+                + DBHelper.KEY_USER_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery,new String[] {userId});
+
+        if(cursor.moveToFirst()){
+            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
+            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
+            int indexCity = cursor . getColumnIndex(DBHelper.KEY_CITY_USERS);
+            nameText.setText(cursor.getString(indexName));
+            surnameText.setText(cursor.getString(indexSurname));
+            cityText.setText(cursor.getString(indexCity));
+        }
     }
 
     @Override
@@ -380,7 +350,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             createProfileData(userId);
         }
     }
-
+    //Переписать курсор Валентину, написать комметарии к курсору и что выполняет метод
     private void addNewServices(Long userId) {
         int visibleCount = servicesLayout.getChildCount();
 
@@ -462,7 +432,22 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         cursor.close();
     }
 
-    //Анулировать статус
+    private void addServiceToScreen(String id, String foundNameService) {
+        fServiceElement = new foundServiceProfileElement(id, foundNameService);
+
+        transaction = manager.beginTransaction();
+        transaction.add(R.id.servicesProfileLayout, fServiceElement);
+        transaction.commit();
+    }
+
+    private void addOrderToScreen(String id, String name, String date, String time) {
+        fOrderElement = new foundOrderElement(id, name, date, time);
+
+        transaction = manager.beginTransaction();
+        transaction.add(R.id.ordersProfileLayout, fOrderElement);
+        transaction.commit();
+    }
+    //Анулировать статус при выходе
     private void annulStatus() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();

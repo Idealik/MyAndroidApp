@@ -19,7 +19,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class registration extends AppCompatActivity implements View.OnClickListener {
 
-    final String TAG = "DBInf";
     final String STATUS = "status";
     final String PHONE = "phone";
     final String PASS = "pass";
@@ -63,16 +62,21 @@ public class registration extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()){
             case R.id.registrateRegistrationBtn:
+                //получение данных с инпутов
                 String myName = nameInput.getText().toString();
                 String mySurname = surnameInput.getText().toString();
                 String myCity = cityInput.getText().toString();
                 String myPhone = phoneInput.getText().toString();
                 String myPass = passInput.getText().toString();
-
-                if(isFullInputs(myPhone,myPass,myCity)){
+                //проверка на незаполенные поля
+                if(isFullInputs(myPhone,myPass,myCity, myName)){
+                    //проверка на стойкость пароля
                     if(isStrongPassword(myPass)) {
+                        //проверка свободен ли телефон
                         if(isFreePhone(database, myPhone)) {
+                            //процесс регистрации
                             registration(database, myName, mySurname, myPhone, myPass, myCity);
+                            // идем в профиль
                             goToProfile();
                         } else {
                             Toast.makeText(
@@ -83,7 +87,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                     } else {
                         Toast.makeText(
                                 this,
-                                "Пароль недостаточно надёжен, попробуй другой.",
+                                "Пароль должен содержать буквы и цифры и быть не менее 6 символов.",
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -96,6 +100,7 @@ public class registration extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.loginRegistrationBtn:
+                // идем в авторизацию
                 goToAuthorization();
                 break;
 
@@ -106,58 +111,62 @@ public class registration extends AppCompatActivity implements View.OnClickListe
 
     private void registration(SQLiteDatabase database, String myName, String mySurname,
                               String myPhone, String myPass, String myCity){
-
         ContentValues contentValues = new ContentValues();
-         myPass =  encryptThisStringSHA512(myPass);
-        // добавить проверку на непустые поля
-        contentValues.put(DBHelper.KEY_NAME_USERS, myName);
-        contentValues.put(DBHelper.KEY_SURNAME_USERS, mySurname);
+        //хэшируем пароль
+        myPass =  encryptThisStringSHA512(myPass);
+        //заносим данные в контент
+        contentValues.put(DBHelper.KEY_NAME_USERS, myName.toLowerCase());
+        contentValues.put(DBHelper.KEY_SURNAME_USERS, mySurname.toLowerCase());
         contentValues.put(DBHelper.KEY_USER_ID, myPhone);
         contentValues.put(DBHelper.KEY_PASS_USERS, myPass);
-        contentValues.put(DBHelper.KEY_CITY_USERS, myCity);
-
+        contentValues.put(DBHelper.KEY_CITY_USERS, myCity.toLowerCase());
+        //заносим данные в БД
         database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
+        // локально сохраняем телефон и пароль
         saveIdAndPass(myPhone, myPass);
+        // сохраняем статус о том, что пользователь вошел
         saveStatus();
-
-        readDB(database);
-        Log.d(TAG, "reg was successful");
-    }
+        }
 
     protected boolean isStrongPassword(String myPass) {
-      //  if(!myPass.matches(".*[A-Z].*")) return  false;
+        if(!myPass.matches(".*[a-z].*")) return  false;
         if(!myPass.matches(".*[0-9].*")) return  false;
         if(myPass.length()<=5) return false;
         return true;
     }
 
     private boolean isFreePhone(SQLiteDatabase database, String phone){
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_USERS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
+        // вернуть номер телефона
+        // используем таблицу Users
+        // номер телефона уже должен быть в базе данных
+        String sqlQuery =
+                "SELECT "
+                + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID
+                + " FROM "
+                + DBHelper.TABLE_CONTACTS_USERS
+                + " WHERE "
+                + DBHelper.TABLE_CONTACTS_USERS +"." + DBHelper.KEY_USER_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery,new String[] {String.valueOf(phone)});
 
         if(cursor.moveToFirst()){
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            do{
-                if(phone.equals(cursor.getString(indexPhone))){
-                    return  false;
-                }
-            }while (cursor.moveToNext());
+            // если есть такой номер, значит он занят
+            cursor.close();
+            return  false;
         }
-        cursor.close();
-        return  true;
+        else {
+            // иначе свободен
+            cursor.close();
+            return true;
+        }
+
     }
-    protected Boolean isFullInputs(String phone, String pass, String city){
+    protected Boolean isFullInputs(String phone, String pass, String city, String name){
 
         if(phone.trim().equals("")) return false;
         if(pass.trim().equals("")) return false;
-        if(city.trim().equals("") ) return false;
+        if(city.trim().equals("")) return false;
+        if(name.trim().equals("")) return false;
 
         return  true;
     }
@@ -209,39 +218,6 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void readDB(SQLiteDatabase database){
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_USERS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        if(cursor.moveToFirst()){
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
-            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
-            int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
-
-            do{
-                Log.d(TAG, " \t" + cursor.getString(indexPhone)
-                        + " \t" + cursor.getString(indexPass)
-                        + " \t" + cursor.getString(indexCity)
-                        + " \t" + cursor.getString(indexName)
-                        + " \t" + cursor.getString(indexSurname)
-                        + " ");
-            }while (cursor.moveToNext());
-        }
-        else {
-            Log.d(TAG, "DB is empty");
-        }
-        cursor.close();
-    }
-
     private  void goToProfile(){
         Intent intent = new Intent(this, profile.class);
         startActivity(intent);
@@ -253,7 +229,4 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
         finish();
     }
-
-
-
 }

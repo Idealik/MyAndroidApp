@@ -19,7 +19,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class authorization extends AppCompatActivity implements View.OnClickListener {
 
-    final String TAG = "DBInf";
     final String STATUS = "status";
     final String PHONE = "phone";
     final String PASS = "pass";
@@ -42,20 +41,18 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.authorization);
 
         dbHelper = new DBHelper(this);
-        status = getStatus(); // если он уже считается вошедшим, то ничего не создаем.
-
+        status = getStatus();
+        // если он уже считается вошедшим, то ничего не создаем.
         if(status) {
             //проверяем БД
-            SQLiteDatabase database = dbHelper.getWritableDatabase();
+            SQLiteDatabase database = dbHelper.getReadableDatabase();
+            // получаем с локальных записей логин и пароль
             String myPhone = getUserId();
             String myPass = getUserPass();
-            boolean confirmed  = checkData(database,myPhone,myPass);
-
-            // Входим в профиль
-            if (confirmed)
-                goToProfile();
-            else
-                Log.d(TAG, myPhone + " " + myPass);
+            // в любом случае проверяем их, вдруг пользователь изменил с другого устройства
+            boolean confirmed  = isItConfirmedUser(database,myPhone,myPass);
+            // Если подтвержден, входим в профиль
+            if (confirmed) goToProfile();
         }
 
         logInBtn = (Button) findViewById(R.id.logInAuthorizationBtn);
@@ -79,11 +76,11 @@ public class authorization extends AppCompatActivity implements View.OnClickList
                 //Проверка пароля и логина
                 // тут хэш, чтобы не хэшировать 2 раза то, что получаем из файла
                 myPass = encryptThisStringSHA512(myPass);
-                boolean confirmed  = checkData(database,myPhone,myPass);
-                logIn(confirmed,myPhone,myPass); // сохраняем статус,получаем, переходим в профиль
+                boolean confirmed  = isItConfirmedUser(database,myPhone,myPass);
+                logIn(confirmed,myPhone,myPass); // сохраняем статус, получаем, переходим в профиль
                 break;
             case R.id.registrationAuthorizationBtn:
-                goToRegegistration();
+                goToRegistration();
             default:
                 break;
         }
@@ -91,13 +88,12 @@ public class authorization extends AppCompatActivity implements View.OnClickList
 
     private void logIn(boolean confirmed, String phone, String pass){
         if(confirmed){
-            Log.d(TAG, "You are ");
-            saveStatus(); // сохраняем статус
-            saveIdAndPass(phone,pass);  //сохраяем пользователя и пароль
-            status = getStatus(); // если true то пользователь вошел иначе не вошел
-            if(status){
-                goToProfile(); // переходим в профиль
-            }
+            // сохраняем статус
+            saveStatus();
+            //сохраяем номер пользователя и пароль
+            saveIdAndPass(phone,pass);
+            // переходим в профиль (тут был гет статус)
+            goToProfile();
         }
         else {
             Toast.makeText(
@@ -107,34 +103,32 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private boolean checkData(SQLiteDatabase database,String myPhone, String myPass){
-        // пробегаем по базе данных и сравниваем введенный пароль и логин с теми, что хранится в бд
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_USERS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
+    private boolean isItConfirmedUser(SQLiteDatabase database,String myPhone, String myPass){
+        // вренуть номер телефона
+        // из таблицы Users
+        // где совпадает номер телефона и пароль
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID + " = ?"
+                        + " AND "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_PASS_USERS + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery,new String[]{myPhone,myPass});
 
         if(cursor.moveToFirst()){
-            int indexPhone = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            int indexPass = cursor.getColumnIndex(DBHelper.KEY_PASS_USERS);
-            boolean isConfirmed;
-            do{
-                isConfirmed=
-                        myPhone.equals(cursor.getString(indexPhone))
-                                && myPass.equals(cursor.getString(indexPass));
-                if(isConfirmed){
-                    cursor.close();
-                    return true;
-                }
-            }while (cursor.moveToNext());
+            // есть совпадения
+            cursor.close();
+            return true;
         }
-        cursor.close();
-        return  false;
+        else {
+            // нет совпадений
+            cursor.close();
+            return false;
+        }
     }
 
     private boolean getStatus() {
@@ -205,7 +199,7 @@ public class authorization extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void goToRegegistration() {
+    private void goToRegistration() {
         Intent intent = new Intent(this, registration.class);
         startActivity(intent);
         finish();
