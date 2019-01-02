@@ -9,9 +9,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ideal.myapplication.fragments.foundServiceElement;
 
@@ -24,12 +30,16 @@ public class searchService extends FragmentActivity implements View.OnClickListe
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
 
+    String city = "Город";
 
     // кнопки
     Button findBtn;
 
     //editTEXT
     EditText searchLineSearchServiceInput;
+
+    //Spinner
+    Spinner citySpinner;
 
     //Вертикальный лэйаут
     LinearLayout resultLayout;
@@ -50,6 +60,12 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
         findBtn = findViewById(R.id.findServiceSearchServiceBtn);
 
+
+        citySpinner = findViewById(R.id.citySearchServiceSpinner);
+        citySpinner.setPrompt("Город");
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.cities, android.R.layout.simple_spinner_item);
+        citySpinner.setAdapter(adapter);
+
         searchLineSearchServiceInput = findViewById(R.id.searchLineSearchServiceInput);
 
         resultLayout = findViewById(R.id.resultSearchServiceLayout);
@@ -60,6 +76,15 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         createMainScreen();
 
         findBtn.setOnClickListener(this);
+
+        citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View itemSelected, int selectedItemPosition, long selectedId) {
+                TextView cityText = (TextView)itemSelected;
+                city = cityText.getText().toString();
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     @Override
@@ -67,7 +92,10 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
         switch (v.getId()) {
             case R.id.findServiceSearchServiceBtn:
-                search();
+                if(!search()) {
+                    resultLayout.removeAllViews();
+                    Toast.makeText(this, "Ничего не найдено", Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;
@@ -124,7 +152,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
                         " = "
                         + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
-        ;
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{userCity.toLowerCase()});
 
         if (cursor.moveToFirst()) {
@@ -156,13 +183,19 @@ public class searchService extends FragmentActivity implements View.OnClickListe
     }
 
     // после нажатия на кнопку
-    private void search() {
+    private boolean search() {
         String[] enteredWords = searchLineSearchServiceInput.getText().toString().split(" ");
         ArrayList<Long> resultId = new ArrayList<>();
         ArrayList<Long> foundId = new ArrayList<>();
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor;
+
+        String cityCondition = "";
+        boolean isCitySelected = !city.equals("Город");
+        if(isCitySelected) {
+            cityCondition = " AND " + DBHelper.KEY_CITY_USERS + " = ?";
+        }
         String sqlQuery =
                 "SELECT "
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID
@@ -172,6 +205,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                         + " WHERE "
                         + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID + " = "
                         + DBHelper.TABLE_CONTACTS_SERVICES +"." + DBHelper.KEY_USER_ID
+                        + cityCondition
                         + " AND ("
                         + DBHelper.KEY_NAME_SERVICES + " = ?"
                         + " OR "
@@ -180,7 +214,12 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                         + DBHelper.KEY_SURNAME_USERS + " = ?)";
 
         for(String word : enteredWords) {
-            cursor = database.rawQuery(sqlQuery, new String[] {word, word, word});
+            if(isCitySelected) {
+                cursor = database.rawQuery(sqlQuery,new String[] {city, word, word, word});
+            } else {
+                cursor = database.rawQuery(sqlQuery,new String[] {word, word, word});
+            }
+
 
             if(cursor.moveToFirst()) {
                 int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
@@ -194,7 +233,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
             }
 
             if(foundId.isEmpty()) {
-                return;
+                return false;
             } else {
                 if(resultId.isEmpty()) {
                     for(long id : foundId) {
@@ -208,15 +247,17 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                             it.remove();
 
                             if(resultId.isEmpty()) {
-                                return;
+                                return false;
                             }
                         }
                     }
                 }
                 foundId.clear();
             }
-
         }
+
+        Log.d(TAG, resultId+"");
+
 
         sqlQuery =
                 "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
@@ -256,6 +297,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                 addToScreen(String.valueOf(id), foundNameUser, foundSurname, foundCity, foundNameService, foundCost);
             }
         }
+        return true;
     }
 
     private void addToScreen(String id, String foundNameUser, String foundSurname, String foundCity,

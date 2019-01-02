@@ -16,8 +16,8 @@
         android:layout_marginTop="33dp"
         android:layout_marginBottom="24dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/nameAddServiceTB" />
+        android:hint="@string/nameAddServiceTB"
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/surnameEditProfileInput"
@@ -28,7 +28,7 @@
         android:layout_marginBottom="26dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/costAddServiceTB"
+        android:hint="@string/surnameEditProfileInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -45,13 +45,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <EditText
+        android:id="@+id/phoneEditProfileInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="26dp"
+        android:ems="10"
+        android:hint="@string/phone"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/editProfileEditProfileBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="5dp"
-        android:layout_gravity="center"
         android:text="@string/edit" />
 
 </LinearLayout>

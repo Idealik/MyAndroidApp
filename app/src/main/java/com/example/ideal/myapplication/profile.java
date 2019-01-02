@@ -22,15 +22,21 @@ import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
 
 public class profile extends AppCompatActivity implements View.OnClickListener {
 
-    private final String TAG = "DBInf";
-    private final String PHONE = "phone";
+    final String TAG = "DBInf";
+    final String PHONE = "phone";
     final String FILE_NAME = "Info";
     final String STATUS = "status";
+    static final String USER_NAME = "my name";
+    static final String USER_SURNAME = "my surname";
+    static final String USER_CITY = "my city";
+    final String SERVICE_ID = "service id";
+
 
     Button logOutBtn;
     Button findServicesBtn;
     Button addServicesBtn;
     Button mainScreenBtn;
+    Button editProfileBtn;
 
     TextView nameText;
     TextView surnameText;
@@ -60,6 +66,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         findServicesBtn = (Button) findViewById(R.id.findServicesProfileBtn);
         addServicesBtn = (Button) findViewById(R.id.addServicesProfileBtn);
         mainScreenBtn = (Button) findViewById(R.id.mainScreenProfileBtn);
+        editProfileBtn = (Button) findViewById(R.id.editProfileBtn);
 
         servicesOrOrdersSwitch = findViewById(R.id.servicesOrOrdersProfileSwitch);
 
@@ -72,40 +79,68 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         surnameText= findViewById(R.id.surnameProfileText);
         cityText = findViewById(R.id.cityProfileText);
 
-        logOutBtn.setOnClickListener(this);
-        findServicesBtn.setOnClickListener(this);
-        addServicesBtn.setOnClickListener(this);
-        mainScreenBtn.setOnClickListener(this);
-
         dbHelper = new DBHelper(this);
 
         manager = getSupportFragmentManager();
+        //получаем id пользователя
+        long userId = getUserId();
+        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
 
-        createServicesList();
-        createOrdersList();
-        createProfileData();
+        Log.d(TAG, "Before if user id = " + userId + "  sI = " + serviceId);
+        if(isMyService(serviceId,userId)){
+            // если это мой сервис - значит мой профиль
+            createServicesList(userId);
+            createOrdersList(userId);
+            createProfileData(userId);
+            servicesLayout.setVisibility(View.INVISIBLE);
+            servicesScroll.setVisibility(View.INVISIBLE);
 
-        servicesLayout.setVisibility(View.INVISIBLE);
-        servicesScroll.setVisibility(View.INVISIBLE);
-
-        servicesOrOrdersSwitch.setOnCheckedChangeListener(new SwitchCompat.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    buttonView.setText("My services");
-                    ordersLayout.setVisibility(View.INVISIBLE);
-                    ordersScroll.setVisibility(View.INVISIBLE);
-                    servicesLayout.setVisibility(View.VISIBLE);
-                    servicesScroll.setVisibility(View.VISIBLE);
-                } else {
-                    buttonView.setText("My orders");
-                    servicesLayout.setVisibility(View.INVISIBLE);
-                    servicesScroll.setVisibility(View.INVISIBLE);
-                    ordersLayout.setVisibility(View.VISIBLE);
-                    ordersScroll.setVisibility(View.VISIBLE);
+            servicesOrOrdersSwitch.setOnCheckedChangeListener(new SwitchCompat.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked) {
+                        buttonView.setText("My services");
+                        ordersLayout.setVisibility(View.INVISIBLE);
+                        ordersScroll.setVisibility(View.INVISIBLE);
+                        servicesLayout.setVisibility(View.VISIBLE);
+                        servicesScroll.setVisibility(View.VISIBLE);
+                    } else {
+                        buttonView.setText("My orders");
+                        servicesLayout.setVisibility(View.INVISIBLE);
+                        servicesScroll.setVisibility(View.INVISIBLE);
+                        ordersLayout.setVisibility(View.VISIBLE);
+                        ordersScroll.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
-        });
+            });
+            addServicesBtn.setOnClickListener(this);
+            editProfileBtn.setOnClickListener(this);
+
+        }else {
+            //прячем функционал, доступный на своем профиле
+            servicesOrOrdersSwitch.setVisibility(View.INVISIBLE);
+            addServicesBtn.setVisibility(View.INVISIBLE);
+            editProfileBtn.setVisibility(View.INVISIBLE);
+            // получаем id user, которому принадлжеит сервис
+            userId = getUserId(serviceId);
+            Log.d(TAG, "user id = " + userId);
+
+            // подгружаем данные о пользователе
+            createProfileData(userId);
+            // подргужаем его сервисы
+            createServicesList(userId);
+
+            // отображаем все сервисы пользователя
+            ordersLayout.setVisibility(View.INVISIBLE);
+            ordersScroll.setVisibility(View.INVISIBLE);
+            servicesLayout.setVisibility(View.VISIBLE);
+            servicesScroll.setVisibility(View.VISIBLE);
+        }
+
+        logOutBtn.setOnClickListener(this);
+        findServicesBtn.setOnClickListener(this);
+        mainScreenBtn.setOnClickListener(this);
+
     }
 
     @Override
@@ -124,46 +159,103 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             case R.id.mainScreenProfileBtn:
                 goToMainScreen();
                 break;
+            case R.id.editProfileBtn:
+                goToEditProfile();
+                break;
             default:
                 break;
         }
     }
 
-    private void createOrdersList(){
+    private void createOrdersList(Long userId){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        //получаем id пользователя
-        long userId = getUserId();
-
         //получаем все сервисы, которые пренадлежат юзеру
         getMyOrders(database, userId);
     }
 
-    private void createServicesList(){
+    private void createServicesList(long userId){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        //получаем id пользователя
-        long userId = getUserId();
 
         //получаем все сервисы, которые пренадлежат юзеру
         getMyServices(database, userId);
     }
 
+    private boolean isMyService(long serviceId, long userId) {
+        //значит мы зашли сразу в профиль свой и это владелец
+        if(serviceId == -1) return true;
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        //Картеж этого сервиса с id текущего пользователя
+        Cursor cursor = database.query(
+                DBHelper.TABLE_CONTACTS_SERVICES,
+                new String[]{DBHelper.KEY_NAME_SERVICES},
+                DBHelper.KEY_ID + " = ? AND " + DBHelper.KEY_USER_ID + " = ? ",
+                new String[]{String.valueOf(serviceId), String.valueOf(userId)},
+                null,
+                null,
+                null,
+                null);
+
+        // такой существует ?
+        if(cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
     //получить id-phone пользователя
     private  long getUserId(){
+        // возваращает id текущего пользователя
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
         long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
         return userId;
     }
 
-    private void createProfileData(){
+    private long getUserId(Long serviceId){
+        //возвращает id юзера указанного сервиса
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        // нужно вернуть: userID из Users
+        // используем таблицы: Services and Users
+        // Условие: по заданному serviceID
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_USERS + ", "
+                        + DBHelper.TABLE_CONTACTS_SERVICES
+                        + " WHERE "
+                        + DBHelper.TABLE_CONTACTS_SERVICES +"." + DBHelper.KEY_ID + " = ?"
+                        + " AND "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
+                        " = "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
+
+        Cursor cursor = database.rawQuery(sqlQuery,new String[] {String.valueOf(serviceId)});
+
+        Long userId;
+
+        if(cursor.moveToFirst()){
+            int indexUserId = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+
+            userId = cursor.getLong(indexUserId);
+        }
+        else {
+            //при присвоении значения лонг, надо добюавлять "L"
+            userId = -1L; // но такого быть не может
+        }
+
+        return userId;
+    }
+
+    private void createProfileData(Long _userId){
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        String userId = String.valueOf(getUserId());
-        String sqlQuert =
+        String userId = String.valueOf(_userId);
+        String sqlQuery =
                 "SELECT "
                 + DBHelper.KEY_NAME_USERS + ", "
                 + DBHelper.KEY_SURNAME_USERS + ", "
@@ -173,14 +265,12 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
                 + " WHERE "
                 + DBHelper.KEY_USER_ID + " = ?";
 
-        Cursor cursor = database.rawQuery(sqlQuert,new String[] {userId});
+        Cursor cursor = database.rawQuery(sqlQuery,new String[] {userId});
 
         if(cursor.moveToFirst()){
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
             int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
             int indexCity = cursor . getColumnIndex(DBHelper.KEY_CITY_USERS);
-
-            Log.d(TAG, " ");
             nameText.setText(cursor.getString(indexName));
             surnameText.setText(cursor.getString(indexSurname));
             cityText.setText(cursor.getString(indexCity));
@@ -230,7 +320,6 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void getMyServices(SQLiteDatabase database, long userId) {
-
         // нужно вернуть, имя, фамилию, город, название услуги, цену, оценку (пока без оценки)
         // используем 2 таблицы - юзеры и сервисы
         // связываем их по номеру телефона юзеров, уточняем юзера по его id
@@ -239,8 +328,6 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
                         + ", " + DBHelper.KEY_ID
                         + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
                         + " WHERE " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID + " = ?";
-
-        Log.d(TAG, "query " + sqlQuery);
         Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(userId)});
 
         if(cursor.moveToFirst()){
@@ -283,13 +370,19 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
 
-        addNewOrders();
-        addNewServices();
+        long userId = getUserId();
+        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+
+        if(isMyService(serviceId,userId)){
+            // если это мой сервис
+            addNewOrders(userId);
+            addNewServices(userId);
+            createProfileData(userId);
+        }
     }
 
-    private void addNewServices() {
+    private void addNewServices(Long userId) {
         int visibleCount = servicesLayout.getChildCount();
-        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = database.query(
@@ -322,9 +415,8 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         cursor.close();
     }
 
-    private void addNewOrders() {
+    private void addNewOrders(Long userId) {
         int visibleCount = ordersLayout.getChildCount();
-        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         String sqlQuery =
@@ -395,6 +487,14 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
 
     private void goToMainScreen() {
         Intent intent = new Intent(this, mainScreen.class);
+        startActivity(intent);
+    }
+
+    private void goToEditProfile() {
+        Intent intent = new Intent(this, editProfile.class);
+        intent.putExtra(USER_NAME, nameText.getText());
+        intent.putExtra(USER_SURNAME, surnameText.getText());
+        intent.putExtra(USER_CITY, cityText.getText());
         startActivity(intent);
     }
 

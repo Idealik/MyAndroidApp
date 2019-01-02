@@ -30,6 +30,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
 
     Button editScheduleBtn;
     Button editServiceBtn;
+    Button profileBtn;
 
     DBHelper dbHelper;
 
@@ -44,6 +45,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
 
         editScheduleBtn = findViewById(R.id.editScheduleGuestServiceBtn);
         editServiceBtn = findViewById(R.id.editServiceGuestServiceBtn);
+        profileBtn = findViewById(R.id.profileGuestServiceBtn);
 
         dbHelper = new DBHelper(this);
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
@@ -67,6 +69,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         }
         editScheduleBtn.setOnClickListener(this);
         editServiceBtn.setOnClickListener(this);
+        profileBtn.setOnClickListener(this);
 
     }
 
@@ -84,6 +87,8 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
             case R.id.editServiceGuestServiceBtn:
                 goToEditService();
             break;
+            case R.id.profileGuestServiceBtn:
+                goToProfile();
             default: break;
         }
     }
@@ -144,8 +149,6 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
 
     private void goToMyCalendar(String status) {
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-        Log.d(TAG, serviceId + " ");
-        Log.d(TAG, status + " ");
 
         Intent intent = new Intent(this, myCalendar.class);
         intent.putExtra(SERVICE_ID, serviceId);
@@ -165,6 +168,15 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         intent.putExtra(NAME_SERVICE, name);
         intent.putExtra(COST_SERVICE, cost);
         intent.putExtra(DESCRIPTION_SERVICE, description);
+
+        startActivity(intent);
+    }
+
+    private void goToProfile(){
+        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+
+        Intent intent = new Intent(this, profile.class);
+        intent.putExtra(SERVICE_ID, serviceId);
 
         startActivity(intent);
     }
