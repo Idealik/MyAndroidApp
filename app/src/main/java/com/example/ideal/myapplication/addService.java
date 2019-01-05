@@ -14,8 +14,6 @@ import android.widget.Toast;
 
 public class addService extends AppCompatActivity implements View.OnClickListener {
 
-    // сказать, что случайно удалил readBtn
-    final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
     final String SERVICE_ID = "service id";
@@ -29,19 +27,16 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     
     DBHelper dbHelper;
 
-    SharedPreferences sPref;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_service);
-        Log.d(TAG, "ADD SERVICE");
-        addServicesBtn = (Button) findViewById(R.id.addServiceAddServiceBtn);
 
-        nameServiceInput = (EditText) findViewById(R.id.nameAddServiceInput);
-        costAddServiceInput = (EditText) findViewById(R.id.costAddServiceInput);
-        descriptonServiceInput = (EditText) findViewById(R.id.descriptionAddServiceInput);
+        addServicesBtn = findViewById(R.id.addServiceAddServiceBtn);
+
+        nameServiceInput = findViewById(R.id.nameAddServiceInput);
+        costAddServiceInput = findViewById(R.id.costAddServiceInput);
+        descriptonServiceInput = findViewById(R.id.descriptionAddServiceInput);
         
         dbHelper = new DBHelper(this);
 
@@ -54,7 +49,17 @@ public class addService extends AppCompatActivity implements View.OnClickListene
 
         switch (v.getId()){
             case R.id.addServiceAddServiceBtn:
-                addService(database);
+                String name = nameServiceInput.getText().toString();
+
+                if(isCorrectData(name)) {
+                    addService(name, database);
+                }
+                else {
+                    Toast.makeText(
+                            this,
+                            "Название сервиса должно содержать только буквы",
+                            Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             default:
@@ -62,32 +67,28 @@ public class addService extends AppCompatActivity implements View.OnClickListene
         }
     }
 
-    private boolean addService(SQLiteDatabase database){
-        String name = nameServiceInput.getText().toString();
+    private boolean addService(String name, SQLiteDatabase database){
         String cost = costAddServiceInput.getText().toString();
         String description = descriptonServiceInput.getText().toString();
 
+        //Проверка на заполненность полей
         if(isFullInputs(name,cost,description)){
             String userId = getUserId();
 
+            //добавление в БД
             ContentValues contentValues = new ContentValues();
-            //добавление в сервис данных
-            contentValues.put(DBHelper.KEY_NAME_SERVICES, name);
+            contentValues.put(DBHelper.KEY_NAME_SERVICES, name.toLowerCase());
             contentValues.put(DBHelper.KEY_MIN_COST_SERVICES, cost);
-            contentValues.put(DBHelper.KEY_DESCRIPTION_SERVICES, description);
-            // добавление id пользователя в таблицу сервисов, чтобы потом использовать в mainScreen
+            contentValues.put(DBHelper.KEY_DESCRIPTION_SERVICES, description.toLowerCase());
             contentValues.put(DBHelper.KEY_USER_ID, userId);
 
             long serviceId = database.insert(DBHelper.TABLE_CONTACTS_SERVICES,null,contentValues);
-            Log.d(TAG, ""+serviceId);
+            goToMyCalendar(getString(R.string.status_worker),serviceId);
 
-            goToMyCalendar("worker",serviceId);
-
-            Log.d(TAG, "reg was successfull");
             return  true;
         }
         else {
-            Toast.makeText(this, "Не все поля заполнены", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.empty_field), Toast.LENGTH_SHORT).show();
             return  false;
         }
     }
@@ -95,26 +96,34 @@ public class addService extends AppCompatActivity implements View.OnClickListene
     protected Boolean isFullInputs(String name, String cost, String description){
         if(name.trim().equals("")) return false;
         if(cost.trim().equals("")) return false;
-        if(description.trim().equals("") ) return false;
+        if(description.trim().equals("")) return false;
 
         return  true;
     }
 
+    protected boolean isCorrectData(String data){
 
-    private  String getUserId(){
-        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        String userId = sPref.getString(PHONE, "-");
+        if(!data.matches("[a-zA-ZА-Яа-я]+")) return false;
+        if(data.length()<0) return false;
+
+        return true;
+    }
+
+
+    private String getUserId(){
+        SharedPreferences sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
+        String userId = sPref.getString(PHONE, getString(R.string.defult_value));
 
         return userId;
     }
 
     private void goToMyCalendar(String status, Long serviceId) {
-        Log.d(TAG, serviceId + " ");
         Intent intent = new Intent(this, myCalendar.class);
         intent.putExtra(SERVICE_ID, serviceId);
         intent.putExtra(STATUS_USER_BY_SERVICE, status);
 
         startActivity(intent);
+        finish();
     }
 }
 

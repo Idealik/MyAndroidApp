@@ -31,7 +31,6 @@ public class editProfile extends AppCompatActivity implements View.OnClickListen
     DBHelper dbHelper;
     SharedPreferences sPref;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +40,7 @@ public class editProfile extends AppCompatActivity implements View.OnClickListen
         surnameInput = findViewById(R.id.surnameEditProfileInput);
         cityInput = findViewById(R.id.cityEditProfileInput);
         phoneInput = findViewById(R.id.phoneEditProfileInput);
-
         editBtn = findViewById(R.id.editProfileEditProfileBtn);
-
 
         nameInput.setText(getIntent().getStringExtra(USER_NAME));
         surnameInput.setText(getIntent().getStringExtra(USER_SURNAME));
@@ -63,22 +60,26 @@ public class editProfile extends AppCompatActivity implements View.OnClickListen
             case R.id.editProfileEditProfileBtn:
                 SQLiteDatabase database = dbHelper.getReadableDatabase();
                 String phone = phoneInput.getText().toString();
+
+                //Проверка изменённого номеа
                 if(phone.length() > 0) {
+                    //Этот номер никем не используется или не изменён?
                     if (isFreePhone(database, phone) || phone.equals(oldPhone)) {
-                        editInfoInDataBase();
+                        updateInfoInDataBase();
                         savePhone(phone);
                         finish();
                     } else {
-                        Toast.makeText(this, "Этот номер телефона используется другим пользователем", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.this_phone_is_already_usead), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, "Поле с номером телефона не может быть пустым", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.empty_phone_field), Toast.LENGTH_SHORT).show();
                 }
             break;
         }
     }
 
-    private void editInfoInDataBase() {
+    //Обновление информации в БД
+    private void updateInfoInDataBase() {
         String name = nameInput.getText().toString();
         String surname = surnameInput.getText().toString();
         String city = cityInput.getText().toString();
@@ -87,7 +88,6 @@ public class editProfile extends AppCompatActivity implements View.OnClickListen
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-
         if(name.length()!=0) contentValues.put(DBHelper.KEY_NAME_USERS, name);
         if(surname.length()!=0) contentValues.put(DBHelper.KEY_SURNAME_USERS, surname);
         if(city.length()!=0) contentValues.put(DBHelper.KEY_CITY_USERS, city);

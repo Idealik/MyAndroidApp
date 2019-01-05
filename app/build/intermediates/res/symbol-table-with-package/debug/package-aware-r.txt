@@ -387,6 +387,7 @@ color button_material_light
 color colorAccent
 color colorPrimary
 color colorPrimaryDark
+color dayWithTimes
 color dim_foreground_disabled_material_dark
 color dim_foreground_disabled_material_light
 color dim_foreground_material_dark
@@ -1007,8 +1008,11 @@ string app_name
 string city
 string cityRegistration
 string costAddServiceTB
+string defult_value
 string delUser
 string edit
+string empty_field
+string empty_phone_field
 string findServices
 string goToAuthor
 string hello_blank_fragment
@@ -1027,8 +1031,10 @@ string regUser
 string search_menu_title
 string selectedId
 string status_bar_notification_info_overflow
+string status_worker
 string surnameEditProfileInput
 string surnameRegistration
+string this_phone_is_already_usead
 string yearId
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light

@@ -18,7 +18,6 @@ import com.example.ideal.myapplication.guestService;
 @SuppressLint("ValidFragment")
 public class foundServiceProfileElement extends Fragment implements View.OnClickListener {
 
-    final String TAG = "DBInf";
     final String SERVICE_ID = "service id";
 
     TextView nameText;
@@ -41,7 +40,6 @@ public class foundServiceProfileElement extends Fragment implements View.OnClick
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         nameText = view.findViewById(R.id.serviceNameFoundServiceProfileElementText);
-        Log.d(TAG, "onViewCreated: ");
         nameText.setOnClickListener(this);
         setData();
     }

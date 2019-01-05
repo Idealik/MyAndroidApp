@@ -55,11 +55,11 @@ public class authorization extends AppCompatActivity implements View.OnClickList
             if (confirmed) goToProfile();
         }
 
-        logInBtn = (Button) findViewById(R.id.logInAuthorizationBtn);
-        registrateBtn = (Button) findViewById(R.id.registrationAuthorizationBtn);
+        logInBtn = findViewById(R.id.logInAuthorizationBtn);
+        registrateBtn = findViewById(R.id.registrationAuthorizationBtn);
 
-        phoneInput = (EditText) findViewById(R.id.phoneAuthorizationInput);
-        passInput = (EditText) findViewById(R.id.passAuthorizationInput);
+        phoneInput = findViewById(R.id.phoneAuthorizationInput);
+        passInput = findViewById(R.id.passAuthorizationInput);
 
         logInBtn.setOnClickListener(this);
         registrateBtn.setOnClickListener(this);
@@ -88,11 +88,11 @@ public class authorization extends AppCompatActivity implements View.OnClickList
 
     private void logIn(boolean confirmed, String phone, String pass){
         if(confirmed){
-            // сохраняем статус
+            //сохраняем статус
             saveStatus();
             //сохраяем номер пользователя и пароль
             saveIdAndPass(phone,pass);
-            // переходим в профиль (тут был гет статус)
+            //переходим в профиль
             goToProfile();
         }
         else {

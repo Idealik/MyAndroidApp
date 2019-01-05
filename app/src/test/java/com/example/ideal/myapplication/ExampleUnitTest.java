@@ -59,26 +59,87 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public  void Inputs_CannotBeEmptyReg(){
+    public void Inputs_ContainsOneSymbols(){
         registration reg = new registration();
-        assertTrue(reg.isFullInputs("147", "11", "asd" ));
-    }
-    @Test
-    public  void Inputs_CannotBeEmptyNameIsEmptyReg(){
-        registration reg = new registration();
-        assertFalse(reg.isFullInputs("   ", "11", "asd" ));
-    }
-    @Test
-    public  void Inputs_CannotBeEmptyCostIsEmptyReg(){
-        registration reg = new registration();
-        assertFalse(reg.isFullInputs("name", "", "asd" ));
-    }
-    @Test
-    public  void Inputs_CannotBeEmptyDescrIsEmptyReg(){
-        registration reg = new registration();
-        assertFalse(reg.isFullInputs("name", "s", "" ));
+
+        assertTrue(reg.isCorrectData("A"));
     }
 
+    @Test
+    public void Inputs_ContainsOnlyEngSymbolsUp(){
+        registration reg = new registration();
+
+        assertTrue(reg.isCorrectData("AASSSDD"));
+    }
+
+    @Test
+    public void Inputs_ContainsOnlyEngSymbolsLow(){
+        registration reg = new registration();
+
+        assertTrue(reg.isCorrectData("assdew"));
+    }
+
+    @Test
+    public void Inputs_ContainsOnlyEngSymbolsLowAndUp(){
+        registration reg = new registration();
+
+        assertTrue(reg.isCorrectData("aSSdew"));
+    }
+
+    @Test
+    public void Inputs_ContainsOnlyRusSymbolsUp(){
+        registration reg = new registration();
+
+        assertTrue(reg.isCorrectData("ЫЫЫВВ"));
+    }
+
+    @Test
+    public void Inputs_ContainsOnlyRusSymbolsLow(){
+        registration reg = new registration();
+
+        assertTrue(reg.isCorrectData("ыыуцуйй"));
+    }
+
+    @Test
+    public void Inputs_ContainsOnlyRusSymbolsLowAndUp(){
+        registration reg = new registration();
+
+        assertTrue(reg.isCorrectData("ЦУЙЙцпПуЫЫуйй"));
+    }
+
+    @Test
+    public void Inputs_ContainsOnlyRusAndEngSymbolsLowAndUp(){
+        registration reg = new registration();
+
+        assertTrue(reg.isCorrectData("ASDDEWывыввыцу"));
+    }
+
+    @Test
+    public void Inputs_CantContainsNumber(){
+        registration reg = new registration();
+
+        assertFalse(reg.isCorrectData("Sы123456789"));
+    }
+    @Test
+    public void Inputs_CantContainsSpecialSymbol(){
+        registration reg = new registration();
+
+        assertFalse(reg.isCorrectData("Sы!@#$%^&*()_+"));
+    }
+
+    @Test
+    public void Inputs_CantContainsSpace(){
+        registration reg = new registration();
+
+        assertFalse(reg.isCorrectData("Sы ывцУ"));
+    }
+
+    @Test
+    public void Inputs_CantBeNull(){
+        registration reg = new registration();
+
+        assertFalse(reg.isCorrectData(""));
+    }
 
 }
 

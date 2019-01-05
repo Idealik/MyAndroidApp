@@ -16,13 +16,13 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ideal.myapplication.fragments.foundOrderElement;
 import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
 
 public class profile extends AppCompatActivity implements View.OnClickListener {
 
-    final String TAG = "DBInf";
     final String PHONE = "phone";
     final String FILE_NAME = "Info";
     final String STATUS = "status";
@@ -61,11 +61,11 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
 
-        logOutBtn = (Button) findViewById(R.id.logOutProfileBtn);
-        findServicesBtn = (Button) findViewById(R.id.findServicesProfileBtn);
-        addServicesBtn = (Button) findViewById(R.id.addServicesProfileBtn);
-        mainScreenBtn = (Button) findViewById(R.id.mainScreenProfileBtn);
-        editProfileBtn = (Button) findViewById(R.id.editProfileBtn);
+        logOutBtn = findViewById(R.id.logOutProfileBtn);
+        findServicesBtn = findViewById(R.id.findServicesProfileBtn);
+        addServicesBtn = findViewById(R.id.addServicesProfileBtn);
+        mainScreenBtn = findViewById(R.id.mainScreenProfileBtn);
+        editProfileBtn = findViewById(R.id.editProfileBtn);
 
         servicesOrOrdersSwitch = findViewById(R.id.servicesOrOrdersProfileSwitch);
 
@@ -82,11 +82,11 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
 
         manager = getSupportFragmentManager();
 
+
         //получаем id пользователя
         long userId = getUserId();
         // получаем сервис пользователя, если он заходит к себе в профиль, то -1
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-        Log.d(TAG, "Before if user id = " + userId + "  sI = " + serviceId);
 
         // идет проверка, относится ли этот сервис к пользователю, чтобы дать соответствующий функционал
         if(isMyService(serviceId,userId)){
@@ -99,6 +99,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             createProfileData(userId);
             servicesLayout.setVisibility(View.INVISIBLE);
             servicesScroll.setVisibility(View.INVISIBLE);
+
 
             servicesOrOrdersSwitch.setOnCheckedChangeListener(new SwitchCompat.OnCheckedChangeListener() {
                 @Override
@@ -128,7 +129,6 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             editProfileBtn.setVisibility(View.INVISIBLE);
             // получаем id user, которому принадлжеит сервис
             userId = getUserId(serviceId);
-            Log.d(TAG, "user id = " + userId);
 
             // подгружаем данные о пользователе
             createProfileData(userId);
@@ -200,6 +200,9 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     private void createOrdersList(Long userId){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
+        // получаем id сервиса, имя сервиса, дату и время всех записей
+        // Из 3-х таблиц: сервисы, рабочие дни, рабочие время
+        // Условие: связка таблиц по id сервиса и id рабочего дня; уточняем пользователя по id
         String sqlQuery =
                 "SELECT "
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + ", "
@@ -241,9 +244,9 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     private void createServicesList(long userId){
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-        // нужно вернуть, имя, фамилию, город, название услуги, цену, оценку (пока без оценки)
-        // используем 2 таблицы - юзеры и сервисы
-        // связываем их по номеру телефона юзеров, уточняем юзера по его id
+        // нужно вернуть имя сервиса и оценку(пока без оценки)
+        // используем таблицу сервисы
+        // уточняем юзера по его id
         String sqlQuery =
                 "SELECT " +  DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES
                         + ", " + DBHelper.KEY_ID
@@ -297,7 +300,6 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         Cursor cursor = database.rawQuery(sqlQuery,new String[] {String.valueOf(serviceId)});
 
         Long userId;
-
         if(cursor.moveToFirst()){
             int indexUserId = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
             userId = cursor.getLong(indexUserId);
@@ -309,11 +311,14 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
 
         return userId;
     }
+
     // получаем данные о пользователе и отображаем в прфоиле
     private void createProfileData(Long _userId){
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         String userId = String.valueOf(_userId);
+
+        //получаем имя, фамилию и город пользователя по его id
         String sqlQuery =
                 "SELECT "
                 + DBHelper.KEY_NAME_USERS + ", "
@@ -330,9 +335,15 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
             int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
             int indexCity = cursor . getColumnIndex(DBHelper.KEY_CITY_USERS);
-            nameText.setText(cursor.getString(indexName));
-            surnameText.setText(cursor.getString(indexSurname));
-            cityText.setText(cursor.getString(indexCity));
+            String name = cursor.getString(indexName).substring(0, 1).toUpperCase()
+                    + cursor.getString(indexName).substring(1);
+            String surname = cursor.getString(indexSurname).substring(0, 1).toUpperCase()
+                    + cursor.getString(indexSurname).substring(1);
+            String city = cursor.getString(indexCity).substring(0, 1).toUpperCase()
+                    + cursor.getString(indexCity).substring(1);
+            nameText.setText(name);
+            surnameText.setText(surname);
+            cityText.setText(city);
         }
     }
 
@@ -350,45 +361,56 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             createProfileData(userId);
         }
     }
-    //Переписать курсор Валентину, написать комметарии к курсору и что выполняет метод
+
+    //добавляет вновь добавленный сервис (обновление serviceList)
     private void addNewServices(Long userId) {
+        //количество сервисов отображаемых на данный момент(старых)
         int visibleCount = servicesLayout.getChildCount();
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        Cursor cursor = database.query(
-                DBHelper.TABLE_CONTACTS_SERVICES,
-                new String[]{DBHelper.KEY_ID, DBHelper.KEY_NAME_SERVICES},
-                DBHelper.KEY_USER_ID + " = ? ",
-                new String[]{String.valueOf(userId)},
-                null,
-                null,
-                null,
-                null);
+        //Получаем id и имя сервисов по id пользователя
+        String sqlQuery =
+                "SELECT "
+                + DBHelper.KEY_ID + ", "
+                + DBHelper.KEY_NAME_SERVICES
+                + " FROM "
+                + DBHelper.TABLE_CONTACTS_SERVICES
+                + " WHERE "
+                + DBHelper.KEY_USER_ID + " = ? ";
 
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(userId)});
+
+        //Проверка на наличие вновь добавленных сервисов
         if(cursor.getCount() > visibleCount) {
+            //Идём с конца
             if(cursor.moveToLast()){
                 int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
                 int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
                 int countOfNewOrders = 0;
 
                 do{
-                    //  формирую сообщения, в будущем тут будем формировать объект
                     String foundId = cursor.getString(indexId);
                     String foundNameService = cursor.getString(indexNameService);
 
                     addServiceToScreen(foundId, foundNameService);
 
                     countOfNewOrders++;
+                    //пока в курсоре есть строки и есть новые сервисы
                 }while (cursor.moveToPrevious() && countOfNewOrders<(cursor.getCount() - visibleCount));
             }
         }
         cursor.close();
     }
 
+    //добавляет вновь добавленные записи (обновление ordersList)
     private void addNewOrders(Long userId) {
+        // количство записей отображаемых на данный момент(старых)
         int visibleCount = ordersLayout.getChildCount();
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
+        // получаем id сервиса, имя сервиса, дату и время всех записей
+        // Из 3-х таблиц: сервисы, рабочие дни, рабочие время
+        // Условие: связка таблиц по id сервиса и id рабочего дня; уточняем пользователя по id
         String sqlQuery =
                 "SELECT "
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + ", "
@@ -408,7 +430,9 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
 
         Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(userId)});
 
+        //если есть новые записи
         if(cursor.getCount() > visibleCount) {
+            //Идём с конца
             if(cursor.moveToLast()){
                 int indexServiceId = cursor.getColumnIndex(DBHelper.KEY_ID);
                 int indexServiceName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
@@ -426,6 +450,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
                     addOrderToScreen(foundId, foundName, foundDate, foundTime);
 
                     countOfNewOrders++;
+                    //пока в курсоре есть строки и есть новые записи
                 }while (cursor.moveToPrevious() && countOfNewOrders<(cursor.getCount() - visibleCount));
             }
         }
@@ -447,6 +472,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         transaction.add(R.id.ordersProfileLayout, fOrderElement);
         transaction.commit();
     }
+
     //Анулировать статус при выходе
     private void annulStatus() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);

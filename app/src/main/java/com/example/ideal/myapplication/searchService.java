@@ -26,27 +26,22 @@ import java.util.Iterator;
 
 public class searchService extends FragmentActivity implements View.OnClickListener {
     // сначала идут константы
-    final String TAG = "DBInf";
     final String FILE_NAME = "Info";
     final String PHONE = "phone";
 
     String city = "Город";
 
-    // кнопки
     Button findBtn;
 
-    //editTEXT
     EditText searchLineSearchServiceInput;
 
-    //Spinner
+    //Выпадающее меню
     Spinner citySpinner;
 
     //Вертикальный лэйаут
     LinearLayout resultLayout;
 
-    //бд
     DBHelper dbHelper;
-
     SharedPreferences sPref;
 
     private foundServiceElement fElement;
@@ -60,7 +55,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
         findBtn = findViewById(R.id.findServiceSearchServiceBtn);
 
-
+        //создаём выпадающее меню на основе массива городов
         citySpinner = findViewById(R.id.citySearchServiceSpinner);
         citySpinner.setPrompt("Город");
         ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.cities, android.R.layout.simple_spinner_item);
@@ -73,10 +68,11 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         dbHelper = new DBHelper(this);
         manager = getSupportFragmentManager();
 
-        createMainScreen();
+        showServicesInHomeTown();
 
         findBtn.setOnClickListener(this);
 
+        //отслеживаем смену городов в выпадающем меню
         citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View itemSelected, int selectedItemPosition, long selectedId) {
                 TextView cityText = (TextView)itemSelected;
@@ -89,7 +85,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.findServiceSearchServiceBtn:
                 if(!search()) {
@@ -102,11 +97,12 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         }
     }
 
-    private void createMainScreen() {
+    private void showServicesInHomeTown() {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         //получаем id пользователя
         String userId = getUserId();
+
         //получаем город юзера
         String userCity = getUserCity(database, userId);
 
@@ -114,6 +110,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         getServicesInThisCity(database, userCity);
     }
 
+    // Получает id пользователя
     private String getUserId() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         String userId = sPref.getString(PHONE, "-");
@@ -121,12 +118,18 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         return userId;
     }
 
+    //Получает город пользователя
     private String getUserCity(SQLiteDatabase database, String userId) {
-        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS_USERS,
-                new String[]{DBHelper.KEY_CITY_USERS},
-                DBHelper.KEY_USER_ID + " = ?",
-                new String[]{userId},
-                null, null, null);
+
+        // Получить город юзера
+        // Таблица Users
+        // уточняем по id юзера
+        String sqlQuery =
+                "SELECT " + DBHelper.KEY_CITY_USERS
+                        + " FROM " + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE " + DBHelper.KEY_USER_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {userId});
 
         int indexCity = cursor.getColumnIndex(DBHelper.KEY_CITY_USERS);
 
@@ -139,19 +142,29 @@ public class searchService extends FragmentActivity implements View.OnClickListe
     }
 
     private void getServicesInThisCity(SQLiteDatabase database, String userCity) {
-        int limitOfService = 10; //максимальное количество выводимых предложений
-        //запрос в бд сравнивает номера в табилце юзер и сервис, а также учитывает город
+        //максимальное количество выводимых предложений
+        int limitOfService = 10;
+
+        //вернуть имя юзера, фамилию, город, имя сервиса, цену сервиса, id сервиса
+        //таблицы: Services & Users
+        //Условия: связь таблиц по id юзера; уточняем по городу
         String sqlQuery =
                 "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
-                        + DBHelper.KEY_SURNAME_USERS + ", " + DBHelper.KEY_CITY_USERS
-                        + ", " + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES
-                        + ", " + DBHelper.KEY_MIN_COST_SERVICES + ", " + DBHelper.KEY_ID
-                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", " + DBHelper.TABLE_CONTACTS_USERS
-                        + " WHERE " + "LOWER(" + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_CITY_USERS + ") = ?"
+                        + DBHelper.KEY_SURNAME_USERS + ", "
+                        + DBHelper.KEY_CITY_USERS+ ", "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES + ", "
+                        + DBHelper.KEY_MIN_COST_SERVICES + ", "
+                        + DBHelper.KEY_ID
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + ", "
+                        + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE "
+                        + "LOWER(" + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_CITY_USERS + ") = ?"
                         + " AND "
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
                         " = "
                         + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
+
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{userCity.toLowerCase()});
 
         if (cursor.moveToFirst()) {
@@ -164,7 +177,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
             int indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
             int countOfFoundServices = 0;
             do {
-                //  формирую сообщения, в будущем тут будем формировать объект
                 String foundId = cursor.getString(indexId);
                 String foundNameUser = cursor.getString(indexNameUser);
                 String foundSurname = cursor.getString(indexSurname);
@@ -176,16 +188,18 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
                 countOfFoundServices++;
             } while (cursor.moveToNext() && countOfFoundServices < limitOfService);
-        } else {
-            Log.d(TAG, "DB is empty");
         }
         cursor.close();
     }
 
-    // после нажатия на кнопку
     private boolean search() {
-        String[] enteredWords = searchLineSearchServiceInput.getText().toString().split(" ");
+        // Массив введёных поисковых слов
+        String[] enteredWords = searchLineSearchServiceInput.getText().toString().toLowerCase().split(" ");
+
+        // Массив id сервисов которые являются результатом всего поиска
         ArrayList<Long> resultId = new ArrayList<>();
+
+        // Массив id сервисов которые являются результатом поиска по текущему слову
         ArrayList<Long> foundId = new ArrayList<>();
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
@@ -193,9 +207,16 @@ public class searchService extends FragmentActivity implements View.OnClickListe
 
         String cityCondition = "";
         boolean isCitySelected = !city.equals("Город");
+        //Проверка выбран ли город
         if(isCitySelected) {
+            //Город выбран
+            //Добавляем ещё одно условие
             cityCondition = " AND " + DBHelper.KEY_CITY_USERS + " = ?";
         }
+
+        // Вернуть id сервиса
+        // Таблицы: Services & Users
+        // Условие: связываем таблицы по id юзера; дополнительное условие на город; уточняет по имени сервиса ИЛИ имени юзера ИЛИ фамилии
         String sqlQuery =
                 "SELECT "
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID
@@ -213,8 +234,12 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                         + " OR "
                         + DBHelper.KEY_SURNAME_USERS + " = ?)";
 
+        //Проход по всем введённым поисковым словам
         for(String word : enteredWords) {
+            // Проверка выбран ли город
             if(isCitySelected) {
+                // Город выбран
+                // Вводим параметр для дополнительного условия
                 cursor = database.rawQuery(sqlQuery,new String[] {city, word, word, word});
             } else {
                 cursor = database.rawQuery(sqlQuery,new String[] {word, word, word});
@@ -224,6 +249,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
             if(cursor.moveToFirst()) {
                 int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
 
+                // Заполняем массив найденными id сервисов
                 do {
                     long id = cursor.getInt(indexId);
                     if(!foundId.contains(id)) {
@@ -232,50 +258,64 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                 } while (cursor.moveToNext());
             }
 
+
+            // Проверка найдено ли что-то
             if(foundId.isEmpty()) {
+                // Не найдено
                 return false;
             } else {
+                // Найдено
+                // Проверка это первое поисковое слово
                 if(resultId.isEmpty()) {
+                    // Данное поисковое слово первое
                     for(long id : foundId) {
+                        // Добавляем все найденные id в конечный массив
                         resultId.add(id);
                     }
                 } else {
-                    Log.d(TAG, resultId + " ");
+                    // Данное поисковое слово не первое
+                    // Проверяем все id из конечного массива
                     for(Iterator<Long> it = resultId.iterator(); it.hasNext(); ) {
                         long id = it.next();
+                        // Проверка найден ли данный id по новому слову
                         if(!foundId.contains(id)) {
+                            // Не найден
+                            // Удаляем данный id из конечного массива
                             it.remove();
 
+                            // Проверка конечный массив пуст?
                             if(resultId.isEmpty()) {
+                                //Массив пуст
                                 return false;
                             }
                         }
                     }
                 }
+                // Очищаем массив найденных id для следующего слова
                 foundId.clear();
             }
         }
 
-        Log.d(TAG, resultId+"");
-
-
+        //вернуть имя и фамилию юзера, город, имя сервиса, цену
+        //таблицы Services, Users
+        //Условия связь таблиц по id юзера; уточняем id сервиса
         sqlQuery =
-                "SELECT " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
+                "SELECT "
+                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_NAME_USERS + ", "
                         + DBHelper.KEY_SURNAME_USERS + ", "
                         + DBHelper.KEY_CITY_USERS+ ", "
                         + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES + ", "
                         + DBHelper.KEY_MIN_COST_SERVICES
-                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES + ", "
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES + ", "
                         + DBHelper.TABLE_CONTACTS_USERS
-                        + " WHERE " + DBHelper.KEY_ID + " = ?"
+                        + " WHERE "
+                        + DBHelper.KEY_ID + " = ?"
                         + " AND "
-                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID +
-                        " = "
-                        + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
-
-
+                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_USER_ID + " = " + DBHelper.TABLE_CONTACTS_USERS + "." + DBHelper.KEY_USER_ID;
 
         int indexNameUser, indexSurname, indexCity, indexNameService, indexMinCost;
+        // Обработка конечного массива с id сервисов
         for(long id : resultId) {
             cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(id)});
 
@@ -287,7 +327,6 @@ public class searchService extends FragmentActivity implements View.OnClickListe
                 indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
                 indexMinCost = cursor.getColumnIndex(DBHelper.KEY_MIN_COST_SERVICES);
 
-                //  формирую сообщения, в будущем тут будем формировать объект
                 String foundNameUser = cursor.getString(indexNameUser);
                 String foundSurname = cursor.getString(indexSurname);
                 String foundCity = cursor.getString(indexCity);
@@ -300,6 +339,7 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         return true;
     }
 
+    // Вывод фрагмента сервиса на экран
     private void addToScreen(String id, String foundNameUser, String foundSurname, String foundCity,
                              String foundNameService, String foundCost ) {
         resultLayout.removeAllViews();
@@ -310,6 +350,4 @@ public class searchService extends FragmentActivity implements View.OnClickListe
         transaction.add(R.id.resultSearchServiceLayout, fElement);
         transaction.commit();
     }
-
-
 }

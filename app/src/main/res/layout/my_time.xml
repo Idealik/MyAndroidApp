@@ -33,7 +33,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:checked="false"
-        android:text="My orders"
+        android:text="Первая половина дня"
         android:textOff="AM"
         android:textOn="PM"
         app:layout_constraintBottom_toTopOf="@+id/saveMyTimeBtn"

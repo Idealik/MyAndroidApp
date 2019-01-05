@@ -16,5 +16,6 @@
     <color name="activeButton">#FFFFFF</color>
     <color name="disabledButton">#7fffffff</color>
     <color name="selectedButton">#ffd646</color>
+    <color name="dayWithTimes">#0091B7</color>
 
 </resources>

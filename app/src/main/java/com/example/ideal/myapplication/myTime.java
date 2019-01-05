@@ -20,26 +20,28 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class myTime extends AppCompatActivity  implements View.OnClickListener {
-    final String TAG = "DBInf";
-    final String FILE_NAME = "Info";
-    final String PHONE = "phone";
-    final String WORKING_DAYS_ID = "working days id";
-    final String STATUS_USER_BY_SERVICE = "status user";
+
+    private final String FILE_NAME = "Info";
+    private final String PHONE = "phone";
+    private final String WORKING_DAYS_ID = "working days id";
+    private final String STATUS_USER_BY_SERVICE = "status user";
+    private final int ROWS_COUNT = 6;
+    private final int COLUMNS_COUNT = 4;
 
     String statusUser;
     String userId;
     String workingDaysId;
     int width;
     int height;
-    boolean hasCurrentHours;
 
     Button[][] timeBtns;
     Button saveBtn;
 
-    // чтобы сохранять несколько выбранных часов надо создать массив,
-    // куда будем добавлять текст выбранной кнопки?
+    //временный буфер добавленного рабочего времени
     ArrayList<String> workingHours;
+    //временный буфер удалённого рабочего времени
     ArrayList<String> removedHours;
+    //
     ArrayList<String> currentHours;
 
     SwitchCompat amOrPmMyTimeSwitch;
@@ -47,8 +49,6 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
     DBHelper dbHelper;
     SharedPreferences sPref;
     RelativeLayout mainLayout;
-
-
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -59,122 +59,74 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         statusUser = getIntent().getStringExtra(STATUS_USER_BY_SERVICE);
         userId = getUserId();
 
-        dbHelper = new DBHelper(this);
-
         mainLayout = findViewById(R.id.mainMyTimeLayout);
 
-        timeBtns = new Button[7][4];
+        timeBtns = new Button[ROWS_COUNT][COLUMNS_COUNT];
         saveBtn = findViewById(R.id.saveMyTimeBtn);
 
         amOrPmMyTimeSwitch = findViewById(R.id.amOrPmMyTimeSwitch);
 
+        //инициализация буферов
         workingHours = new ArrayList<>();
         removedHours = new ArrayList<>();
         currentHours = new ArrayList<>();
 
+        //получение парамтров экрана
         Display display = getWindowManager().getDefaultDisplay();
-         width = display.getWidth();
-         height = display.getHeight();
+        width = display.getWidth();
+        height = display.getHeight();
 
         addButtonsOnScreen(width,height, false);
+
+        dbHelper = new DBHelper(this);
 
         checkCurrentTimes();
 
         amOrPmMyTimeSwitch.setOnCheckedChangeListener(new SwitchCompat.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isPm) {
+                // Очищаем layout
+                mainLayout.removeAllViews();
+                if(isPm) {
                     buttonView.setText("Вторая половина дня");
-                    // сначала очищаем layout
-                    mainLayout.removeAllViews();
                     // создаем кнопки с нужным временем
-                    addButtonsOnScreen(width,height,isChecked);
-                    checkCurrentTimes();
+                    addButtonsOnScreen(width,height, true);
 
                 } else {
                     buttonView.setText("Первая половина дня");
-                    // сначала очищаем layout
-                    mainLayout.removeAllViews();
                     // создаем кнопки с нужным временем
-                    addButtonsOnScreen(width,height,isChecked);
-                    checkCurrentTimes();
+                    addButtonsOnScreen(width,height, false);
                 }
+                // Выделяет кнопки
+                checkCurrentTimes();
+                // Выделяет кнопки хронящиеся в буфере рабочих дней
+                checkWorkingHours();
+                // Снимает выделение с кнопок хронящихся в буфере удалённых дней
+                checkRemovedHours();
             }
         });
 
         saveBtn.setOnClickListener(this);
     }
 
-    private void checkCurrentTimes() {
-        workingDaysId = String.valueOf(getIntent().getLongExtra(WORKING_DAYS_ID, -1));
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        Cursor cursor = database.query(
-                DBHelper.TABLE_WORKING_TIME,
-                new String[]{DBHelper.KEY_TIME_WORKING_TIME,DBHelper.KEY_USER_ID},
-                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?",
-                new String[]{workingDaysId},
-                null,
-                null,
-                null,
-                null);
-        //если уже есть запись, то он не пустой
-        hasCurrentHours =  isWorkingHours(cursor); // становится не empty только если есть запись
-        Log.d(TAG, "size curHours " + currentHours.size());
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 4; j++) {
-                String time = (String) timeBtns[i][j].getText();
-                if (statusUser.equals("worker")) {
-                    if (hasTimeForWorker(cursor, time)) {
-                        timeBtns[i][j].setBackgroundResource(R.drawable.pressed_button);
-                        timeBtns[i][j].setTag(R.string.selectedId, true);
-
-                        if(!isFreeTime(cursor,time)){
-                            timeBtns[i][j].setEnabled(false);
-                            timeBtns[i][j].setTag(R.string.selectedId, true);
-                        }
-                    }
-                } else {
-                    if(!hasCurrentHours) {
-                        if (!isFreeTime(cursor, time)) {
-                            timeBtns[i][j].setBackgroundResource(R.drawable.disabled_button);
-                            timeBtns[i][j].setEnabled(false);
-                        }
-
-                        if (hasOrder(cursor, userId, time)) {
-                            timeBtns[i][j].setBackgroundResource(R.drawable.pressed_button);
-                            timeBtns[i][j].setTag(R.string.selectedId, true);
-                        }
-                    }else {
-                        if (hasOrder(cursor, userId, time)) {
-                            timeBtns[i][j].setBackgroundResource(R.drawable.pressed_button);
-                            timeBtns[i][j].setTag(R.string.selectedId, true);
-                        } else {
-                            timeBtns[i][j].setBackgroundResource(R.drawable.disabled_button);
-                            timeBtns[i][j].setEnabled(false);
-                        }
-                    }
-                }
-            }
-        }
-    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.saveMyTimeBtn:
                 if(statusUser.equals("worker")) {
-                    Log.d(TAG, "Worker pressed button");
                     if (workingHours.size() > 0) {
+                        // Добавляем время из буфера workingHours в БД
                         addTime();
                     }
                     if (removedHours.size() > 0) {
+                        // Удаляем время сохранённое в буфере removeHours в БД
                         deleteTime();
                     }
                     Toast.makeText(this, "Расписанеие обновлено", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Log.d(TAG, "User pressed button");
-                    if (workingHours.size() > 0) {
+                    if (workingHours.size() == 1) {
+                        // Обновляем id пользователя в таблице рабочего времени
                         makeOrder();
                         checkCurrentTimes();
                     }
@@ -185,7 +137,10 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
             default:
                 Button btn = (Button) v;
                 String btnText = btn.getText().toString();
+                // Проверка мой ли это сервис (я - worker)
                 if(statusUser.equals("worker")){
+                    // Это мой сервис (я - worker)
+
                     if(Boolean.valueOf((btn.getTag(R.string.selectedId)).toString())) {
                         btn.setBackgroundResource(R.drawable.time_button);
                         workingHours.remove(btnText);
@@ -199,37 +154,158 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
                     }
                 }
                 else {
-                    // тоже самое только отличается в проверке на смежное время
+                    // Это не мой сервис (я - user)
+
+                    // Проверка была ли кнопка выбрана до нажатия
                     if(Boolean.valueOf((btn.getTag(R.string.selectedId)).toString())) {
+                        // Кнопка была уже нажата
+
                         btn.setBackgroundResource(R.drawable.time_button);
                         workingHours.remove(btnText);
-                        removedHours.add(btnText);
                         btn.setTag(R.string.selectedId, false);
                     } else {
-                        String laterBtnText;
-                        if(workingHours.size()>0){
-                            laterBtnText =  workingHours.get(0);
-                            updateBtn(laterBtnText);
+                        // Кнопка не была нажата до клика
+
+                        String selectedTime;
+                        //Если уже существует выбранное время
+                        if(workingHours.size() == 1){
+                            selectedTime =  workingHours.get(0);
+                            removeSelection(selectedTime);
+                            workingHours.clear();
                         }
-                        workingHours.clear();
                         btn.setBackgroundResource(R.drawable.pressed_button);
                         workingHours.add(btnText);
                         btn.setTag(R.string.selectedId, true);
-                        for(String sx: workingHours){
-                            Log.d(TAG, sx);
-                        }
                     }
                 }
                 break;
         }
     }
 
-    private void updateBtn(String laterBtnText){
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 4; j++) {
+    // Снимает выделение с кнопок хронящихся в буфере удалённых дней
+    private void checkRemovedHours() {
+        for (int i = 0; i < ROWS_COUNT; i++) {
+            for (int j = 0; j < COLUMNS_COUNT; j++) {
+                String time = (String) timeBtns[i][j].getText();
+                if (removedHours.contains(time)) {
+                    timeBtns[i][j].setBackgroundResource(R.drawable.day_button);
+                    timeBtns[i][j].setTag(R.string.selectedId, false);
+                }
+            }
+        }
+    }
+
+    // Выделяет кнопки хронящиеся в буфере рабочих дней
+    private void checkWorkingHours() {
+        for (int i = 0; i < ROWS_COUNT; i++) {
+            for (int j = 0; j < COLUMNS_COUNT; j++) {
+                String time = (String) timeBtns[i][j].getText();
+                if (workingHours.contains(time)) {
+                    timeBtns[i][j].setBackgroundResource(R.drawable.pressed_button);
+                    timeBtns[i][j].setTag(R.string.selectedId, true);
+                }
+            }
+        }
+    }
+
+    //Выделяет необходимые кнопки
+    private void checkCurrentTimes() {
+        workingDaysId = String.valueOf(getIntent().getLongExtra(WORKING_DAYS_ID, -1));
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        // Получает время и id пользователя который записан на это время
+        // Таблицы: рабочие время
+        // Условия: уточняем id рабочего дня
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.KEY_TIME_WORKING_TIME + ", "
+                        + DBHelper.KEY_USER_ID
+                        + " FROM "
+                        + DBHelper.TABLE_WORKING_TIME
+                        + " WHERE "
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{workingDaysId});
+
+        // Проверка на то, что это мой сервис
+        if (statusUser.equals("worker")) {
+            // Это мой сервис (я - worker)
+
+            selectBtsForWorker(cursor);
+        } else {
+            // Это не мой сервис (я - user)
+
+            selectBtsForUser(cursor);
+        }
+    }
+
+    // Выделяет кнопки (worker)
+    private void selectBtsForWorker(Cursor cursor) {
+        for (int i = 0; i < ROWS_COUNT; i++) {
+            for (int j = 0; j < COLUMNS_COUNT; j++) {
                 String time = (String) timeBtns[i][j].getText();
 
-                if(time.equals(laterBtnText)){
+                //Проверка является ли данное время рабочим
+                if (checkTimeForWorker(cursor, time)) {
+                    timeBtns[i][j].setBackgroundResource(R.drawable.pressed_button);
+                    timeBtns[i][j].setTag(R.string.selectedId, true);
+
+                    // Проверка записан ли кто-то на это время
+                    if (!isFreeTime(cursor, time)) {
+                        timeBtns[i][j].setEnabled(false);
+                    }
+                }
+            }
+        }
+    }
+
+    // Выделяет кнопки (user)
+    private void selectBtsForUser(Cursor cursor) {
+        // Время на которое я записан
+        String myOrderTime = checkMyOrder(cursor);
+
+        for (int i = 0; i < ROWS_COUNT; i++) {
+            for (int j = 0; j < COLUMNS_COUNT; j++) {
+                String time = (String) timeBtns[i][j].getText();
+
+
+                //Проверка на наличие записи на данный день
+                if (!myOrderTime.equals("")) {
+                    // Есть запись
+
+                    // Проверка на то, что я записан на данное время
+                    if (myOrderTime.equals(time)) {
+                        timeBtns[i][j].setClickable(false);
+                        timeBtns[i][j].setBackgroundResource(R.drawable.pressed_button);
+                        timeBtns[i][j].setTag(R.string.selectedId, true);
+                    } else {
+                        timeBtns[i][j].setBackgroundResource(R.drawable.disabled_button);
+                        timeBtns[i][j].setEnabled(false);
+                    }
+                } else {
+                    // Записи нет
+
+                    // Проверка является ли данное время свободным
+                    if (isFreeTime(cursor, time)) {
+                        timeBtns[i][j].setBackgroundResource(R.drawable.time_button);
+                        timeBtns[i][j].setTag(R.string.selectedId, false);
+                    } else {
+                        timeBtns[i][j].setBackgroundResource(R.drawable.disabled_button);
+                        timeBtns[i][j].setEnabled(false);
+                    }
+                }
+
+            }
+        }
+    }
+
+    //Снимает выделение с кнопки с данным временем
+    private void removeSelection(String selectedTime){
+        for (int i = 0; i < ROWS_COUNT; i++) {
+            for (int j = 0; j < COLUMNS_COUNT; j++) {
+                String time = (String) timeBtns[i][j].getText();
+
+                if(time.equals(selectedTime)){
                     timeBtns[i][j].setBackgroundResource(R.drawable.time_button);
                     timeBtns[i][j].setTag(R.string.selectedId, false);
                 }
@@ -237,24 +313,28 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         }
     }
 
+    // Добавляем время из буфера workingTime в БД
     private void addTime(){
         long workingDaysId = getIntent().getLongExtra(WORKING_DAYS_ID, -1);
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-        Cursor cursor = database.query(
-                DBHelper.TABLE_WORKING_TIME,
-                new String[]{DBHelper.KEY_TIME_WORKING_TIME},
-                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
-                new String[]{String.valueOf(workingDaysId)},
-                null,
-                null,
-                null,
-                null);
+        // Получает время
+        // Таблицы: рабочие время
+        // Условия: уточняем id рабочего дня
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.KEY_TIME_WORKING_TIME
+                        + " FROM "
+                        + DBHelper.TABLE_WORKING_TIME
+                        + " WHERE "
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(workingDaysId)});
 
         ContentValues contentValues = new ContentValues();
         for (String time: workingHours) {
-            if(!hasTimeForWorker(cursor, time)) {
+            if(!checkTimeForWorker(cursor, time)) {
                 contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, time);
                 contentValues.put(DBHelper.KEY_USER_ID,"0");
                 contentValues.put(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME, workingDaysId);
@@ -262,47 +342,53 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
                 database.insert(DBHelper.TABLE_WORKING_TIME,null,contentValues);
             }
         }
-        readDB(database);
+
         workingHours.clear();
         cursor.close();
     }
 
-    private boolean isWorkingHours(Cursor cursor) {
+    // Проверяет есть ли запись на данный день
+    private String checkMyOrder(Cursor cursor) {
         if(cursor.moveToFirst()) {
-            int indexUserId= cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+            int indexUserId = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
+            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
+            String userId = getUserId();
             do {
-                if(cursor.getString(indexUserId).equals(getUserId()))
-                    return true;
+                if(cursor.getString(indexUserId).equals(userId)) {
+                    String orderTime = cursor.getString(indexTime);
+                    return orderTime;
+                }
             } while (cursor.moveToNext());
         }
-        return false;
+        return "";
     }
 
+    // Обновляем id пользователя в таблице рабочего времени
     private void makeOrder(){
         long workingDaysId = getIntent().getLongExtra(WORKING_DAYS_ID, -1);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-        Cursor cursor = database.query(
-                DBHelper.TABLE_WORKING_TIME,
-                new String[]{DBHelper.KEY_TIME_WORKING_TIME},
-                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
-                new String[]{String.valueOf(workingDaysId)},
-                null,
-                null,
-                null,
-                null);
+        // Получает время
+        // Таблицы: рабочие время
+        // Условия: уточняем id рабочего дня
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.KEY_TIME_WORKING_TIME
+                        + " FROM "
+                        + DBHelper.TABLE_WORKING_TIME
+                        + " WHERE "
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(workingDaysId)});
 
         ContentValues contentValues = new ContentValues();
         String userId  = getUserId();
-        Log.d(TAG, "user id " + userId);
         for (String time: workingHours) {
-            Log.d(TAG, "In has time");
             contentValues.put(DBHelper.KEY_USER_ID, userId);
             database.update(DBHelper.TABLE_WORKING_TIME, contentValues,
-                    DBHelper.KEY_TIME_WORKING_TIME + " = ? AND " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? " ,
+                    DBHelper.KEY_TIME_WORKING_TIME + " = ? AND " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
                     new String []{time, String.valueOf(workingDaysId)});
         }
-        readDB(database);
         workingHours.clear();
         cursor.close();
     }
@@ -312,18 +398,21 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-        Cursor cursor = database.query(
-                DBHelper.TABLE_WORKING_TIME,
-                new String[]{DBHelper.KEY_TIME_WORKING_TIME},
-                DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
-                new String[]{String.valueOf(workingDaysId)},
-                null,
-                null,
-                null,
-                null);
+        // Получает время
+        // Таблицы: рабочие время
+        // Условия: уточняем id рабочего дня
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.KEY_TIME_WORKING_TIME
+                        + " FROM "
+                        + DBHelper.TABLE_WORKING_TIME
+                        + " WHERE "
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(workingDaysId)});
 
         for (String time: removedHours) {
-            if(hasTimeForWorker(cursor, time)) {
+            if(checkTimeForWorker(cursor, time)) {
                 database.delete(
                         DBHelper.TABLE_WORKING_TIME,
                         DBHelper.KEY_TIME_WORKING_TIME + " = ? AND "
@@ -332,47 +421,11 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
             }
         }
 
-        readDB(database);
         removedHours.clear();
     }
 
-    private  void readDB(SQLiteDatabase database){
-        Cursor cursor = database.query(
-                DBHelper.TABLE_WORKING_TIME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        if(cursor.moveToFirst()){
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexWorkingDayId = cursor.getColumnIndex(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME);
-            int indexUserId = cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            int indexWorkingTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
-
-            do{
-                Log.d(TAG, cursor.getString(indexId)
-                        + " "
-                        + cursor.getString(indexWorkingDayId)
-                        + " user id =  "
-                        + cursor.getString(indexUserId)
-                        + " "
-                        + cursor.getString(indexWorkingTime)
-                        + " "
-                );
-            } while (cursor.moveToNext());
-        }
-        else {
-            Log.d(TAG, "DB is empty");
-        }
-        cursor.close();
-        Log.d(TAG, "Done!");
-    }
-
-    private boolean hasTimeForWorker(Cursor cursor, String time) {
+    // Проверяет есть ли какие-либо записи на данное время
+    private boolean checkTimeForWorker(Cursor cursor, String time) {
         if(cursor.moveToFirst()) {
             int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
             do {
@@ -384,6 +437,7 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         return false;
     }
 
+    // Проверяет свободно ли данное время
     private boolean isFreeTime(Cursor cursor, String time) {
         if(cursor.moveToFirst()) {
             int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
@@ -397,51 +451,39 @@ public class myTime extends AppCompatActivity  implements View.OnClickListener {
         return false;
     }
 
-    private boolean hasOrder(Cursor cursor, String userId, String time){
-        if(cursor.moveToFirst()) {
-            int indexUserId= cursor.getColumnIndex(DBHelper.KEY_USER_ID);
-            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
-            do {
-                // есть id пользователя в таблице и есть время
-                if (userId.equals(cursor.getString(indexUserId)) && time.equals(cursor.getString(indexTime))) {
-                    return true;
-                }
-            } while (cursor.moveToNext());
-        }
-        return false;
-    }
-    private  String getUserId(){
+    // Получает
+    private String getUserId(){
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
         userId = sPref.getString(PHONE, "-");
 
         return userId;
     }
 
-    private void addButtonsOnScreen(int width, int height, boolean isChecked){
-        int secondI = 1;
-        int nextHour = 12;
-        for (int i=0; i<6; i++) {
-            for (int j=0; j<4; j++) {
+    // Добавление кнопок со временем на экран
+    private void addButtonsOnScreen(int width, int height, boolean isPm){
+        //Дополнительные часы (am - 0, pm - 12)
+        int extraHours = 0;
+        if(isPm) {
+            extraHours = 12;
+        }
+
+        for (int i=0; i<ROWS_COUNT; i++) {
+            for (int j=0; j<COLUMNS_COUNT; j++) {
                 timeBtns[i][j]= new Button(this);
+                // установка параметров
                 timeBtns[i][j].setWidth(50);
                 timeBtns[i][j].setHeight(30);
-                timeBtns[i][j].setX(j*width/4);
-                timeBtns[i][j].setY(i*height/12);
+                timeBtns[i][j].setX(j*width/COLUMNS_COUNT);
+                timeBtns[i][j].setY(i*height/(2*ROWS_COUNT));
                 timeBtns[i][j].setBackgroundResource(R.drawable.time_button);
+
                 timeBtns[i][j].setTag(R.string.selectedId, false);
                 timeBtns[i][j].setOnClickListener(this);
-                if(!isChecked) {
-                    String hour = String.valueOf((i * 4 + j) / 2); // 0*4+0/2
-                    String min = (j % 2 == 0) ? "00" : "30";
-                    timeBtns[i][j].setText(hour + ":" + min);
-                }
-                else {
-                    String hour =  String.valueOf((secondI * nextHour));
-                    String min = (j % 2 == 0) ? "00" : "30";
-                    if(j == 1 || j == 3) nextHour++;
-                    timeBtns[i][j].setText(hour + ":" + min);
+                // установка текста
+                String hour = String.valueOf(extraHours + (i * COLUMNS_COUNT + j) / 2);
+                String min = (j % 2 == 0) ? "00" : "30";
+                timeBtns[i][j].setText(hour + ":" + min);
 
-                }
                 if(timeBtns[i][j].getParent() != null) {
                     ((ViewGroup)timeBtns[i][j].getParent()).removeView(timeBtns[i][j]);
                 }

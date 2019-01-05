@@ -41,14 +41,14 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration);
 
-        registrateBtn = (Button) findViewById(R.id.registrateRegistrationBtn);
-        loginBtn = (Button) findViewById(R.id.loginRegistrationBtn);
+        registrateBtn = findViewById(R.id.registrateRegistrationBtn);
+        loginBtn = findViewById(R.id.loginRegistrationBtn);
 
-        nameInput = (EditText) findViewById(R.id.nameRegistrationInput);
-        surnameInput = (EditText) findViewById(R.id.surnameRegistrationInput);
-        phoneInput = (EditText) findViewById(R.id.phoneRegistrationInput);
-        passInput = (EditText) findViewById(R.id.passRegistrationInput);
-        cityInput = (EditText) findViewById(R.id.cityRegistrationInput);
+        nameInput = findViewById(R.id.nameRegistrationInput);
+        surnameInput = findViewById(R.id.surnameRegistrationInput);
+        phoneInput = findViewById(R.id.phoneRegistrationInput);
+        passInput = findViewById(R.id.passRegistrationInput);
+        cityInput = findViewById(R.id.cityRegistrationInput);
 
         dbHelper = new DBHelper(this);
 
@@ -64,30 +64,55 @@ public class registration extends AppCompatActivity implements View.OnClickListe
             case R.id.registrateRegistrationBtn:
                 //получение данных с инпутов
                 String myName = nameInput.getText().toString();
+
                 String mySurname = surnameInput.getText().toString();
                 String myCity = cityInput.getText().toString();
                 String myPhone = phoneInput.getText().toString();
                 String myPass = passInput.getText().toString();
                 //проверка на незаполенные поля
-                if(isFullInputs(myPhone,myPass,myCity, myName)){
-                    //проверка на стойкость пароля
-                    if(isStrongPassword(myPass)) {
-                        //проверка свободен ли телефон
-                        if(isFreePhone(database, myPhone)) {
-                            //процесс регистрации
-                            registration(database, myName, mySurname, myPhone, myPass, myCity);
-                            // идем в профиль
-                            goToProfile();
-                        } else {
+                if(isFullInputs(myPhone,myPass,myCity, myName)) {
+                    //проверяем, что имя состоит только из букв
+                    if (isCorrectData(myName)) {
+                        //также проверяем фамилию
+                        if(isCorrectData(mySurname)) {
+                            //также проверяем город
+                            if (isCorrectData(myCity)) {
+                                //проверка на стойкость пароля
+                                if (isStrongPassword(myPass)) {
+                                    //проверка свободен ли телефон
+                                    if (isFreePhone(database, myPhone)) {
+                                        //процесс регистрации
+                                        registration(database, myName, mySurname, myPhone, myPass, myCity);
+                                        //идем в профиль
+                                        goToProfile();
+                                    } else {
+                                        Toast.makeText(
+                                                this,
+                                                "Пользователь с данным номером телефона уже зарегистрирован.",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                            this,
+                                            "Пароль должен содержать буквы и цифры и быть не менее 6 символов.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(
+                                        this,
+                                        "Название города должен содержать только буквы",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            } else {
                             Toast.makeText(
                                     this,
-                                    "Пользователь с данным номером телефона уже зарегистрирован.",
+                                    "Фамилия должна содержать только буквы",
                                     Toast.LENGTH_SHORT).show();
                         }
-                    } else {
+                    }else {
                         Toast.makeText(
                                 this,
-                                "Пароль должен содержать буквы и цифры и быть не менее 6 символов.",
+                                "Имя должно содержать только буквы",
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -110,10 +135,10 @@ public class registration extends AppCompatActivity implements View.OnClickListe
     }
 
     private void registration(SQLiteDatabase database, String myName, String mySurname,
-                              String myPhone, String myPass, String myCity){
+                              String myPhone, String myPass, String myCity) {
         ContentValues contentValues = new ContentValues();
         //хэшируем пароль
-        myPass =  encryptThisStringSHA512(myPass);
+        myPass = encryptThisStringSHA512(myPass);
         //заносим данные в контент
         contentValues.put(DBHelper.KEY_NAME_USERS, myName.toLowerCase());
         contentValues.put(DBHelper.KEY_SURNAME_USERS, mySurname.toLowerCase());
@@ -126,12 +151,20 @@ public class registration extends AppCompatActivity implements View.OnClickListe
         saveIdAndPass(myPhone, myPass);
         // сохраняем статус о том, что пользователь вошел
         saveStatus();
-        }
+    }
 
     protected boolean isStrongPassword(String myPass) {
         if(!myPass.matches(".*[a-z].*")) return  false;
         if(!myPass.matches(".*[0-9].*")) return  false;
         if(myPass.length()<=5) return false;
+        return true;
+    }
+
+    protected boolean isCorrectData(String data){
+
+        if(!data.matches("[a-zA-ZА-Яа-я]+")) return false;
+        if(data.length()<0) return false;
+
         return true;
     }
 
