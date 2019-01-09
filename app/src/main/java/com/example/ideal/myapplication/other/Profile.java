@@ -1,4 +1,4 @@
-package com.example.ideal.myapplication;
+package com.example.ideal.myapplication.other;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.createService.AddService;
 import com.example.ideal.myapplication.editing.EditProfile;
 import com.example.ideal.myapplication.fragments.foundOrderElement;
@@ -24,7 +25,7 @@ import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
 import com.example.ideal.myapplication.logIn.Authorization;
 
 public class Profile extends AppCompatActivity implements View.OnClickListener {
-    //
+
     private static final String TAG = "DBInf";
     private static final String PHONE_NUMBER = "Phone number";
     private  final String FILE_NAME = "Info";

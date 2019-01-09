@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.ideal.myapplication.DBHelper;
+import com.example.ideal.myapplication.other.DBHelper;
 import com.example.ideal.myapplication.R;
 
 import java.util.ArrayList;

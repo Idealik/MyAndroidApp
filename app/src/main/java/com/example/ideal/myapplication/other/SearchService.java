@@ -1,4 +1,4 @@
-package com.example.ideal.myapplication;
+package com.example.ideal.myapplication.other;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -7,9 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,13 +17,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.foundServiceElement;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class SearchService extends FragmentActivity implements View.OnClickListener {
-    //
+    
     // сначала идут константы
     final String FILE_NAME = "Info";
     final String PHONE = "phone";

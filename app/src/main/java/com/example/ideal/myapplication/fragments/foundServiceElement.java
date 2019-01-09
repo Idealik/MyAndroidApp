@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ideal.myapplication.R;
-import com.example.ideal.myapplication.GuestService;
+import com.example.ideal.myapplication.other.GuestService;
 
 @SuppressLint("ValidFragment")
 public class foundServiceElement extends Fragment implements View.OnClickListener {

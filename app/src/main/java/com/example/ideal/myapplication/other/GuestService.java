@@ -1,4 +1,4 @@
-package com.example.ideal.myapplication;
+package com.example.ideal.myapplication.other;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.createService.MyCalendar;
 import com.example.ideal.myapplication.editing.EditService;
 

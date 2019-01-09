@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.ideal.myapplication.DBHelper;
-import com.example.ideal.myapplication.Profile;
+import com.example.ideal.myapplication.other.DBHelper;
+import com.example.ideal.myapplication.other.Profile;
 import com.example.ideal.myapplication.R;
 
 public class EditService extends AppCompatActivity implements View.OnClickListener{

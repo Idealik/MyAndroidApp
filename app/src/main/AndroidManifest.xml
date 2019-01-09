@@ -17,11 +17,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Profile" />
-        <activity android:name=".SearchService" />
+        <activity android:name=".other.Profile" />
+        <activity android:name=".other.SearchService" />
         <activity android:name=".createService.AddService" />
-        <activity android:name=".GuestService" />
-        <activity android:name=".MainScreen" />
+        <activity android:name=".other.GuestService" />
+        <activity android:name=".other.MainScreen" />
         <activity android:name=".createService.MyTime" />
         <activity android:name=".createService.MyCalendar" />
         <activity android:name=".editing.EditService" />

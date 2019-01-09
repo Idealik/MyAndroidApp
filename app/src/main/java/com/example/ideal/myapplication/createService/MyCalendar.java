@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.ideal.myapplication.DBHelper;
+import com.example.ideal.myapplication.other.DBHelper;
 import com.example.ideal.myapplication.R;
 
 import java.util.Calendar;

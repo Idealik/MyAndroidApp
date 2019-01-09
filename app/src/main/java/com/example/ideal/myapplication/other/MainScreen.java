@@ -1,4 +1,4 @@
-package com.example.ideal.myapplication;
+package com.example.ideal.myapplication.other;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -10,10 +10,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
 
+import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.foundServiceElement;
 
 public class MainScreen extends AppCompatActivity {
-    //
+
     // добавить, чтобы не было видно своих сервисов
     // например номер юзера, возвращаемого сервиса не должен быть равен локальному
     final String TAG = "DBInf";
