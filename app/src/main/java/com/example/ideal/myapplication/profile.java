@@ -24,7 +24,7 @@ import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
 import com.example.ideal.myapplication.logIn.Authorization;
 
 public class Profile extends AppCompatActivity implements View.OnClickListener {
-
+    //
     private static final String TAG = "DBInf";
     private static final String PHONE_NUMBER = "Phone number";
     private  final String FILE_NAME = "Info";

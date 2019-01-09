@@ -15,7 +15,7 @@ import com.example.ideal.myapplication.createService.MyCalendar;
 import com.example.ideal.myapplication.editing.EditService;
 
 public class GuestService extends AppCompatActivity implements View.OnClickListener {
-
+    //
     private final String PHONE = "phone";
     private final String FILE_NAME = "Info";
     private final String TAG = "DBInf";
