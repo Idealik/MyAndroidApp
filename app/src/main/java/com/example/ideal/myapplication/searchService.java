@@ -24,7 +24,7 @@ import com.example.ideal.myapplication.fragments.foundServiceElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class searchService extends FragmentActivity implements View.OnClickListener {
+public class SearchService extends FragmentActivity implements View.OnClickListener {
     // сначала идут константы
     final String FILE_NAME = "Info";
     final String PHONE = "phone";

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "741942352707",
+    "firebase_url": "https://bun-beauty.firebaseio.com",
+    "project_id": "bun-beauty",
+    "storage_bucket": "bun-beauty.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741942352707:android:93d7b23b09ff0c3c",
+        "android_client_info": {
+          "package_name": "com.example.ideal.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741942352707-t196b7n4u79939jlkjkbdlfd2bgvhmh6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ideal.myapplication",
+            "certificate_hash": "e765020b35263b037cb836d6b69bc552a2bf2f52"
+          }
+        },
+        {
+          "client_id": "741942352707-jrpbo1rig4pnmkl8i5gvonifka665skh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh7vTexcrkqrI1ZSAMPJyvhhGmRHssk9U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741942352707-jrpbo1rig4pnmkl8i5gvonifka665skh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

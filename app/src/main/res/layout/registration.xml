@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg"
     android:orientation="vertical"
-    tools:context=".registration">
+    tools:context=".logIn.Registration">
 
     <ImageView
         android:id="@+id/imageView2"
@@ -16,65 +16,54 @@
         app:srcCompat="@drawable/bun_beauty" />
 
     <EditText
+        android:id="@+id/phoneRegistrationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:inputType="textCapWords"
+        android:backgroundTint="@color/lightText"
+        android:ems="10"
+        android:enabled="false"
+        android:hint="@string/phoneRegistration"
+        android:inputType="phone"
         android:textColor="@color/white"
+        android:textColorHint="@color/lightText" />
+
+    <EditText
         android:id="@+id/nameRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_gravity="center"
         android:layout_marginTop="45dp"
-        android:textColorHint="@color/lightText"
         android:backgroundTint="@color/lightText"
-        android:hint="@string/nameRegistration" />
+        android:ems="10"
+        android:hint="@string/nameRegistration"
+        android:inputType="textCapWords"
+        android:textColor="@color/white"
+        android:textColorHint="@color/lightText" />
 
     <EditText
-        android:layout_gravity="center"
         android:id="@+id/surnameRegistrationInput"
-        android:inputType="textPersonName|textCapWords"
-        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:textColorHint="@color/lightText"
+        android:layout_gravity="center"
         android:backgroundTint="@color/lightText"
-        android:hint="@string/surnameRegistration" />
+        android:ems="10"
+        android:hint="@string/surnameRegistration"
+        android:inputType="textPersonName|textCapWords"
+        android:textColor="@color/white"
+        android:textColorHint="@color/lightText" />
 
     <EditText
-        android:layout_gravity="center"
         android:id="@+id/cityRegistrationInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:ems="10"
-        android:textColorHint="@color/lightText"
+        android:layout_gravity="center"
         android:backgroundTint="@color/lightText"
+        android:ems="10"
         android:hint="@string/cityRegistration"
-        android:inputType="textPersonName|textCapWords"/>
-
-    <EditText
-        android:layout_gravity="center"
-        android:id="@+id/phoneRegistrationInput"
-        android:layout_width="wrap_content"
-        android:layout_height="43dp"
+        android:inputType="textPersonName|textCapWords"
         android:textColor="@color/white"
-        android:ems="10"
-        android:textColorHint="@color/lightText"
-        android:backgroundTint="@color/lightText"
-        android:hint="@string/phoneRegistration"
-        android:inputType="phone" />
-
-    <EditText
-        android:layout_gravity="center"
-        android:id="@+id/passRegistrationInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:ems="10"
-        android:hint="@string/passwordRegistration"
-        android:textColorHint="@color/lightText"
-        android:backgroundTint="@color/lightText"
-        android:inputType="textPassword" />
+        android:textColorHint="@color/lightText" />
 
     <Button
         android:id="@+id/registrateRegistrationBtn"
@@ -83,18 +72,16 @@
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:background="@drawable/btn"
-        android:textColor="@color/white"
         android:text="@string/regUser"
-        android:textStyle="bold"/>
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/loginRegistrationBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/logInRegistration"
         android:layout_gravity="center"
-        />
-
+        android:text="@string/logInRegistration" />
 
 
 </LinearLayout>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/allPages"
-    tools:context=".myTime">
+    tools:context=".createService.MyTime">
 
     <RelativeLayout
         android:id="@+id/mainMyTimeLayout"

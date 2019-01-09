@@ -9,23 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".registration" />
-        <activity android:name=".authorization">
+        <activity android:name=".logIn.Registration" />
+        <activity android:name=".logIn.Authorization">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".profile" />
-        <activity android:name=".searchService" />
-        <activity android:name=".addService" />
-        <activity android:name=".guestService" />
-        <activity android:name=".mainScreen" />
-        <activity android:name=".myTime" />
-        <activity android:name=".myCalendar" />
-        <activity android:name=".editService" />
-        <activity android:name=".editProfile"></activity>
+        <activity android:name=".Profile" />
+        <activity android:name=".SearchService" />
+        <activity android:name=".createService.AddService" />
+        <activity android:name=".GuestService" />
+        <activity android:name=".MainScreen" />
+        <activity android:name=".createService.MyTime" />
+        <activity android:name=".createService.MyCalendar" />
+        <activity android:name=".editing.EditService" />
+        <activity android:name=".editing.EditProfile" />
+        <activity android:name=".logIn.Confirmation"></activity>
     </application>
 
 </manifest>

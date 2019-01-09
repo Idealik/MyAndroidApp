@@ -16,40 +16,43 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.ideal.myapplication.createService.AddService;
+import com.example.ideal.myapplication.editing.EditProfile;
 import com.example.ideal.myapplication.fragments.foundOrderElement;
 import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
+import com.example.ideal.myapplication.logIn.Authorization;
 
-public class profile extends AppCompatActivity implements View.OnClickListener {
+public class Profile extends AppCompatActivity implements View.OnClickListener {
 
-    final String PHONE = "phone";
-    final String FILE_NAME = "Info";
-    final String STATUS = "status";
-    static final String USER_NAME = "my name";
-    static final String USER_SURNAME = "my surname";
-    static final String USER_CITY = "my city";
-    final String SERVICE_ID = "service id";
+    private static final String TAG = "DBInf";
+    private static final String PHONE_NUMBER = "Phone number";
+    private  final String FILE_NAME = "Info";
+    private  final String STATUS = "status";
+    private  static final String USER_NAME = "my name";
+    private  static final String USER_SURNAME = "my surname";
+    private  static final String USER_CITY = "my city";
+    private  final String SERVICE_ID = "service id";
 
-    Button logOutBtn;
-    Button findServicesBtn;
-    Button addServicesBtn;
-    Button mainScreenBtn;
-    Button editProfileBtn;
+    private  Button logOutBtn;
+    private  Button findServicesBtn;
+    private  Button addServicesBtn;
+    private  Button mainScreenBtn;
+    private  Button editProfileBtn;
 
-    TextView nameText;
-    TextView surnameText;
-    TextView cityText;
+    private  TextView nameText;
+    private  TextView surnameText;
+    private  TextView cityText;
 
-    ScrollView servicesScroll;
-    ScrollView ordersScroll;
-    LinearLayout servicesLayout;
-    LinearLayout ordersLayout;
+    private  ScrollView servicesScroll;
+    private  ScrollView ordersScroll;
+    private  LinearLayout servicesLayout;
+    private  LinearLayout ordersLayout;
 
-    SwitchCompat servicesOrOrdersSwitch;
+    private  SwitchCompat servicesOrOrdersSwitch;
 
-    SharedPreferences sPref;
-    DBHelper dbHelper;
+    private  SharedPreferences sPref;
+    private  DBHelper dbHelper;
 
     private foundServiceProfileElement fServiceElement;
     private foundOrderElement fOrderElement;
@@ -88,8 +91,12 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         // получаем сервис пользователя, если он заходит к себе в профиль, то -1
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
 
-        // идет проверка, относится ли этот сервис к пользователю, чтобы дать соответствующий функционал
+
+        // идет проверка, относится ли этот сервис к пользователю,
+        // чтобы дать соответствующий функционал
+        // если сервис не находится в бд, то считаем, что это пользователь без сервисов
         if(isMyService(serviceId,userId)){
+            Log.d(TAG, "onCreate: " + serviceId + " " + userId);
             // если это мой сервис - значит мой профиль
             // создаем свои сервисы
             createServicesList(userId);
@@ -127,7 +134,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             servicesOrOrdersSwitch.setVisibility(View.INVISIBLE);
             addServicesBtn.setVisibility(View.INVISIBLE);
             editProfileBtn.setVisibility(View.INVISIBLE);
-            // получаем id user, которому принадлжеит сервис
+            // получаем id User, которому принадлжеит сервис
             userId = getUserId(serviceId);
 
             // подгружаем данные о пользователе
@@ -141,11 +148,9 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
             servicesLayout.setVisibility(View.VISIBLE);
             servicesScroll.setVisibility(View.VISIBLE);
         }
-
         logOutBtn.setOnClickListener(this);
         findServicesBtn.setOnClickListener(this);
         mainScreenBtn.setOnClickListener(this);
-
     }
 
     @Override
@@ -273,7 +278,7 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     private  long getUserId(){
         // возваращает id текущего пользователя
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
+        long userId = Long.valueOf(sPref.getString(PHONE_NUMBER, "0"));
 
         return userId;
     }
@@ -321,13 +326,13 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         //получаем имя, фамилию и город пользователя по его id
         String sqlQuery =
                 "SELECT "
-                + DBHelper.KEY_NAME_USERS + ", "
-                + DBHelper.KEY_SURNAME_USERS + ", "
-                + DBHelper.KEY_CITY_USERS
-                + " FROM "
-                + DBHelper.TABLE_CONTACTS_USERS
-                + " WHERE "
-                + DBHelper.KEY_USER_ID + " = ?";
+                        + DBHelper.KEY_NAME_USERS + ", "
+                        + DBHelper.KEY_SURNAME_USERS + ", "
+                        + DBHelper.KEY_CITY_USERS
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_USERS
+                        + " WHERE "
+                        + DBHelper.KEY_USER_ID + " = ?";
 
         Cursor cursor = database.rawQuery(sqlQuery,new String[] {userId});
 
@@ -371,12 +376,12 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
         //Получаем id и имя сервисов по id пользователя
         String sqlQuery =
                 "SELECT "
-                + DBHelper.KEY_ID + ", "
-                + DBHelper.KEY_NAME_SERVICES
-                + " FROM "
-                + DBHelper.TABLE_CONTACTS_SERVICES
-                + " WHERE "
-                + DBHelper.KEY_USER_ID + " = ? ";
+                        + DBHelper.KEY_ID + ", "
+                        + DBHelper.KEY_NAME_SERVICES
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES
+                        + " WHERE "
+                        + DBHelper.KEY_USER_ID + " = ? ";
 
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(userId)});
 
@@ -482,32 +487,31 @@ public class profile extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void goToLogIn() {
-        Intent intent = new Intent(this, authorization.class);
+        Intent intent = new Intent(this, Authorization.class);
         startActivity(intent);
         finish();
     }
     private void goToAddService() {
-        Intent intent = new Intent(this, addService.class);
+        Intent intent = new Intent(this, AddService.class);
         startActivity(intent);
     }
 
     private void goToSearchService() {
-        Intent intent = new Intent(this, searchService.class);
+        Intent intent = new Intent(this, SearchService.class);
         startActivity(intent);
     }
 
     private void goToMainScreen() {
-        Intent intent = new Intent(this, mainScreen.class);
+        Intent intent = new Intent(this, MainScreen.class);
         startActivity(intent);
     }
 
     private void goToEditProfile() {
-        Intent intent = new Intent(this, editProfile.class);
+        Intent intent = new Intent(this, EditProfile.class);
         intent.putExtra(USER_NAME, nameText.getText());
         intent.putExtra(USER_SURNAME, surnameText.getText());
         intent.putExtra(USER_CITY, cityText.getText());
         startActivity(intent);
     }
-
 
 }

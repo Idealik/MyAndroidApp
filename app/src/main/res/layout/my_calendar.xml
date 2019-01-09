@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/allPages"
-    tools:context=".myCalendar">
+    tools:context=".createService.MyCalendar">
 
     <RelativeLayout
         android:id="@+id/mainMyCalendarLayout"

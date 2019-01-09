@@ -36,7 +36,6 @@
     <string name="yearId">yearId</string>
 
 
-
     <string name="BunBeauty">BunBeauty</string>
     <string name="hello_blank_fragment">hello blank fragment</string>
     <string name="status_worker">worker</string>
@@ -44,6 +43,10 @@
     <string name="defult_value">-</string>
     <string name="empty_phone_field">Поле с номером телефона не может быть пустым</string>
     <string name="this_phone_is_already_usead">Этот номер телефона используется другим пользователем</string>
+    <string name="BunB" />
+    <string name="resendCode">Отправить код снова</string>
+    <string name="verifyCode">Подтвердить код</string>
+    <string name="enterCode">Введите код</string>
 
     //array for spinner
     <string-array name="cities">

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:theme="@style/allPages"
     android:orientation="vertical"
-    tools:context=".searchService">
+    tools:context=".SearchService">
 
     <EditText
         android:id="@+id/searchLineSearchServiceInput"

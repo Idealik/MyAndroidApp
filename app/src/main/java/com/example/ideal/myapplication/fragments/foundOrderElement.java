@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ideal.myapplication.R;
-import com.example.ideal.myapplication.guestService;
+import com.example.ideal.myapplication.GuestService;
 
 @SuppressLint("ValidFragment")
 public class foundOrderElement extends Fragment implements View.OnClickListener {
@@ -66,7 +66,7 @@ public class foundOrderElement extends Fragment implements View.OnClickListener 
     }
 
     private void goToGuestService(){
-        Intent intent = new Intent(this.getContext(), guestService.class);
+        Intent intent = new Intent(this.getContext(), GuestService.class);
         intent.putExtra(SERVICE_ID, Long.valueOf(idString));
         startActivity(intent);
     }

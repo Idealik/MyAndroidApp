@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:theme="@style/allPages"
-    tools:context=".guestService">
+    tools:context=".GuestService">
 
     <TextView
         android:id="@+id/nameGuestServiceText"

@@ -11,7 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class guestService extends AppCompatActivity implements View.OnClickListener {
+import com.example.ideal.myapplication.createService.MyCalendar;
+import com.example.ideal.myapplication.editing.EditService;
+
+public class GuestService extends AppCompatActivity implements View.OnClickListener {
 
     private final String PHONE = "phone";
     private final String FILE_NAME = "Info";
@@ -20,7 +23,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     private final String NAME_SERVICE = "name service";
     private final String COST_SERVICE = "cost service";
     private final String DESCRIPTION_SERVICE = "description service";
-    private final String STATUS_USER_BY_SERVICE = "status user";
+    private final String STATUS_USER_BY_SERVICE = "status User";
 
     Boolean isMyService = false;
 
@@ -82,7 +85,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
                     goToMyCalendar("worker");
                 }
                 else {
-                    goToMyCalendar("user");
+                    goToMyCalendar("User");
                 }
                 break;
             case R.id.editServiceGuestServiceBtn:
@@ -148,7 +151,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     private void goToMyCalendar(String status) {
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
 
-        Intent intent = new Intent(this, myCalendar.class);
+        Intent intent = new Intent(this, MyCalendar.class);
         intent.putExtra(SERVICE_ID, serviceId);
         intent.putExtra(STATUS_USER_BY_SERVICE, status);
 
@@ -161,7 +164,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
         String cost = costText.getText().toString();
         String description = descriptionText.getText().toString();
 
-        Intent intent = new Intent(this, editService.class);
+        Intent intent = new Intent(this, EditService.class);
         intent.putExtra(SERVICE_ID, serviceId);
         intent.putExtra(NAME_SERVICE, name);
         intent.putExtra(COST_SERVICE, cost);
@@ -173,7 +176,7 @@ public class guestService extends AppCompatActivity implements View.OnClickListe
     private void goToProfile(){
         long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
 
-        Intent intent = new Intent(this, profile.class);
+        Intent intent = new Intent(this, Profile.class);
         intent.putExtra(SERVICE_ID, serviceId);
 
         startActivity(intent);

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    android:orientation="vertical"
+    tools:context="com.example.ideal.myapplication.logIn.Confirmation">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:srcCompat="@drawable/bun_beauty" />
+
+    <EditText
+        android:layout_gravity="center"
+        android:id="@+id/phoneConfirmationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="43dp"
+        android:textColor="@color/white"
+        android:ems="10"
+        android:layout_marginTop="45dp"
+        android:textColorHint="@color/lightText"
+        android:backgroundTint="@color/lightText"
+        android:hint="@string/phoneRegistration"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/passConfirmationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/lightText"
+        android:ems="10"
+        android:hint="@string/passwordRegistration"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:textColorHint="@color/lightText"
+        />
+
+    <EditText
+        android:id="@+id/repeatPassConfirmationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/lightText"
+        android:ems="10"
+        android:hint="Подтвердите пароль"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:textColorHint="@color/lightText" />
+
+    <Button
+        android:id="@+id/registrationConfirmationBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/btn"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:text="@string/regUser" />
+
+    <Button
+        android:id="@+id/resendConfirmationBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:text="@string/resendCode"
+        android:visibility="invisible"/>
+
+    <EditText
+        android:id="@+id/codeConfirmationInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:backgroundTint="@color/lightText"
+        android:hint="@string/enterCode"
+        android:textColor="@color/white"
+        android:textColorHint="@color/lightText"
+        android:inputType="number"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/verifyConfirmationBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/verifyCode"
+        android:visibility="invisible"/>
+
+</LinearLayout>

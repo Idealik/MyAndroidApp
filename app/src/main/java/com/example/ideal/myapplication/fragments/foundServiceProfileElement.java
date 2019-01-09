@@ -6,14 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ideal.myapplication.R;
-import com.example.ideal.myapplication.guestService;
+import com.example.ideal.myapplication.GuestService;
 
 @SuppressLint("ValidFragment")
 public class foundServiceProfileElement extends Fragment implements View.OnClickListener {
@@ -54,7 +53,7 @@ public class foundServiceProfileElement extends Fragment implements View.OnClick
     }
 
     private void goToGuestService(){
-        Intent intent = new Intent(this.getContext(), guestService.class);
+        Intent intent = new Intent(this.getContext(), GuestService.class);
         intent.putExtra(SERVICE_ID, Long.valueOf(idString));
         startActivity(intent);
     }
