@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final  int DATABASE_VERSION = 25;
+    public static final  int DATABASE_VERSION = 26;
     public static final String DATABASE_NAME = "MyFirstDB";
 
     //tables name
@@ -53,7 +53,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String users = "create table "+ TABLE_CONTACTS_USERS
                 + "("
-                + KEY_USER_ID + " integer primary key,"
+                + KEY_USER_ID + " text primary key,"
                 + KEY_NAME_USERS + " text,"
                 + KEY_SURNAME_USERS + " text,"
                 + KEY_PASS_USERS + " text,"
@@ -64,7 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_PHOTO_LINK_USERS + " text"
                 + ")";
         String services = "create table "+ TABLE_CONTACTS_SERVICES
-                + "(" + KEY_ID + " integer primary key,"
+                + "(" + KEY_ID + " text primary key,"
                 + KEY_NAME_SERVICES + " text,"
                 + KEY_DESCRIPTION_SERVICES+ " text,"
                 + KEY_RATING_SERVICES + " text,"
@@ -74,13 +74,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 + ")";
         String workingDays = "create table "+ TABLE_WORKING_DAYS
                 + "("
-                + KEY_ID + " integer primary key,"
+                + KEY_ID + " text primary key,"
                 + KEY_DATE_WORKING_DAYS + " date,"
                 + KEY_SERVICE_ID_WORKING_DAYS + " text"
                 + ")";
         String workingTime = "create table "+ TABLE_WORKING_TIME
                 + "("
-                + KEY_ID + " integer primary key,"
+                + KEY_ID + " text primary key,"
                 + KEY_TIME_WORKING_TIME + " text,"
                 + KEY_USER_ID + " text,"
                 + KEY_WORKING_DAYS_ID_WORKING_TIME + " integer"

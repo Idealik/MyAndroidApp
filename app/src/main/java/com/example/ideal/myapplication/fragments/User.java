@@ -38,7 +38,7 @@ public class User {
     public String getSurname(){return surname;}
     public String getCity(){ return city; }
 
-    protected boolean isCorrectData(String data){
+    public boolean isCorrectData(String data){
 
         if(!data.matches("[a-zA-ZА-Яа-я\\-]+")) return false;
         if(data.length()<0) return false;

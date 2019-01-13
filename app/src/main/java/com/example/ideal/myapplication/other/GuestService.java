@@ -1,32 +1,44 @@
 package com.example.ideal.myapplication.other;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.createService.MyCalendar;
 import com.example.ideal.myapplication.editing.EditService;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class GuestService extends AppCompatActivity implements View.OnClickListener {
     //
-    private final String PHONE = "phone";
+    private static final String PHONE_NUMBER = "Phone number";
     private final String FILE_NAME = "Info";
     private final String TAG = "DBInf";
     private final String SERVICE_ID = "service id";
-    private final String NAME_SERVICE = "name service";
-    private final String COST_SERVICE = "cost service";
-    private final String DESCRIPTION_SERVICE = "description service";
+    private static final String WORKING_DAYS = "working days/";
+    private static final String WORKING_TIME = "working time/";
+    private final String WORKING_DAYS_ID = "working day id";
+
     private final String STATUS_USER_BY_SERVICE = "status User";
 
     Boolean isMyService = false;
+    String serviceId;
+    Integer countOfDate;
 
     TextView nameText;
     TextView costText;
@@ -52,11 +64,11 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
         profileBtn = findViewById(R.id.profileGuestServiceBtn);
 
         dbHelper = new DBHelper(this);
-        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+        serviceId = getIntent().getStringExtra(SERVICE_ID);
         //получаем данные о сервисе
         getDataAboutService(serviceId);
 
-        long userId = getUserId();
+        String userId = getUserId();
         // мой сервис или нет?
         isMyService = isMyService(serviceId,userId);
 
@@ -82,11 +94,14 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.editScheduleGuestServiceBtn:
                 // если мой сервис, то иду, как воркер
+                countOfDate=0;
                 if(isMyService){
-                    goToMyCalendar("worker");
+                    String status = "worker";
+                    loadSchedule(status);
                 }
                 else {
-                    goToMyCalendar("User");
+                    String status = "User";
+                    loadSchedule(status);
                 }
                 break;
             case R.id.editServiceGuestServiceBtn:
@@ -98,14 +113,14 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void getDataAboutService(long serviceId) {
+    private void getDataAboutService(String serviceId) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         // получаем сервис с указанным ID
         String sqlQuery =
                 "SELECT " + DBHelper.TABLE_CONTACTS_SERVICES + ".*"
                         + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
                         + " WHERE " + DBHelper.KEY_ID +" = ? ";
-        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(serviceId)});
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {serviceId});
 
         if(cursor.moveToFirst()) {
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
@@ -116,13 +131,11 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
             costText.setText(cursor.getString(indexMinCost));
             descriptionText.setText(cursor.getString(indexDescription));
         }
-        else {
-            Log.d(TAG, "DB is empty");
-        }
+
         cursor.close();
     }
 
-    private boolean isMyService(long serviceId, long userId) {
+    private boolean isMyService(String serviceId, String userId) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         // вернуть имя сервиса
         // из таблицы Services
@@ -131,7 +144,7 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
                 "SELECT " + DBHelper.KEY_NAME_SERVICES
                         + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
                         + " WHERE " + DBHelper.KEY_ID + " = ? AND " + DBHelper.KEY_USER_ID + " = ? ";
-        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(serviceId), String.valueOf(userId)});
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {String.valueOf(serviceId), userId});
 
         // такой существует ?
         if(cursor.moveToFirst()) {
@@ -140,18 +153,110 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
             return false;
         }
     }
+    private void loadSchedule(final String status) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //возвращает все дни определенного сервиса
+        final Query query = database.getReference(WORKING_DAYS).
+                orderByChild(SERVICE_ID).
+                equalTo(serviceId);
+        //загружаем рабочие дни
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshotDate) {
+                //если воркер и нет расписания
+                if((dataSnapshotDate.getChildrenCount() == 0) && (status.equals("worker"))){
+                    goToMyCalendar(status);
+                }
+                //если юзер и у воркера еще нету расписания на этот сервис
+                if((dataSnapshotDate.getChildrenCount() == 0) && (status.equals("User"))) {
+                    attentionThisScheduleIsEmpty();
+                }
+                for (DataSnapshot schedule : dataSnapshotDate.getChildren()){
+                    String dayId = String.valueOf(schedule.getKey());
+                    String dayDate = String.valueOf(schedule.child("data").getValue());
+                    addScheduleInLocalStorage(dayId,dayDate);
 
-    private long getUserId() {
+                    //загружаем часы работы
+                    final Query queryTime = database.getReference(WORKING_TIME).
+                            orderByChild(WORKING_DAYS_ID).
+                            equalTo(dayId);
+
+                    queryTime.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            countOfDate++;
+
+                            for (DataSnapshot time : dataSnapshot.getChildren()) {
+                                String timeId = String.valueOf(time.getKey());
+                                String timeDate = String.valueOf(time.child("time").getValue());
+                                String timeUserId = String.valueOf(time.child("user id").getValue());
+                                String timeWorkingDayId = String.valueOf(time.child("working day id")
+                                        .getValue());
+
+                                addTimeInLocalStorage(timeId, timeDate,timeUserId,timeWorkingDayId);
+                            }
+                            //если прошли по всем дням, идем в календарь
+                            if(dataSnapshotDate.getChildrenCount()==countOfDate) goToMyCalendar(status);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) { }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: GUEST SERiVCE");
+            }
+        });
+    }
+    private void addScheduleInLocalStorage(String dayId, String dayDate) {
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBHelper.KEY_ID, dayId);
+        contentValues.put(DBHelper.KEY_DATE_WORKING_DAYS, dayDate);
+        contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
+
+        database.insert(DBHelper.TABLE_WORKING_DAYS, null, contentValues);
+
+    }
+
+    private void addTimeInLocalStorage(String timeId, String timeDate,
+                                       String timeUserId, String timeWorkingDayId) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DBHelper.KEY_ID, timeId);
+        contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, timeDate);
+        contentValues.put(DBHelper.KEY_USER_ID,timeUserId);
+        contentValues.put(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME, timeWorkingDayId);
+
+        database.insert(DBHelper.TABLE_WORKING_TIME,null,contentValues);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void attentionThisScheduleIsEmpty(){
+        Toast.makeText(
+                this,
+                "Пользователь еще не написал расписание к этому сервису.",
+                Toast.LENGTH_SHORT).show();
+    }
+    private String getUserId() {
         SharedPreferences sPref;
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        long userId = Long.valueOf(sPref.getString(PHONE, "0"));
+        String userId = sPref.getString(PHONE_NUMBER, "0");
 
         return  userId;
     }
 
     private void goToMyCalendar(String status) {
-        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-
         Intent intent = new Intent(this, MyCalendar.class);
         intent.putExtra(SERVICE_ID, serviceId);
         intent.putExtra(STATUS_USER_BY_SERVICE, status);
@@ -160,23 +265,13 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
     }
 
     private void goToEditService() {
-        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-        String name = nameText.getText().toString();
-        String cost = costText.getText().toString();
-        String description = descriptionText.getText().toString();
-
         Intent intent = new Intent(this, EditService.class);
         intent.putExtra(SERVICE_ID, serviceId);
-        intent.putExtra(NAME_SERVICE, name);
-        intent.putExtra(COST_SERVICE, cost);
-        intent.putExtra(DESCRIPTION_SERVICE, description);
 
         startActivity(intent);
     }
 
     private void goToProfile(){
-        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-
         Intent intent = new Intent(this, Profile.class);
         intent.putExtra(SERVICE_ID, serviceId);
 

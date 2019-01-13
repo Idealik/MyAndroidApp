@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.ideal.myapplication.fragments.Service;
+import com.example.ideal.myapplication.fragments.User;
 import com.example.ideal.myapplication.other.DBHelper;
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.other.Profile;
@@ -21,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigInteger;
@@ -30,19 +33,24 @@ import java.security.NoSuchAlgorithmException;
 
 public class Authorization extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "tag";
-    final String STATUS = "status";
+    private static final String TAG = "DBInf";
+    private static final String STATUS = "status";
 
-    final String FILE_NAME = "Info";
-    final String PHONE = "phone";
-    final String PASS = "password";
+    private static final String FILE_NAME = "Info";
+    private static final String PHONE_NUMBER = "Phone number";
+    private static final String PASS = "password";
 
-
-    private static final String REF = "users/";
+    private static final String USERS = "users";
     private static final String NAME = "name";
     private static final String SURNAME = "surname";
     private static final String CITY = "city";
 
+    private static final String SERVICES = "services";
+    private static final String USER_ID = "user id";
+    private static final String DESCRIPTION = "description";
+    private static final String COST = "cost";
+    private static final String RATING = "rating";
+    private static final String COUNT_OF_RATES = "count of rates";
 
     boolean status;
     String truePassword = "";
@@ -113,7 +121,7 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
 
     private void logIn(String phone, String pass){
         //сохраняем статус
-        saveStatus();
+        saveStatus(true);
         //сохраяем номер пользователя и пароль
         saveIdAndPass(phone,pass);
         //переходим в профиль
@@ -122,49 +130,105 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
 
     private void isAuthorizedUser(final String myPhoneNumber, final String myPassword) {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference(REF + myPhoneNumber);
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference();
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Получаем пароль из Firebase
-                Object passObj = dataSnapshot.child(PASS).getValue();
+                Object passObj = dataSnapshot.child(USERS).child(myPhoneNumber).child(PASS).getValue();
 
-                if(passObj != null) {
+                if (passObj != null) {
                     truePassword = passObj.toString();
                     // Проверка на правильность пароля
-                    if(myPassword.equals(truePassword)) {
+                    if (myPassword.equals(truePassword)) {
                         // Пароль правильный
                         // Получаем остальные данные о пользователе
-                        String name = String.valueOf(dataSnapshot.child(NAME).getValue());
-                        String surname = String.valueOf(dataSnapshot.child(SURNAME).getValue());
-                        String city = String.valueOf(dataSnapshot.child(CITY).getValue());
+                        String name = String.valueOf(dataSnapshot.child(USERS)
+                                .child(myPhoneNumber)
+                                .child(NAME)
+                                .getValue());
+                        String surname = String.valueOf(dataSnapshot.child(USERS)
+                                .child(myPhoneNumber)
+                                .child(SURNAME)
+                                .getValue());
+                        String city = String.valueOf(dataSnapshot.child(USERS)
+                                .child(myPhoneNumber)
+                                .child(CITY)
+                                .getValue());
+
+                        User user = new User();
+                        user.setName(name);
+                        user.setSurname(surname);
+                        user.setCity(city);
 
                         // Добавляем все данные в SQLite
-                        updateSQLite(myPhoneNumber, name, surname, city);
-                        // Выполняем вход
-                        logIn(myPhoneNumber, myPassword);
-                    }
-                    else {
+                        updateUserInfoInLocalStorage(myPhoneNumber, user);
+
+                        Query query = database.getReference(SERVICES).
+                                orderByChild(USER_ID).
+                                equalTo(myPhoneNumber);
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                clearSQLite();
+                                for (DataSnapshot service : dataSnapshot.getChildren()) {
+                                    String serviceId = String.valueOf(service.getKey());
+                                    String serviceName = String.valueOf(service.child(NAME).getValue());
+                                    String serviceDescription = String.valueOf(service.child(DESCRIPTION).getValue());
+                                    String serviceCost = String.valueOf(service.child(COST).getValue());
+                                    String serviceRating = String.valueOf(service.child(RATING).getValue());
+                                    String serviceCountOfRates = String.valueOf(service.child(COUNT_OF_RATES).getValue());
+
+                                    Service newService = new Service();
+                                    newService.setId(serviceId);
+                                    newService.setName(serviceName);
+                                    newService.setDescription(serviceDescription);
+                                    newService.setCost(serviceCost);
+                                    newService.setRating(serviceRating);
+                                    newService.setCountOfRates(serviceCountOfRates);
+                                    newService.setUserId(myPhoneNumber);
+
+                                    addUserServicesInLocalStorage(newService);
+                                }
+
+                                // Выполняем вход
+                                logIn(myPhoneNumber, myPassword);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.d(TAG, "onCancelled");
+                            }
+                        });
+                    } else{
                         // Пароль - неверный
                         // Показываем все вью
                         addViewOnScreen();
                         // Проверяем поля ввода
                         checkInputs();
+                        // Обновляем статус
+                        saveStatus(false);
                     }
+                } else {
+                    // Такого пользователя вообще нет в Firebase
+                    // Показываем все вью
+                    addViewOnScreen();
+                    // Проверяем поля ввода
+                    checkInputs();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("111", "onCancelled");
+                Log.d(TAG, "onCancelled");
             }
         });
     }
 
-    private void updateSQLite(String phoneNumber, String name, String surname, String city) {
-        DBHelper dbHelper = new DBHelper(this);
+    // Обновляет информацию о текущем пользователе в SQLite
+    private void updateUserInfoInLocalStorage(String phoneNumber, User user) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -180,9 +244,9 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{phoneNumber});
 
         // Заполняем contentValues информацией о данном пользователе
-        contentValues.put(DBHelper.KEY_NAME_USERS, name);
-        contentValues.put(DBHelper.KEY_SURNAME_USERS, surname);
-        contentValues.put(DBHelper.KEY_CITY_USERS, city);
+        contentValues.put(DBHelper.KEY_NAME_USERS, user.getName());
+        contentValues.put(DBHelper.KEY_SURNAME_USERS, user.getSurname());
+        contentValues.put(DBHelper.KEY_CITY_USERS, user.getCity());
 
         // Проверка есть ли такой пользователь в SQLite
         if(cursor.moveToFirst()) {
@@ -201,7 +265,35 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
             // Добавляем данного пользователя в SQLite
             database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
         }
+        cursor.close();
     }
+
+    // Удаляет все сервисы из SQLite
+    private void clearSQLite() {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        database.delete(DBHelper.TABLE_CONTACTS_SERVICES, null, null);
+        database.delete(DBHelper.TABLE_WORKING_DAYS,null,null);
+        database.delete(DBHelper.TABLE_WORKING_TIME,null,null);
+    }
+
+    // Добавляет информацию о сервисах данного пользователя в SQLite
+    private void addUserServicesInLocalStorage(Service service) {
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        // Заполняем contentValues информацией о данном сервисе
+        contentValues.put(DBHelper.KEY_ID, service.getId());
+        contentValues.put(DBHelper.KEY_NAME_SERVICES, service.getName());
+        contentValues.put(DBHelper.KEY_USER_ID, service.getUserId());
+        contentValues.put(DBHelper.KEY_DESCRIPTION_SERVICES, service.getDescription());
+        contentValues.put(DBHelper.KEY_MIN_COST_SERVICES, service.getCost());
+        contentValues.put(DBHelper.KEY_RATING_SERVICES, service.getRating());
+        contentValues.put(DBHelper.KEY_COUNT_OF_RATES_SERVICES, service.getCountOfRates());
+
+        // Добавляем данный сервис в SQLite
+        database.insert(DBHelper.TABLE_CONTACTS_SERVICES, null, contentValues);
+    }
+
 
     private String convertPhoneToNormalView(String phone) {
         if(phone.charAt(0)=='8'){
@@ -232,7 +324,7 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
     //получить номер телефона для проверки
     private String getUserPhone() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String userId = sPref.getString(PHONE, "-");
+        String userId = sPref.getString(PHONE_NUMBER, "-");
 
         return  userId;
     }
@@ -244,16 +336,17 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
         return  pass;
     }
 
-    private void saveStatus() {
+    private void saveStatus(boolean statusValue) {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
-        editor.putBoolean(STATUS, true);
+        editor.putBoolean(STATUS, statusValue);
         editor.apply();
     }
+
     private void saveIdAndPass(String phone, String pass) {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
-        editor.putString(PHONE, phone);
+        editor.putString(PHONE_NUMBER, phone);
         editor.putString(PASS, pass);
         editor.apply();
     }

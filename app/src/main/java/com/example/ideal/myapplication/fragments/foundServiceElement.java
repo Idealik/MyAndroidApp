@@ -33,13 +33,13 @@ public class foundServiceElement extends Fragment implements View.OnClickListene
     String costString;
 
     @SuppressLint("ValidFragment")
-    public foundServiceElement(String id, String nameUser, String surname, String city, String nameService, String cost) {
-        idString = id;
-        nameUserString = nameUser;
-        surnameString = surname;
-        cityString = city;
-        nameServiceString = nameService;
-        costString = cost;
+    public foundServiceElement(Service service, User user) {
+        idString = service.getId();
+        nameUserString = user.getName();
+        surnameString = user.getSurname();
+        cityString = user.getCity();
+        nameServiceString = service.getName();
+        costString = service.getCost().toString();
     }
 
     @Override
@@ -65,12 +65,12 @@ public class foundServiceElement extends Fragment implements View.OnClickListene
     }
 
     private void setData() {
-        nameUserText.setText(nameUserString + " ");
-        surname.setText(surnameString + " ");
-        city.setText(cityString + " ");
-        surname.setText(surnameString + " ");
-        nameServiceText.setText(nameServiceString + " ");
-        costText.setText(costString + " ");
+        nameUserText.setText(nameUserString);
+        surname.setText(surnameString);
+        city.setText(cityString);
+        surname.setText(surnameString);
+        nameServiceText.setText(nameServiceString);
+        costText.setText(costString);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class foundServiceElement extends Fragment implements View.OnClickListene
 
     private void goToGuestService(){
         Intent intent = new Intent(this.getContext(), GuestService.class);
-        intent.putExtra(SERVICE_ID, Long.valueOf(idString));
+        intent.putExtra(SERVICE_ID, idString);
         startActivity(intent);
     }
 }

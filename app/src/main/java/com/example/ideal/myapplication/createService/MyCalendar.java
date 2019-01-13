@@ -20,16 +20,22 @@ import android.widget.Toast;
 
 import com.example.ideal.myapplication.other.DBHelper;
 import com.example.ideal.myapplication.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyCalendar extends AppCompatActivity implements View.OnClickListener {
 
     private final String FILE_NAME = "Info";
     private final String TAG = "DBInf";
-    private final String PHONE = "phone";
-    private final String SERVICE_ID = "service id";
-    private final String WORKING_DAYS_ID = "working days id";
+    private static final String PHONE_NUMBER = "Phone number";
+    private static final String REF = "working days/";
+
+    final String SERVICE_ID = "service id";
+    private final String WORKING_DAYS_ID = "working day id";
     private final String STATUS_USER_BY_SERVICE = "status User";
     private final int WEEKS_COUNT = 4;
     private final int DAYS_COUNT = 7;
@@ -50,7 +56,6 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_calendar);
-
         mainLayout = findViewById(R.id.mainMyCalendarLayout);
         nextBtn = findViewById(R.id.continueMyCalendarBtn2);
         dayBtns = new Button[WEEKS_COUNT][DAYS_COUNT];
@@ -68,12 +73,11 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
             checkOrder();
         }
         else {
+            //если worker
             selectWorkingDayWithTime();
         }
         nextBtn.setOnClickListener(this);
     }
-
-
 
     @Override
     public void onClick(View v) {
@@ -124,7 +128,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
     //Выделяет рабочие дни
     private void selectWorkingDayWithTime() {
         String dayAndMonth, year;
-        long dayId;
+        String dayId;
         int dayWithTimesColor = ContextCompat.getColor(this, R.color.dayWithTimes);
         for (int i = 0; i < WEEKS_COUNT; i++) {
             for (int j = 0; j < DAYS_COUNT; j++) {
@@ -132,9 +136,8 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
                 year = dayBtns[i][j].getTag(R.string.yearId).toString();
 
                 dayId = checkCurrentDay(convertDate(dayAndMonth, year));
-                if (dayId != 0) {
+                if (!dayId.equals("0") ) {
                     if (hasSomeTime(dayId)) {
-                        Log.d(TAG, "selectWorkingDayWithTime: " + dayId);
                         dayBtns[i][j].setTextColor(dayWithTimesColor);
                     }
                 }
@@ -165,7 +168,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         } else {
             // Если записи на данный сервис нет, отключаем всё нерабочие дни
             String dayAndMonth, year;
-            long dayId;
+            String dayId;
 
             for (int i = 0; i < WEEKS_COUNT; i++) {
                 for (int j = 0; j < DAYS_COUNT; j++) {
@@ -173,8 +176,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
                     year = dayBtns[i][j].getTag(R.string.yearId).toString();
 
                     dayId = checkCurrentDay(convertDate(dayAndMonth, year));
-
-                    if (dayId == 0) {
+                    if (dayId.equals("0") ) {
                         dayBtns[i][j].setEnabled(false);
                         dayBtns[i][j].setBackgroundResource(R.drawable.disabled_button);
                     } else {
@@ -190,7 +192,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     //Возвращает дату записи
     private String getOrderDate() {
-        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+        String serviceId = getIntent().getStringExtra(SERVICE_ID);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         String userId = getUserId();
         // Получает дату записи
@@ -284,7 +286,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
     }
 
     // Возвращает есть ли в рабочем дне рабочие часы
-    private boolean hasSomeTime(long dayId) {
+    private boolean hasSomeTime(String dayId) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
 
         // Получает id рабочего дня
@@ -298,7 +300,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
                         + " WHERE "
                         + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ";
 
-        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(dayId)});
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{dayId});
 
         if(cursor.moveToFirst()) {
             return true;
@@ -318,28 +320,45 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     // Добавляе рабочий день в БД
     private void addWorkingDay() {
-        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
-
-        long id = checkCurrentDay(date);
+        String serviceId = getIntent().getStringExtra(SERVICE_ID);
+        String id = checkCurrentDay(date);
 
         // Проверка на существование такого дня
-        if(id != 0){
+        if(!id.equals("0") ){
             goToMyTime(id,statusUser);
         } else {
-            SQLiteDatabase database = dbHelper.getWritableDatabase();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(DBHelper.KEY_DATE_WORKING_DAYS, date);
-            contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference(REF);
 
-            id = database.insert(DBHelper.TABLE_WORKING_DAYS, null, contentValues);
+            Map<String,Object> items = new HashMap<>();
+            items.put("data",date);
+            items.put("service id", serviceId);
 
-            goToMyTime(id,statusUser);
+            Object dayId =  myRef.push().getKey();
+            myRef = database.getReference(REF).child(String.valueOf(dayId));
+            myRef.updateChildren(items);
+
+            putDataInLocalStorage(serviceId, String.valueOf(dayId));
+
         }
     }
 
+    private void putDataInLocalStorage(String serviceId, String dayId) {
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBHelper.KEY_ID, dayId);
+        contentValues.put(DBHelper.KEY_DATE_WORKING_DAYS, date);
+        contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
+
+        database.insert(DBHelper.TABLE_WORKING_DAYS, null, contentValues);
+
+        goToMyTime(dayId,statusUser);
+    }
+
     //Возвращает id дня по id данного сервиса и дате
-    private long checkCurrentDay(String day) {
-        long serviceId = getIntent().getLongExtra(SERVICE_ID, -1);
+    private String checkCurrentDay(String day) {
+        String serviceId = getIntent().getStringExtra(SERVICE_ID);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         // Получает id рабочего дня
@@ -358,15 +377,14 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
         if(cursor.moveToFirst()) {
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-
-            return Long.valueOf(cursor.getString(indexId));
+            return String.valueOf(cursor.getString(indexId));
         }
-        return 0;
+        return "0";
     }
 
     private  String getUserId(){
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        String userId = sPref.getString(PHONE, "-");
+        String userId = sPref.getString(PHONE_NUMBER, "-");
 
         return userId;
     }
@@ -382,7 +400,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         }
     }
 
-    private void goToMyTime(long dayId, String statusUser){
+    private void goToMyTime(String dayId, String statusUser){
 
         Intent intent = new Intent(this, MyTime.class);
         intent.putExtra(WORKING_DAYS_ID, dayId);

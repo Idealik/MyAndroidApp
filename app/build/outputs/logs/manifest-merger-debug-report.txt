@@ -144,26 +144,26 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:17:17-77
 	android:name
 		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:17:27-74
-activity#com.example.ideal.myapplication.Profile
-ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:20:9-45
+activity#com.example.ideal.myapplication.other.Profile
+ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:20:9-51
 	android:name
-		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:20:19-42
-activity#com.example.ideal.myapplication.SearchService
-ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:21:9-51
+		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:20:19-48
+activity#com.example.ideal.myapplication.other.SearchService
+ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:21:9-57
 	android:name
-		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:21:19-48
+		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:21:19-54
 activity#com.example.ideal.myapplication.createService.AddService
 ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:22:9-62
 	android:name
 		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:22:19-59
-activity#com.example.ideal.myapplication.GuestService
-ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:23:9-50
+activity#com.example.ideal.myapplication.other.GuestService
+ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:23:9-56
 	android:name
-		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:23:19-47
-activity#com.example.ideal.myapplication.MainScreen
-ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:24:9-48
+		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:23:19-53
+activity#com.example.ideal.myapplication.other.MainScreen
+ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:24:9-54
 	android:name
-		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:24:19-45
+		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:24:19-51
 activity#com.example.ideal.myapplication.createService.MyTime
 ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:25:9-58
 	android:name

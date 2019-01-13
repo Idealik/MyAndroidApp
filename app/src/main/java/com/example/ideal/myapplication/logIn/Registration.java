@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,15 +19,22 @@ import com.example.ideal.myapplication.fragments.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.awt.font.TextAttribute;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Registration extends AppCompatActivity implements View.OnClickListener {
 
-    final String STATUS = "status";
-    final String FILE_NAME = "Info";
+    private static final String TAG = "DBInf";
+    private static final String STATUS = "status";
+    private static final String FILE_NAME = "Info";
+
     private static final String PHONE_NUMBER = "Phone number";
     private static final String REF = "users/";
+
+    private static final String NAME = "name";
+    private static final String SURNAME = "surname";
+    private static final String CITY = "city";
 
     Button registrateBtn;
     Button loginBtn;
@@ -117,21 +125,19 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     }
 
     private void registration(User user) {
-
         String phoneNumber = phoneInput.getText().toString();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(REF+phoneNumber);
 
         Map<String,Object> items = new HashMap<>();
-        items.put("name",user.getName());
-        items.put("surname",user.getSurname());
-        items.put("city",user.getCity());
+        items.put(NAME,user.getName());
+        items.put(SURNAME,user.getSurname());
+        items.put(CITY,user.getCity());
         myRef.updateChildren(items);
         //заносим данные о пользователе в локальную базу данных
         putDataInLocalStorage(user, phoneNumber);
         // сохраняем статус о том, что пользователь вошел
         saveStatus();
-
     }
 
     private void putDataInLocalStorage(User user,

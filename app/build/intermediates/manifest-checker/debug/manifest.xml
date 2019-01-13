@@ -32,11 +32,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.ideal.myapplication.Profile" />
-        <activity android:name="com.example.ideal.myapplication.SearchService" />
+        <activity android:name="com.example.ideal.myapplication.other.Profile" />
+        <activity android:name="com.example.ideal.myapplication.other.SearchService" />
         <activity android:name="com.example.ideal.myapplication.createService.AddService" />
-        <activity android:name="com.example.ideal.myapplication.GuestService" />
-        <activity android:name="com.example.ideal.myapplication.MainScreen" />
+        <activity android:name="com.example.ideal.myapplication.other.GuestService" />
+        <activity android:name="com.example.ideal.myapplication.other.MainScreen" />
         <activity android:name="com.example.ideal.myapplication.createService.MyTime" />
         <activity android:name="com.example.ideal.myapplication.createService.MyCalendar" />
         <activity android:name="com.example.ideal.myapplication.editing.EditService" />

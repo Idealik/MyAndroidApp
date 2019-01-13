@@ -53,7 +53,7 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_service);
 
-        findBtn = findViewById(R.id.findServiceSearchServiceBtn);
+        /*findBtn = findViewById(R.id.findServiceSearchServiceBtn);
 
         //создаём выпадающее меню на основе массива городов
         citySpinner = findViewById(R.id.citySearchServiceSpinner);
@@ -80,12 +80,12 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }
-        });
+        });*/
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+        /*switch (v.getId()) {
             case R.id.findServiceSearchServiceBtn:
                 if(!search()) {
                     resultLayout.removeAllViews();
@@ -94,10 +94,10 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
                 break;
             default:
                 break;
-        }
+        }*/
     }
 
-    private void showServicesInHomeTown() {
+    /*private void showServicesInHomeTown() {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         //получаем id пользователя
@@ -349,5 +349,5 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
         transaction = manager.beginTransaction();
         transaction.add(R.id.resultSearchServiceLayout, fElement);
         transaction.commit();
-    }
+    }*/
 }

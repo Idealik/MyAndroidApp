@@ -25,9 +25,9 @@ public class foundServiceProfileElement extends Fragment implements View.OnClick
     String nameString;
 
     @SuppressLint("ValidFragment")
-    public foundServiceProfileElement(String id, String name) {
-        idString = id;
-        nameString = name;
+    public foundServiceProfileElement(Service service) {
+        idString = service.getId();
+        nameString = service.getName();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class foundServiceProfileElement extends Fragment implements View.OnClick
 
     private void goToGuestService(){
         Intent intent = new Intent(this.getContext(), GuestService.class);
-        intent.putExtra(SERVICE_ID, Long.valueOf(idString));
+        intent.putExtra(SERVICE_ID, idString);
         startActivity(intent);
     }
 }
