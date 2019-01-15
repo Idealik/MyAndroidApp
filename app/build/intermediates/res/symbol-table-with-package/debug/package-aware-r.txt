@@ -12,6 +12,7 @@ anim abc_slide_out_top
 anim abc_tooltip_enter
 anim abc_tooltip_exit
 array cities
+array searchBy
 attr actionBarDivider
 attr actionBarItemBackground
 attr actionBarPopupTheme
@@ -771,6 +772,7 @@ id citySearchServiceSpinner
 id clip_horizontal
 id clip_vertical
 id codeConfirmationInput
+id codeEditProfileInput
 id collapseActionView
 id content
 id contentPanel
@@ -874,6 +876,7 @@ id registrationAuthorizationBtn
 id registrationConfirmationBtn
 id repeatPassConfirmationInput
 id resendConfirmationBtn
+id resendProfileEditProfileBtn
 id resultSearchServiceLayout
 id resultsMainScreenLayout
 id right
@@ -884,6 +887,7 @@ id screen
 id scrollIndicatorDown
 id scrollIndicatorUp
 id scrollView
+id searchBySearchServiceSpinner
 id searchLineSearchServiceInput
 id search_badge
 id search_bar
@@ -917,9 +921,6 @@ id start
 id status_bar_latest_event_content
 id submenuarrow
 id submit_area
-id surnameEditProfileInput
-id surnameFoundServiceElementText
-id surnameProfileText
 id surnameRegistrationInput
 id tabMode
 id tag_transition_group
@@ -940,6 +941,7 @@ id up
 id useLogo
 id userNameFoundServiceElementText
 id verifyConfirmationBtn
+id verifyProfileEditProfileBtn
 id wide
 id withText
 id wrap

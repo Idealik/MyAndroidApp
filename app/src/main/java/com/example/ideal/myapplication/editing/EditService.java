@@ -27,9 +27,6 @@ public class EditService extends AppCompatActivity implements View.OnClickListen
 
     private final String TAG = "DBInf";
     private final String SERVICE_ID = "service id";
-    private final String NAME_SERVICE = "name service";
-    private final String COST_SERVICE = "cost service";
-    private final String DESCRIPTION_SERVICE = "description service";
 
     private final String SERVICES = "services";
     private final String NAME = "name";
@@ -63,11 +60,11 @@ public class EditService extends AppCompatActivity implements View.OnClickListen
         dbHelper = new DBHelper(this);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         String sqlQuery = "SELECT "
-                        + DBHelper.KEY_NAME_SERVICES + ", "
-                        + DBHelper.KEY_DESCRIPTION_SERVICES + ", "
-                        + DBHelper.KEY_MIN_COST_SERVICES
-                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
-                        + " WHERE " + DBHelper.KEY_ID + " = ?";
+                + DBHelper.KEY_NAME_SERVICES + ", "
+                + DBHelper.KEY_DESCRIPTION_SERVICES + ", "
+                + DBHelper.KEY_MIN_COST_SERVICES
+                + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
+                + " WHERE " + DBHelper.KEY_ID + " = ?";
         Cursor cursor = database.rawQuery(sqlQuery, new String[] {serviseId});
 
         if(cursor.moveToFirst()) {
@@ -88,7 +85,6 @@ public class EditService extends AppCompatActivity implements View.OnClickListen
         switch (v.getId()){
 
             case R.id.editServiceEditServiceBtn:
-                String name = nameServiceInput.getText().toString();
                 String cost = costServiceInput.getText().toString();
                 String description = descriptonServiceInput.getText().toString();
 
@@ -145,6 +141,7 @@ public class EditService extends AppCompatActivity implements View.OnClickListen
         if(service.getDescription()!=null) items.put(DESCRIPTION,service.getDescription());
         reference.updateChildren(items);
     }
+
 
     private void goToService() {
         Intent intent = new Intent(this, GuestService.class);

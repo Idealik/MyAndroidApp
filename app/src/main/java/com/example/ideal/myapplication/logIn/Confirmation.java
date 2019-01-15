@@ -88,7 +88,7 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.registrationConfirmationBtn:
                 //проверка на заполенность полей
-                if(isFullInputs(phone,password,repeatPassword)){
+                if(isFullInputs()){
                     phone = convertPhoneToNormalView(phone);
                     // проверка на надежность пароля
                     if(isStrongPassword(password)) {
@@ -118,6 +118,9 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
                     // подтверждаем код и если все хорошо, создаем юзера
                     verifyCode(code);
                 }
+                break;
+            case R.id.resendConfirmationBtn:
+                resendCode();
                 break;
             default:
                 break;
@@ -280,12 +283,10 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    protected boolean isFullInputs(String phone, String pass, String repeatPassword){
-
-        if(phone.trim().equals("")) return false;
-        if(pass.trim().equals("")) return false;
-        if(repeatPassword.trim().equals("")) return false;
-
+    protected Boolean isFullInputs(){
+        if(phoneText.getText().toString().isEmpty()) return false;
+        if(passwordText.getText().toString().isEmpty()) return false;
+        if(repeatPasswordText.getText().toString().isEmpty()) return false;
         return  true;
     }
     protected boolean isStrongPassword(String myPass) {

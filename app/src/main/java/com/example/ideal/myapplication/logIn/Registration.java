@@ -33,7 +33,6 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     private static final String REF = "users/";
 
     private static final String NAME = "name";
-    private static final String SURNAME = "surname";
     private static final String CITY = "city";
 
     Button registrateBtn;
@@ -82,21 +81,15 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                 //проверка на незаполенные поля
                 if(isFullInputs()) {
                     //если имя не устанавлявается, значит выводим тоаст и выходим из кейса
-                    if(!user.setName(nameInput.getText().toString())){
+                    String fullName = nameInput.getText().toString().toLowerCase() + " " + surnameInput.getText().toString().toLowerCase();
+                    if(!user.setName(fullName)){
                         Toast.makeText(
                                 this,
                                 "Имя должно содержать только буквы",
                                 Toast.LENGTH_SHORT).show();
                         break;
                     }
-                    if(!user.setSurname(surnameInput.getText().toString())) {
-                        Toast.makeText(
-                                this,
-                                "Фамилия должна содержать только буквы",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                    if(!user.setCity(cityInput.getText().toString())){
+                    if(!user.setCity(cityInput.getText().toString().toLowerCase())){
                         Toast.makeText(
                                 this,
                                 "Название города должно содержать только буквы",
@@ -131,7 +124,6 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
 
         Map<String,Object> items = new HashMap<>();
         items.put(NAME,user.getName());
-        items.put(SURNAME,user.getSurname());
         items.put(CITY,user.getCity());
         myRef.updateChildren(items);
         //заносим данные о пользователе в локальную базу данных
@@ -145,21 +137,15 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
+        database.delete(DBHelper.TABLE_CONTACTS_USERS, null, null);
+
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(DBHelper.KEY_NAME_USERS, user.getName());
-        contentValues.put(DBHelper.KEY_SURNAME_USERS, user.getSurname());
         contentValues.put(DBHelper.KEY_CITY_USERS, user.getCity());
         contentValues.put(DBHelper.KEY_USER_ID, phoneNumber);
 
         database.insert(DBHelper.TABLE_CONTACTS_USERS,null,contentValues);
-    }
-
-    protected boolean isStrongPassword(String myPass) {
-        if(!myPass.matches(".*[a-z].*")) return  false;
-        if(!myPass.matches(".*[0-9].*")) return  false;
-        if(myPass.length()<=5) return false;
-        return true;
     }
 
     protected Boolean isFullInputs(){

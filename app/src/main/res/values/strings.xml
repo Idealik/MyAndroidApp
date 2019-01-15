@@ -51,10 +51,15 @@
     //array for spinner
     <string-array name="cities">
         <item>Город</item>
-        <item>Дубна</item>
-        <item>Дмитров</item>
-        <item>Талдом</item>
-        <item>Кимры</item>
+        <item>dubna</item>
+        <item>dmitrov</item>
+        <item>taldom</item>
+        <item>kimry</item>
+    </string-array>
+
+    <string-array name="searchBy">
+        <item>название сервиса</item>
+        <item>имя и фамилия</item>
     </string-array>
 
 

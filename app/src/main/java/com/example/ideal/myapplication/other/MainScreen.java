@@ -32,7 +32,6 @@ public class MainScreen extends AppCompatActivity {
 
     private static final String USERS = "users";
     private static final String NAME = "name";
-    private static final String SURNAME = "surname";
     private static final String CITY = "city";
 
     private static final String SERVICES = "services";
@@ -123,12 +122,10 @@ public class MainScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot:dataSnapshot.getChildren()) {
                     String userName = String.valueOf(snapshot.child(NAME).getValue());
-                    String userSurname = String.valueOf(snapshot.child(SURNAME).getValue());
                     final String userId = snapshot.getKey();
 
                     final User user = new User();
                     user.setName(userName);
-                    user.setSurname(userSurname);
                     user.setCity(userCity);
 
                     Query serviceQuery = FirebaseDatabase.getInstance().getReference(SERVICES)

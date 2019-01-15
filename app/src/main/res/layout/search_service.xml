@@ -22,6 +22,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Spinner
+        android:id="@+id/searchBySearchServiceSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ScrollView
         android:layout_width="330dp"
         android:layout_height="310dp"

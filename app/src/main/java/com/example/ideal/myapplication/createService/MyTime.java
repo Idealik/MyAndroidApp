@@ -482,8 +482,6 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
                 //удаляем время из базы данных
                 for (String hours : removedHours) {
                     for (DataSnapshot time : dataSnapshot.getChildren()) {
-                        Log.d(TAG, "onDataChange: " + hours);
-                        Log.d(TAG, "onDataChange: " + removedHours.size());
                         if (String.valueOf(time.child("time").getValue()).equals(hours)) {
                             String timeId = String.valueOf(time.getKey());
 

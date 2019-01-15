@@ -67,7 +67,7 @@ public class foundOrderElement extends Fragment implements View.OnClickListener 
 
     private void goToGuestService(){
         Intent intent = new Intent(this.getContext(), GuestService.class);
-        intent.putExtra(SERVICE_ID, Long.valueOf(idString));
+        intent.putExtra(SERVICE_ID, idString);
         startActivity(intent);
     }
 }

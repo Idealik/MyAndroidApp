@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,7 @@ import com.example.ideal.myapplication.fragments.Service;
 import com.example.ideal.myapplication.fragments.foundOrderElement;
 import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
 import com.example.ideal.myapplication.logIn.Authorization;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Profile extends AppCompatActivity implements View.OnClickListener {
 
@@ -32,7 +35,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private  final String FILE_NAME = "Info";
     private  final String STATUS = "status";
     private  static final String USER_NAME = "my name";
-    private  static final String USER_SURNAME = "my surname";
     private  static final String USER_CITY = "my city";
     private  final String SERVICE_ID = "service id";
 
@@ -43,7 +45,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private  Button editProfileBtn;
 
     private  TextView nameText;
-    private  TextView surnameText;
     private  TextView cityText;
 
     private  ScrollView servicesScroll;
@@ -61,6 +62,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private FragmentManager manager;
     private FragmentTransaction transaction;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +82,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         ordersLayout = findViewById(R.id.ordersProfileLayout);
 
         nameText = findViewById(R.id.nameProfileText);
-        surnameText= findViewById(R.id.surnameProfileText);
         cityText = findViewById(R.id.cityProfileText);
 
         dbHelper = new DBHelper(this);
@@ -92,7 +93,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         String userId = getUserId();
         // получаем сервис пользователя, если он заходит к себе в профиль, то 0
         String serviceId = getIntent().getStringExtra(SERVICE_ID);
-
 
         // идет проверка, относится ли этот сервис к пользователю,
         // чтобы дать соответствующий функционал
@@ -269,7 +269,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
             int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
             int indexRatingService = cursor.getColumnIndex(DBHelper.KEY_RATING_SERVICES);
             int indexCountOfRatesService = cursor.getColumnIndex(DBHelper.KEY_COUNT_OF_RATES_SERVICES);
-
             do{
                 String foundId = cursor.getString(indexId);
                 String foundNameService = cursor.getString(indexNameService);
@@ -331,6 +330,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     }
 
     // получаем данные о пользователе и отображаем в прфоиле
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void createProfileData(String userId){
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
@@ -339,7 +339,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         String sqlQuery =
                 "SELECT "
                         + DBHelper.KEY_NAME_USERS + ", "
-                        + DBHelper.KEY_SURNAME_USERS + ", "
                         + DBHelper.KEY_CITY_USERS
                         + " FROM "
                         + DBHelper.TABLE_CONTACTS_USERS
@@ -350,20 +349,21 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
         if(cursor.moveToFirst()){
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
-            int indexSurname = cursor.getColumnIndex(DBHelper.KEY_SURNAME_USERS);
             int indexCity = cursor . getColumnIndex(DBHelper.KEY_CITY_USERS);
-            String name = cursor.getString(indexName).substring(0, 1).toUpperCase()
-                    + cursor.getString(indexName).substring(1);
-            String surname = cursor.getString(indexSurname).substring(0, 1).toUpperCase()
-                    + cursor.getString(indexSurname).substring(1);
+            String[] names = cursor.getString(indexName).split(" ");
+            for (int i=0; i<names.length; i++) {
+                names[i] = names[i].substring(0, 1).toUpperCase() + names[i].substring(1);
+            }
+            String name = String.join(" ", names);
+
             String city = cursor.getString(indexCity).substring(0, 1).toUpperCase()
                     + cursor.getString(indexCity).substring(1);
             nameText.setText(name);
-            surnameText.setText(surname);
             cityText.setText(city);
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();
@@ -536,7 +536,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private void goToEditProfile() {
         Intent intent = new Intent(this, EditProfile.class);
         intent.putExtra(USER_NAME, nameText.getText());
-        intent.putExtra(USER_SURNAME, surnameText.getText());
         intent.putExtra(USER_CITY, cityText.getText());
         startActivity(intent);
     }

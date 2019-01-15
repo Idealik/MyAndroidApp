@@ -20,14 +20,12 @@ public class foundServiceElement extends Fragment implements View.OnClickListene
     final String SERVICE_ID = "service id";
 
     TextView nameUserText;
-    TextView surname;
     TextView city;
     TextView nameServiceText;
     TextView costText;
 
     String idString;
     String nameUserString;
-    String surnameString;
     String cityString;
     String nameServiceString;
     String costString;
@@ -36,7 +34,6 @@ public class foundServiceElement extends Fragment implements View.OnClickListene
     public foundServiceElement(Service service, User user) {
         idString = service.getId();
         nameUserString = user.getName();
-        surnameString = user.getSurname();
         cityString = user.getCity();
         nameServiceString = service.getName();
         costString = service.getCost().toString();
@@ -51,13 +48,11 @@ public class foundServiceElement extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         nameUserText = view.findViewById(R.id.userNameFoundServiceElementText);
-        surname = view.findViewById(R.id.surnameFoundServiceElementText);
         city = view.findViewById(R.id.cityFoundServiceElementText);
         nameServiceText = view.findViewById(R.id.serviceNameFoundServiceElementText);
         costText = view.findViewById(R.id.costFoundServiceElementText);
 
         nameUserText.setOnClickListener(this);
-        surname.setOnClickListener(this);
         city.setOnClickListener(this);
         nameServiceText.setOnClickListener(this);
         costText.setOnClickListener(this);
@@ -66,9 +61,7 @@ public class foundServiceElement extends Fragment implements View.OnClickListene
 
     private void setData() {
         nameUserText.setText(nameUserString);
-        surname.setText(surnameString);
         city.setText(cityString);
-        surname.setText(surnameString);
         nameServiceText.setText(nameServiceString);
         costText.setText(costString);
     }

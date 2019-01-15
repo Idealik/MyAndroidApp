@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.createService.MyCalendar;
 import com.example.ideal.myapplication.editing.EditService;
+import com.example.ideal.myapplication.fragments.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,13 +31,17 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
     private final String FILE_NAME = "Info";
     private final String TAG = "DBInf";
     private final String SERVICE_ID = "service id";
+    private final String SERVICE = "services/";
+    private final String USERS = "users/";
     private static final String WORKING_DAYS = "working days/";
     private static final String WORKING_TIME = "working time/";
     private final String WORKING_DAYS_ID = "working day id";
 
     private final String STATUS_USER_BY_SERVICE = "status User";
 
-    Boolean isMyService = false;
+    Boolean isMyService;
+    Boolean haveTime;
+
     String serviceId;
     Integer countOfDate;
 
@@ -54,6 +59,9 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.guest_service);
+
+        isMyService = false;
+        haveTime = false;
 
         nameText = findViewById(R.id.nameGuestServiceText);
         costText = findViewById(R.id.costGuestServiceText);
@@ -86,7 +94,6 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
         editScheduleBtn.setOnClickListener(this);
         editServiceBtn.setOnClickListener(this);
         profileBtn.setOnClickListener(this);
-
     }
 
     @Override
@@ -108,7 +115,7 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
                 goToEditService();
             break;
             case R.id.profileGuestServiceBtn:
-                goToProfile();
+                loadProfileData();
             default: break;
         }
     }
@@ -165,7 +172,7 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
             public void onDataChange(@NonNull final DataSnapshot dataSnapshotDate) {
                 //если воркер и нет расписания
                 if((dataSnapshotDate.getChildrenCount() == 0) && (status.equals("worker"))){
-                    goToMyCalendar(status);
+                                    goToMyCalendar(status);
                 }
                 //если юзер и у воркера еще нету расписания на этот сервис
                 if((dataSnapshotDate.getChildrenCount() == 0) && (status.equals("User"))) {
@@ -184,25 +191,30 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
                     queryTime.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                countOfDate++;
 
-                            countOfDate++;
-
-                            for (DataSnapshot time : dataSnapshot.getChildren()) {
-                                String timeId = String.valueOf(time.getKey());
-                                String timeDate = String.valueOf(time.child("time").getValue());
-                                String timeUserId = String.valueOf(time.child("user id").getValue());
-                                String timeWorkingDayId = String.valueOf(time.child("working day id")
-                                        .getValue());
-
-                                addTimeInLocalStorage(timeId, timeDate,timeUserId,timeWorkingDayId);
+                                for (DataSnapshot time : dataSnapshot.getChildren()) {
+                                    String timeId = String.valueOf(time.getKey());
+                                    String timeDate = String.valueOf(time.child("time").getValue());
+                                    String timeUserId = String.valueOf(time.child("user id").getValue());
+                                    String timeWorkingDayId = String.valueOf(time.child("working day id")
+                                            .getValue());
+                                    haveTime=true;
+                                    addTimeInLocalStorage(timeId, timeDate, timeUserId, timeWorkingDayId);
+                                }
+                                //если прошли по всем дням, идем в календарь
+                                if ((dataSnapshotDate.getChildrenCount() == countOfDate) && haveTime) {
+                                    goToMyCalendar(status);
+                                }
+                                else {
+                                    attentionThisScheduleIsEmpty();
+                                }
                             }
-                            //если прошли по всем дням, идем в календарь
-                            if(dataSnapshotDate.getChildrenCount()==countOfDate) goToMyCalendar(status);
-                        }
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) { }
                     });
                 }
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -234,7 +246,51 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
         contentValues.put(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME, timeWorkingDayId);
 
         database.insert(DBHelper.TABLE_WORKING_TIME,null,contentValues);
+    }
 
+    private void loadProfileData(){
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //возвращает все дни определенного сервиса
+        DatabaseReference myRef = database.getReference(SERVICE+serviceId);
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String phone = String.valueOf(dataSnapshot.child("user id").getValue());
+                DatabaseReference myRef = database.getReference(USERS+phone);
+
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = new User();
+
+                        user.setName(String.valueOf(dataSnapshot.child("name").getValue()));
+                        user.setCity(String.valueOf(dataSnapshot.child("city").getValue()));
+                        putDataInLocalStorage(user,phone);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) { }
+                });
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+    }
+
+    private void putDataInLocalStorage(User user,
+                                       String phoneNumber) {
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DBHelper.KEY_NAME_USERS, user.getName());
+        contentValues.put(DBHelper.KEY_CITY_USERS, user.getCity());
+        contentValues.put(DBHelper.KEY_USER_ID, phoneNumber);
+
+        database.insert(DBHelper.TABLE_CONTACTS_USERS,null,contentValues);
+        goToProfile();
     }
 
     @Override
