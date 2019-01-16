@@ -27,9 +27,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MyTime extends AppCompatActivity  implements View.OnClickListener {
 
@@ -37,9 +40,15 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
     private static final String PHONE_NUMBER = "Phone number";
     private final String WORKING_DAYS_ID = "working day id";
     private static final String WORKING_TIME = "working time/";
+    private final String WORKING_DAYS = "working days";
+    private final String SERVICES = "services";
+
+    private static final String DIALOGS = "dialogs/";
+    private static final String MESSAGES = "message orders/";
     private static final String USER_ID = "user id";
     private final String TAG = "DBInf";
 
+    private final String SERVICE_ID = "service id";
     private final String STATUS_USER_BY_SERVICE = "status User";
     private final int ROWS_COUNT = 6;
     private final int COLUMNS_COUNT = 4;
@@ -47,6 +56,7 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
     String statusUser;
     String userId;
     String workingDaysId;
+    String serviceId;
     int width;
     int height;
 
@@ -86,6 +96,8 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
         workingHours = new ArrayList<>();
         removedHours = new ArrayList<>();
         currentHours = new ArrayList<>();
+
+        serviceId = getIntent().getStringExtra(SERVICE_ID);
 
         //получение парамтров экрана
         Display display = getWindowManager().getDefaultDisplay();
@@ -423,17 +435,73 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
 
                         myRef.updateChildren(items);
                         updateLocalStorageTime();
+                        // DatabaseReference myRef = database.getReference(WORKING_TIME + timeId);
+                        createDialog(workingDaysId);
                         checkCurrentTimes();
                     }
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: ");
-            }
+                Log.d(TAG, "onCancelled: "); }
         });
+    }
 
+    private void createDialog(final String workingDaysId) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dayReference = database.getReference(WORKING_DAYS).child(workingDaysId);
+        dayReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot day) {
+                String serviceId = String.valueOf(day.child(SERVICE_ID).getValue());
+                DatabaseReference serviceReference = database.getReference(SERVICES).child(serviceId);
+                serviceReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot service) {
+                        String workerId =  String.valueOf(service.child(USER_ID).getValue());
 
+                        DatabaseReference reference = database.getReference(DIALOGS);
+                        String dialogId =  reference.push().getKey();
+                        reference = reference.child(dialogId);
+
+                        Map<String,Object> items = new HashMap<>();
+                        items.put("first phone", workerId);
+                        items.put("second phone", userId);
+
+                        reference.updateChildren(items);
+
+                        createMessage(dialogId);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    private void createMessage(final String dialogId) {
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        Date dateNow = new Date();
+
+        DatabaseReference myRef = database.getReference(MESSAGES);
+        Map<String, Object> items = new HashMap<>();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("HH:mm:ss");
+        formatForDateNow.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
+
+        items.put("service id", serviceId);
+        items.put("dialog id", dialogId);
+        items.put("time", formatForDateNow.format(dateNow));
+        items.put("is canceled", false);
+
+        String messageId =  myRef.push().getKey();
+        myRef = database.getReference(MESSAGES).child(messageId);
+        myRef.updateChildren(items);
     }
 
     private void updateLocalStorageTime() {

@@ -848,7 +848,6 @@ id nameFoundOrderElementText
 id nameGuestServiceText
 id nameProfileText
 id nameRegistrationInput
-id nameSearchServiceInput
 id never
 id none
 id normal
@@ -879,6 +878,7 @@ id resendConfirmationBtn
 id resendProfileEditProfileBtn
 id resultSearchServiceLayout
 id resultsMainScreenLayout
+id resultsMessageLayout
 id right
 id right_icon
 id right_side
@@ -983,6 +983,8 @@ layout abc_tooltip
 layout add_service
 layout authorization
 layout confirmation
+layout dialog_element
+layout dialogs
 layout edit_profile
 layout edit_service
 layout found_order_element
@@ -991,6 +993,9 @@ layout found_service_profile_element
 layout fragment_found_service_profile_element
 layout guest_service
 layout main_screen
+layout message_order_element
+layout message_review_element
+layout messages
 layout my_calendar
 layout my_time
 layout notification_action

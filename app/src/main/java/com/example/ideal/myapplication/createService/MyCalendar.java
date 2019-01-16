@@ -42,6 +42,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     String statusUser;
     String date;
+    String serviceId;
 
     Button[][] dayBtns;
     Button nextBtn;
@@ -192,7 +193,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     //Возвращает дату записи
     private String getOrderDate() {
-        String serviceId = getIntent().getStringExtra(SERVICE_ID);
+        serviceId = getIntent().getStringExtra(SERVICE_ID);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         String userId = getUserId();
         // Получает дату записи
@@ -320,7 +321,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     // Добавляе рабочий день в БД
     private void addWorkingDay() {
-        String serviceId = getIntent().getStringExtra(SERVICE_ID);
+        serviceId = getIntent().getStringExtra(SERVICE_ID);
         String id = checkCurrentDay(date);
 
         // Проверка на существование такого дня
@@ -358,7 +359,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     //Возвращает id дня по id данного сервиса и дате
     private String checkCurrentDay(String day) {
-        String serviceId = getIntent().getStringExtra(SERVICE_ID);
+        serviceId = getIntent().getStringExtra(SERVICE_ID);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         // Получает id рабочего дня
@@ -405,6 +406,8 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         Intent intent = new Intent(this, MyTime.class);
         intent.putExtra(WORKING_DAYS_ID, dayId);
         intent.putExtra(STATUS_USER_BY_SERVICE, statusUser);
+        intent.putExtra(SERVICE_ID, serviceId);
+
 
         startActivity(intent);
     }
@@ -467,7 +470,6 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
             case "дек":
                 return 12;
         }
-
         return -1;
     }
 }

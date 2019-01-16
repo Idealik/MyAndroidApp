@@ -1,0 +1,16 @@
+package com.example.ideal.myapplication.fragments;
+
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.ideal.myapplication.R;
+
+
+public class MessageOrderElement extends Fragment {
+
+}

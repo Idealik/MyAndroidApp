@@ -9,6 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".other.Messages"></activity>
+        <activity android:name=".other.Dialogs" />
         <activity android:name=".logIn.Registration" />
         <activity android:name=".logIn.Authorization">
             <intent-filter>
@@ -26,7 +28,7 @@
         <activity android:name=".createService.MyCalendar" />
         <activity android:name=".editing.EditService" />
         <activity android:name=".editing.EditProfile" />
-        <activity android:name=".logIn.Confirmation"></activity>
+        <activity android:name=".logIn.Confirmation" />
     </application>
 
 </manifest>
