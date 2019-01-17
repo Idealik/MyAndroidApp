@@ -393,6 +393,7 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
         database.delete(DBHelper.TABLE_CONTACTS_SERVICES, null, null);
         database.delete(DBHelper.TABLE_WORKING_DAYS,null,null);
         database.delete(DBHelper.TABLE_WORKING_TIME,null,null);
+
     }
 
     // Добавляет информацию о сервисах данного пользователя в SQLite

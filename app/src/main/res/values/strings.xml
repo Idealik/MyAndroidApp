@@ -47,6 +47,8 @@
     <string name="resendCode">Отправить код снова</string>
     <string name="verifyCode">Подтвердить код</string>
     <string name="enterCode">Введите код</string>
+    <string name="canceled">Отказаться</string>
+    <string name="Dialogs">Диалоги</string>
 
     //array for spinner
     <string-array name="cities">

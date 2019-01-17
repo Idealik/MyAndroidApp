@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final  int DATABASE_VERSION = 30;
+    public static final  int DATABASE_VERSION = 35;
     public static final String DATABASE_NAME = "MyFirstDB";
 
     //tables name
@@ -46,14 +46,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public  static final  String KEY_WORKING_DAYS_ID_WORKING_TIME = "id_Working_Days";
 
     // dialogs
-    public  static final  String KEY_FIRST_USER_ID_DIALOGS = "first phone";
-    public  static final  String KEY_SECOND_USER_ID_DIALOGS = "second phone";
+    public  static final  String KEY_FIRST_USER_ID_DIALOGS = "first_phone";
+    public  static final  String KEY_SECOND_USER_ID_DIALOGS = "second_phone";
 
     // messages
     public  static final  String KEY_TIME_MESSAGES = "message_time";
     public  static final  String KEY_IS_CANCELED_MESSAGES = "is_canceled";
-    public  static final  String KEY_SERVICE_ID_MESSAGES = "service_id";
     public  static final  String KEY_DIALOG_ID_MESSAGES = "dialog_id";
+    public  static final  String KEY_DAY_ID_MESSAGES = "day_id";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -104,10 +104,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String messages = "create table "+ TABLE_MESSAGES
                 + "("
                 + KEY_ID + " text primary key,"
-                + KEY_USER_ID + " text,"
-                + KEY_SERVICE_ID_MESSAGES + " text,"
                 + KEY_DIALOG_ID_MESSAGES + " text,"
                 + KEY_IS_CANCELED_MESSAGES + " text,"
+                + KEY_DAY_ID_MESSAGES + " text,"
                 + KEY_TIME_MESSAGES + " text"
                 + ")";
 

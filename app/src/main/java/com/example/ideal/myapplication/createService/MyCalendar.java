@@ -30,7 +30,6 @@ import java.util.Map;
 public class MyCalendar extends AppCompatActivity implements View.OnClickListener {
 
     private final String FILE_NAME = "Info";
-    private final String TAG = "DBInf";
     private static final String PHONE_NUMBER = "Phone number";
     private static final String REF = "working days/";
 
@@ -385,9 +384,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     private  String getUserId(){
         sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        String userId = sPref.getString(PHONE_NUMBER, "-");
-
-        return userId;
+        return sPref.getString(PHONE_NUMBER, "-");
     }
 
     @Override
@@ -406,8 +403,6 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         Intent intent = new Intent(this, MyTime.class);
         intent.putExtra(WORKING_DAYS_ID, dayId);
         intent.putExtra(STATUS_USER_BY_SERVICE, statusUser);
-        intent.putExtra(SERVICE_ID, serviceId);
-
 
         startActivity(intent);
     }

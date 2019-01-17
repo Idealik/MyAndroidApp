@@ -43,6 +43,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private  Button addServicesBtn;
     private  Button mainScreenBtn;
     private  Button editProfileBtn;
+    private  Button dialogsBtn;
 
     private  TextView nameText;
     private  TextView cityText;
@@ -73,6 +74,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         addServicesBtn = findViewById(R.id.addServicesProfileBtn);
         mainScreenBtn = findViewById(R.id.mainScreenProfileBtn);
         editProfileBtn = findViewById(R.id.editProfileBtn);
+        dialogsBtn = findViewById(R.id.dialogsProfileBtn);
 
         servicesOrOrdersSwitch = findViewById(R.id.servicesOrOrdersProfileSwitch);
 
@@ -153,6 +155,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         logOutBtn.setOnClickListener(this);
         findServicesBtn.setOnClickListener(this);
         mainScreenBtn.setOnClickListener(this);
+        dialogsBtn.setOnClickListener(this);
     }
 
     @Override
@@ -173,6 +176,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.editProfileBtn:
                 goToEditProfile();
+                break;
+            case R.id.dialogsProfileBtn:
+                goToDialogs();
                 break;
             default:
                 break;
@@ -537,6 +543,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         Intent intent = new Intent(this, EditProfile.class);
         intent.putExtra(USER_NAME, nameText.getText());
         intent.putExtra(USER_CITY, cityText.getText());
+        startActivity(intent);
+    }
+
+    private void goToDialogs() {
+        Intent intent = new Intent(this, Dialogs.class);
         startActivity(intent);
     }
 

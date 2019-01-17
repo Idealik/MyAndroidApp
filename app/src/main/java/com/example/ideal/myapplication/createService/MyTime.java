@@ -56,7 +56,6 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
     String statusUser;
     String userId;
     String workingDaysId;
-    String serviceId;
     int width;
     int height;
 
@@ -96,8 +95,6 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
         workingHours = new ArrayList<>();
         removedHours = new ArrayList<>();
         currentHours = new ArrayList<>();
-
-        serviceId = getIntent().getStringExtra(SERVICE_ID);
 
         //получение парамтров экрана
         Display display = getWindowManager().getDefaultDisplay();
@@ -494,14 +491,18 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("HH:mm:ss");
         formatForDateNow.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
 
-        items.put("service id", serviceId);
         items.put("dialog id", dialogId);
         items.put("time", formatForDateNow.format(dateNow));
+        items.put("date", workingDaysId);
         items.put("is canceled", false);
 
         String messageId =  myRef.push().getKey();
         myRef = database.getReference(MESSAGES).child(messageId);
         myRef.updateChildren(items);
+
+
+
+        //добавлять в локальную бд
     }
 
     private void updateLocalStorageTime() {
