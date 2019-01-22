@@ -4,13 +4,13 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.Service;
@@ -48,9 +48,7 @@ public class MainScreen extends AppCompatActivity {
 
     LinearLayout resultLayout;
 
-    private foundServiceElement fElement;
     private FragmentManager manager;
-    private FragmentTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +78,6 @@ public class MainScreen extends AppCompatActivity {
         getServicesInThisCity(userCity);
     }
 
-    private  String getUserId(){
-        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        String userId = sPref.getString(PHONE_NUMBER, "-");
-
-        return userId;
-    }
 
     private String getUserCity(SQLiteDatabase database,String userId){
         // Получить город юзера
@@ -164,7 +156,7 @@ public class MainScreen extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.d(TAG, "onCancelled");
+                            attentionBadConnection();
                         }
                     });
                     if(countOfService == limitOfService) {
@@ -174,7 +166,7 @@ public class MainScreen extends AppCompatActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled");
+                attentionBadConnection();
             }
         });
 
@@ -182,9 +174,9 @@ public class MainScreen extends AppCompatActivity {
     }
 
     private void addToScreen(Service service, User user) {
-        fElement = new foundServiceElement(service, user);
+        foundServiceElement fElement = new foundServiceElement(service, user);
 
-        transaction = manager.beginTransaction();
+        FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.resultsMainScreenLayout, fElement);
         transaction.commit();
     }
@@ -234,4 +226,14 @@ public class MainScreen extends AppCompatActivity {
         cursor.close();
     }
 
+    private  String getUserId(){
+        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
+
+        return sPref.getString(PHONE_NUMBER, "-");
+    }
+
+
+    private void attentionBadConnection() {
+        Toast.makeText(this,"Плохое соединение",Toast.LENGTH_SHORT).show();
+    }
 }

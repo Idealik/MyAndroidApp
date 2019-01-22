@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
+import com.example.ideal.myapplication.helpApi.WorkWithViewApi;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -21,8 +22,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -35,9 +39,11 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "DBInf";
 
-    final String PASS = "password";
-    final String FILE_NAME = "Info";
+    private static final String PASS = "password";
+    private static final String FILE_NAME = "Info";
     private static final String PHONE_NUMBER = "Phone number";
+
+    private static final String USERS = "users";
 
     private Button registrationButton;
     private Button verifyButton;
@@ -47,7 +53,6 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
     private EditText passwordText;
     private EditText repeatPasswordText;
     private EditText codeText;
-
     SharedPreferences sPref;
 
     private String phoneVerificationId;
@@ -85,6 +90,8 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
         String password = passwordText.getText().toString();
         String repeatPassword = repeatPasswordText.getText().toString();
 
+        WorkWithViewApi.hideKeyboard(this);
+
         switch (v.getId()) {
             case R.id.registrationConfirmationBtn:
                 //проверка на заполенность полей
@@ -120,7 +127,7 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.resendConfirmationBtn:
-                resendCode();
+                resendCode(phone);
                 break;
             default:
                 break;
@@ -133,22 +140,46 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
         }
         return phone;
     }
-
     private void createNewUser(String phoneNumber, String pass) {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users/"+phoneNumber);
         Map<String,Object> items = new HashMap<>();
-        items.put("password", pass);
+        items.put(PASS, pass);
         myRef.updateChildren(items);
 
         goToRegistration(phoneNumber);
     }
 
-    public void sendCode(String phoneNumber) {
+    public void sendCode(final String phoneNumber) {
 
-        setUpVerificationCallbacks();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
+        DatabaseReference myRef = database.getReference(USERS).child(phoneNumber);
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getChildrenCount()==0) {
+                    setUpVerificationCallbacks();
+                    phoneText.setEnabled(false);
+                    passwordText.setVisibility(View.GONE);
+                    repeatPasswordText.setVisibility(View.GONE);
+                    registrationButton.setVisibility(View.GONE);
+                    sendingCode(phoneNumber);
+                }
+                else {
+                    attentionThisUserAlreadyReg();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
+        });
+
+    }
+    private void sendingCode(String phoneNumber){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
@@ -167,8 +198,6 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
                     public void onVerificationCompleted(PhoneAuthCredential credential) {
                         //вызывается, если номер подтвержден
                         codeText.setText("");
-                        //выводит соообщение о том, что пользователь уже зарегестрирован
-                        attentionThisUserAlreadyReg();
                     }
 
                     @Override
@@ -204,19 +233,9 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
         signInWithPhoneAuthCredential(credential);
     }
 
-    public void resendCode() {
-
-        String phoneNumber = phoneText.getText().toString();
-
+    public void resendCode(String phone) {
         setUpVerificationCallbacks();
-
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                phoneNumber,
-                60,
-                TimeUnit.SECONDS,
-                this,
-                verificationCallbacks,
-                resendToken);
+        sendingCode(phone);
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
@@ -243,7 +262,6 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
                                     FirebaseAuthInvalidCredentialsException) {
                                 attentionThisCodeWasWrong();
                                 // The verification code entered was invalid
-
                             }
                         }
                     }
@@ -281,7 +299,6 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
             throw new RuntimeException(e);
         }
     }
-
 
     protected Boolean isFullInputs(){
         if(phoneText.getText().toString().isEmpty()) return false;
@@ -331,4 +348,7 @@ public class Confirmation extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
+    private void attentionBadConnection() {
+        Toast.makeText(this,"Плохое соединение",Toast.LENGTH_SHORT).show();
+    }
 }

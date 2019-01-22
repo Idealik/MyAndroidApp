@@ -1,23 +1,19 @@
 package com.example.ideal.myapplication.other;
 
-import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.preference.Preference;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.DialogElement;
-import com.example.ideal.myapplication.fragments.Service;
 import com.example.ideal.myapplication.fragments.User;
-import com.example.ideal.myapplication.fragments.foundServiceElement;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,22 +33,26 @@ public class Dialogs extends AppCompatActivity {
     private static final String SECOND_PHONE = "second phone";
 
     private static final String USERS = "users";
+    private static final String USER_ID = "user id";
     private static final String NAME = "name";
+    private static final String CITY = "city";
 
     private static final String MESSAGE_ORDERS = "message orders";
     private static final String DIALOG_ID = "dialog id";
-    private static final String DATE = "date";
     private static final String IS_CANCELED = "is canceled";
-    private static final String SERVICE_ID = "service id";
+
+    private static final String WORKING_TIME = "working time";
+    private static final String WORKING_DAYS_ID = "working day id";
     private static final String TIME = "time";
 
+    private static final String DATE = "date";
 
     SharedPreferences sPref;
     DBHelper dbHelper;
 
-    private DialogElement dElement;
-    private FragmentManager manager;
-    private FragmentTransaction transaction;
+    DialogElement dElement;
+    FragmentManager manager;
+    FragmentTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +64,20 @@ public class Dialogs extends AppCompatActivity {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         database.delete(DBHelper.TABLE_MESSAGES, null, null);
         database.delete(DBHelper.TABLE_DIALOGS, null, null);
-
-        loadDialogs();
     }
 
+    // Подгружает все мои диалоги и всё что с ними связано из Firebase
     private void loadDialogs() {
-        final String myPhone = getUserPhone();
 
+        // Загрузка диалогов, где мой номер стоит на 1-м месте
+        loadDialogsByFirsPhone();
+
+        // Загрузка диалогов, где мой номер стоит на 2-м месте
+        loadDialogsBySecondPhone();
+    }
+
+    private void loadDialogsByFirsPhone() {
+        final String myPhone = getUserPhone();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         Query query1 = database.getReference(DIALOGS)
@@ -80,32 +87,26 @@ public class Dialogs extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dialogs) {
                 for(DataSnapshot dialog:dialogs.getChildren()) {
-                    final String otherPhone = String.valueOf(dialog.child(SECOND_PHONE).getValue());
-                    final String dialogId = dialog.getKey();
                     String secondPhone = String.valueOf(dialog.child(SECOND_PHONE).getValue());
-                    addDialogInLocalStorage(dialogId,myPhone, secondPhone);
+                    String dialogId = dialog.getKey();
 
-                    DatabaseReference reference = database.getReference(USERS).child(otherPhone);
-                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot user) {
+                    // Добавляет(обновляет) диалог в LocalStorage и возвращает true если это диалог новый
+                    boolean isNew = addDialogInLocalStorage(dialogId, myPhone, secondPhone);
 
-                            String name = String.valueOf(user.child(NAME).getValue());
-                            addUserInLocalStorage(name,otherPhone);
-
-                            addMessagesInLocalStorage(dialogId);
-                            addToScreen(dialogId, name);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {}
-                    });
+                    loadInterlocutor(secondPhone, dialogId, isNew);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
         });
+    }
+
+    private void loadDialogsBySecondPhone() {
+        final String myPhone = getUserPhone();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         Query query2 = database.getReference(DIALOGS)
                 .orderByChild(SECOND_PHONE)
@@ -114,64 +115,186 @@ public class Dialogs extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dialogs) {
                 for(DataSnapshot dialog:dialogs.getChildren()){
-                     final String otherPhone = String.valueOf(dialog.child(FIRST_PHONE).getValue());
+                    final String firstPhone = String.valueOf(dialog.child(FIRST_PHONE).getValue());
                     final String dialogId = dialog.getKey();
 
-                    String firstPhone = String.valueOf(dialog.child(FIRST_PHONE).getValue());
-                    addDialogInLocalStorage(dialogId,firstPhone, myPhone);
+                    boolean isNew = addDialogInLocalStorage(dialogId, firstPhone, myPhone);
 
-                    DatabaseReference reference = database.getReference(USERS).child(otherPhone);
-                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot user) {
-                            String name = String.valueOf(user.child(NAME).getValue());
-
-                            addUserInLocalStorage(name,otherPhone);
-                            addMessagesInLocalStorage(dialogId);
-                            addToScreen(dialogId, name);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {}
-                    });
+                    loadInterlocutor(firstPhone, dialogId, isNew);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
         });
     }
 
-    private void addUserInLocalStorage(String name, String otherPhone) {
+    private void loadInterlocutor(final String phone, final String dialogId, final boolean isNew) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(USERS).child(phone);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot userSnapshot) {
 
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DBHelper.KEY_NAME_USERS, name);
-        contentValues.put(DBHelper.KEY_USER_ID, otherPhone);
+                String name = String.valueOf(userSnapshot.child(NAME).getValue());
+                String city = String.valueOf(userSnapshot.child(CITY).getValue());
 
-        database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
+                User user = new User();
+                user.setPhone(phone);
+                user.setName(name);
+                user.setCity(city);
 
+                addUserInLocalStorage(user);
+
+                addMessagesInLocalStorage(dialogId);
+
+                if(isNew) {
+                    addToScreen(dialogId, name);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
+        });
     }
 
-    private void addDialogInLocalStorage(String dialogId, String firstPhone, String secondPhone) {
+    private void updateWorkingTimeInLocalStorage(String messageId) {
+        //получить id message
+        //получить date (id working days)
+        //сделать query по date в working time и получить id времени
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(MESSAGE_ORDERS).child(messageId).child(DATE);
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dateId) {
+                String date = String.valueOf(dateId.getValue());
 
+                Query query = database.getReference(WORKING_TIME)
+                        .orderByChild(WORKING_DAYS_ID)
+                        .equalTo(date);
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        for(DataSnapshot time: dataSnapshot.getChildren()) {
+                            final String timeId = String.valueOf(time.getKey());
+
+                            DatabaseReference myRef = database.getReference(WORKING_TIME)
+                                    .child(timeId)
+                                    .child(USER_ID);
+
+                            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+                                    String phone =  String.valueOf(dataSnapshot.getValue());
+
+                                    ContentValues contentValues = new ContentValues();
+                                    contentValues.put(DBHelper.KEY_USER_ID, phone);
+
+                                    database.update(DBHelper.TABLE_WORKING_TIME, contentValues,
+                                            DBHelper.KEY_ID + " = ? ",
+                                            new String[]{String.valueOf(timeId)});
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    attentionBadConnection();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        attentionBadConnection();
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
+        });
+    }
+
+    private void addUserInLocalStorage(User user) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DBHelper.KEY_ID, dialogId);
+        String phone = user.getPhone();
+
+        String sqlQuery = "SELECT * FROM "
+                + DBHelper.TABLE_CONTACTS_USERS
+                + " WHERE "
+                + DBHelper.KEY_USER_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {phone});
+
+        contentValues.put(DBHelper.KEY_NAME_USERS, user.getName());
+        contentValues.put(DBHelper.KEY_CITY_USERS, user.getCity());
+
+        if(cursor.moveToFirst()) {
+            database.update(DBHelper.TABLE_CONTACTS_USERS, contentValues,
+                    DBHelper.KEY_USER_ID + " = ?",
+                    new String[]{String.valueOf(phone)});
+        } else {
+            contentValues.put(DBHelper.KEY_USER_ID, phone);
+            database.insert(DBHelper.TABLE_CONTACTS_USERS, null, contentValues);
+        }
+        cursor.close();
+    }
+
+    private boolean addDialogInLocalStorage(String dialogId, String firstPhone, String secondPhone) {
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+        String sqlQuery = "SELECT * FROM "
+                + DBHelper.TABLE_DIALOGS
+                + " WHERE "
+                + DBHelper.KEY_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[] {dialogId});
+
+        ContentValues contentValues = new ContentValues();
         contentValues.put(DBHelper.KEY_FIRST_USER_ID_DIALOGS, firstPhone);
         contentValues.put(DBHelper.KEY_SECOND_USER_ID_DIALOGS, secondPhone);
 
-        database.insert(DBHelper.TABLE_DIALOGS, null, contentValues);
-
+        if(cursor.moveToFirst()) {
+            database.update(DBHelper.TABLE_DIALOGS,
+                    contentValues,
+                    DBHelper.KEY_ID + " = ?",
+                    new String[]{String.valueOf(dialogId)});
+            cursor.close();
+            return false;
+        } else {
+            contentValues.put(DBHelper.KEY_ID, dialogId);
+            database.insert(DBHelper.TABLE_DIALOGS, null, contentValues);
+            cursor.close();
+            return true;
+        }
     }
+
     private void addMessagesInLocalStorage(final String dialogId) {
         Query messagesQuery = FirebaseDatabase.getInstance().getReference(MESSAGE_ORDERS)
                 .orderByChild(DIALOG_ID)
                 .equalTo(dialogId);
+
         messagesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot messages) {
                 SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+                String sqlQuery = "SELECT * FROM "
+                        + DBHelper.TABLE_MESSAGES
+                        + " WHERE "
+                        + DBHelper.KEY_ID + " = ?";
+                Cursor cursor;
 
                 for(DataSnapshot message:messages.getChildren()){
                     String messageId = message.getKey();
@@ -179,27 +302,45 @@ public class Dialogs extends AppCompatActivity {
                     String isCanceled = String.valueOf(message.child(IS_CANCELED).getValue());
                     String time = String.valueOf(message.child(TIME).getValue());
 
+                    cursor = database.rawQuery(sqlQuery, new String[] {messageId});
+
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBHelper.KEY_ID, messageId);
                     contentValues.put(DBHelper.KEY_DIALOG_ID_MESSAGES, dialogId);
                     contentValues.put(DBHelper.KEY_DAY_ID_MESSAGES, date);
                     contentValues.put(DBHelper.KEY_IS_CANCELED_MESSAGES, isCanceled);
                     contentValues.put(DBHelper.KEY_TIME_MESSAGES, time);
 
-                    database.insert(DBHelper.TABLE_MESSAGES,null,contentValues);
+                    if(cursor.moveToFirst()) {
+                        database.update(DBHelper.TABLE_MESSAGES, contentValues,
+                                DBHelper.KEY_ID + " = ?",
+                                new String[]{String.valueOf(messageId)});
+                    } else {
+                        contentValues.put(DBHelper.KEY_ID, messageId);
+                        database.insert(DBHelper.TABLE_MESSAGES, null, contentValues);
+                    }
+                    cursor.close();
+                    updateWorkingTimeInLocalStorage(messageId);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
         });
     }
 
     private String getUserPhone() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String userId = sPref.getString(PHONE_NUMBER, "-");
 
-        return  userId;
+        return  sPref.getString(PHONE_NUMBER, "-");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loadDialogs();
     }
 
     private void addToScreen(String dialogId, String name) {
@@ -207,5 +348,9 @@ public class Dialogs extends AppCompatActivity {
         transaction = manager.beginTransaction();
         transaction.add(R.id.mainDialogsLayout, dElement);
         transaction.commit();
+    }
+
+    private void attentionBadConnection() {
+        Toast.makeText(this,"Плохое соединение",Toast.LENGTH_SHORT).show();
     }
 }

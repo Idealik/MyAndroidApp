@@ -32,12 +32,12 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\anim\\abc_tooltip_enter.xml"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable_common_google_signin_btn_icon_light.xml.flat",
-        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-base-16.0.1.aar\\bd5138adf46dfe2ddc0956f9c47fb814\\res\\drawable\\common_google_signin_btn_icon_light.xml"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_list_focused_holo.9.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-hdpi-v4\\abc_list_focused_holo.9.png"
+    },
+    {
+        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable_common_google_signin_btn_icon_light.xml.flat",
+        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-base-16.0.1.aar\\bd5138adf46dfe2ddc0956f9c47fb814\\res\\drawable\\common_google_signin_btn_icon_light.xml"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi_btn.png.flat",
@@ -72,10 +72,6 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-ldrtl-xxxhdpi-v17\\abc_spinner_mtrl_am_alpha.9.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi_panel.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xxhdpi\\panel.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_profile.xml.flat",
         "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\layout\\profile.xml"
     },
@@ -104,20 +100,16 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-ldrtl-mdpi-v17\\abc_ic_menu_copy_mtrl_am_alpha.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_found_service_profile_element.xml.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\layout\\fragment_found_service_profile_element.xml"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi_ic_launcher.png.flat",
         "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21_notification_template_custom_big.xml.flat",
-        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-28.0.0.aar\\ae4abe8cc67f6b91bf1ea6b52c515755\\res\\layout-v21\\notification_template_custom_big.xml"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxxhdpi_ic_launcher_round.png.flat",
         "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21_notification_template_custom_big.xml.flat",
+        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-28.0.0.aar\\ae4abe8cc67f6b91bf1ea6b52c515755\\res\\layout-v21\\notification_template_custom_big.xml"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_media_cancel_action.xml.flat",
@@ -248,12 +240,12 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xxhdpi-v4\\abc_text_select_handle_left_mtrl_light.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_seekbar_tick_mark_material.xml.flat",
-        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable\\abc_seekbar_tick_mark_material.xml"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-mdpi-v4\\abc_scrubber_control_to_pressed_mtrl_000.png"
+    },
+    {
+        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_seekbar_tick_mark_material.xml.flat",
+        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable\\abc_seekbar_tick_mark_material.xml"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat",
@@ -324,12 +316,12 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-mdpi-v4\\abc_btn_check_to_on_mtrl_000.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat",
-        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xxxhdpi-v4\\abc_text_select_handle_right_mtrl_light.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_switch_track_mtrl_alpha.9.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-mdpi-v4\\abc_switch_track_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat",
+        "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xxxhdpi-v4\\abc_text_select_handle_right_mtrl_light.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat",
@@ -342,10 +334,6 @@
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_found_service_profile_element.xml.flat",
         "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\layout\\found_service_profile_element.xml"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi_fields.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xxhdpi\\fields.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable_common_google_signin_btn_text_light_focused.xml.flat",
@@ -472,10 +460,6 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xxxhdpi-v4\\abc_ic_star_black_16dp.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_ic_launcher_foreground.xml.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-v24\\ic_launcher_foreground.xml"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\color_abc_secondary_text_material_dark.xml.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\color\\abc_secondary_text_material_dark.xml"
     },
@@ -564,10 +548,6 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable\\abc_ic_go_search_api_material.xml"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi_fields.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-hdpi\\fields.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable_abc_list_selector_holo_dark.xml.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable\\abc_list_selector_holo_dark.xml"
     },
@@ -632,14 +612,6 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\play-services-base-16.0.1.aar\\bd5138adf46dfe2ddc0956f9c47fb814\\res\\drawable-hdpi-v4\\googleg_disabled_color_18.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_fields.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xhdpi\\fields.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi_recover.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-hdpi\\recover.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldrtl-xxxhdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-ldrtl-xxxhdpi-v17\\abc_ic_menu_cut_mtrl_alpha.png"
     },
@@ -696,16 +668,8 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable\\abc_ratingbar_indicator_material.xml"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi_recover.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-ldpi\\recover.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-hdpi-v4\\abc_scrubber_control_off_mtrl_alpha.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi_recover.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xxhdpi\\recover.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_select_dialog_material.xml.flat",
@@ -884,10 +848,6 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-28.0.0.aar\\ae4abe8cc67f6b91bf1ea6b52c515755\\res\\drawable-hdpi-v4\\notification_bg_normal_pressed.9.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi_fields.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xxxhdpi\\fields.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-mdpi-v4\\abc_scrubber_track_mtrl_alpha.9.png"
     },
@@ -1012,10 +972,6 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-hdpi-v4\\abc_scrubber_track_mtrl_alpha.9.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi_fields.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-ldpi\\fields.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_ic_star_half_black_48dp.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-hdpi-v4\\abc_ic_star_half_black_48dp.png"
     },
@@ -1080,24 +1036,12 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xxhdpi-v4\\abc_ic_star_half_black_16dp.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi_panel.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-ldpi\\panel.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_popup_background_mtrl_mult.9.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xxhdpi-v4\\abc_popup_background_mtrl_mult.9.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_abc_ic_menu_copy_mtrl_am_alpha.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xxxhdpi-v4\\abc_ic_menu_copy_mtrl_am_alpha.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi_panel.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-hdpi\\panel.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_panel.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xhdpi\\panel.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_bun_beauty.png.flat",
@@ -1414,10 +1358,6 @@
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_abc_text_select_handle_middle_mtrl_dark.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-xhdpi-v4\\abc_text_select_handle_middle_mtrl_dark.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi_panel.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xxxhdpi\\panel.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_select_dialog_item_material.xml.flat",
@@ -1776,10 +1716,6 @@
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-mdpi-v4\\abc_list_pressed_holo_dark.9.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_recover.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xhdpi\\recover.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_popup_menu_header_item_layout.xml.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\layout\\abc_popup_menu_header_item_layout.xml"
     },
@@ -1810,10 +1746,6 @@
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_notification_bg_low_pressed.9.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-28.0.0.aar\\ae4abe8cc67f6b91bf1ea6b52c515755\\res\\drawable-xhdpi-v4\\notification_bg_low_pressed.9.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi_recover.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-xxxhdpi\\recover.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\color_abc_primary_text_material_dark.xml.flat",
@@ -1850,10 +1782,6 @@
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-hdpi-v4\\abc_ic_menu_cut_mtrl_alpha.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_recover.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-mdpi\\recover.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_list_selector_disabled_holo_light.9.png.flat",
@@ -2072,10 +2000,6 @@
         "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-mdpi\\btn.png"
     },
     {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_fields.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-mdpi\\fields.png"
-    },
-    {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_dialog_element.xml.flat",
         "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\layout\\dialog_element.xml"
     },
@@ -2106,10 +2030,6 @@
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_ic_menu_copy_mtrl_am_alpha.png.flat",
         "source": "C:\\Users\\Ideal\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3876e435b13e764cfe453270f0656dc9\\res\\drawable-hdpi-v4\\abc_ic_menu_copy_mtrl_am_alpha.png"
-    },
-    {
-        "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_panel.png.flat",
-        "source": "C:\\Users\\Ideal\\Desktop\\proj\\app\\src\\main\\res\\drawable-mdpi\\panel.png"
     },
     {
         "merged": "C:\\Users\\Ideal\\Desktop\\proj\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_activity_chooser_view.xml.flat",

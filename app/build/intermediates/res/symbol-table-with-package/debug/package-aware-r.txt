@@ -391,7 +391,6 @@ color bright_foreground_material_dark
 color bright_foreground_material_light
 color button_material_dark
 color button_material_light
-color colorAccent
 color colorPrimary
 color colorPrimaryDark
 color common_google_signin_btn_text_dark
@@ -435,8 +434,6 @@ color material_grey_900
 color notification_action_color_filter
 color notification_icon_bg_color
 color notification_material_background_media_default_color
-color orange4
-color orange5
 color primary_dark_material_dark
 color primary_dark_material_light
 color primary_material_dark
@@ -462,7 +459,6 @@ color tooltip_background_dark
 color tooltip_background_light
 color white
 color yellow1
-color yellow2
 dimen abc_action_bar_content_inset_material
 dimen abc_action_bar_content_inset_with_nav
 dimen abc_action_bar_default_height_material
@@ -689,11 +685,9 @@ drawable common_google_signin_btn_text_light_normal
 drawable common_google_signin_btn_text_light_normal_background
 drawable day_button
 drawable disabled_button
-drawable fields
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
 drawable ic_launcher_background
-drawable ic_launcher_foreground
 drawable log_in
 drawable notification_action_background
 drawable notification_bg
@@ -707,9 +701,7 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
-drawable panel
 drawable pressed_button
-drawable recover
 drawable registration
 drawable selected_day_button
 drawable time_button
@@ -995,7 +987,6 @@ layout edit_service
 layout found_order_element
 layout found_service_element
 layout found_service_profile_element
-layout fragment_found_service_profile_element
 layout guest_service
 layout main_screen
 layout message_order_element
@@ -1028,7 +1019,6 @@ layout support_simple_spinner_dropdown_item
 mipmap ic_launcher
 mipmap ic_launcher_foreground
 mipmap ic_launcher_round
-string BunB
 string BunBeauty
 string Dialogs
 string abc_action_bar_home_description
@@ -1071,9 +1061,7 @@ string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
 string addServices
-string app_name
 string canceled
-string city
 string cityRegistration
 string common_google_play_services_enable_button
 string common_google_play_services_enable_text
@@ -1096,7 +1084,6 @@ string common_signin_button_text_long
 string costAddServiceTB
 string default_web_client_id
 string defult_value
-string delUser
 string edit
 string empty_field
 string empty_phone_field
@@ -1104,7 +1091,6 @@ string enterCode
 string findServices
 string firebase_database_url
 string gcm_defaultSenderId
-string goToAuthor
 string google_api_key
 string google_app_id
 string google_crash_reporting_api_key
@@ -1114,23 +1100,19 @@ string logInRegistration
 string logOut
 string main_screen
 string nameAddServiceTB
-string nameEditProfileInput
 string nameRegistration
 string passwordRegistration
 string phone
 string phoneRegistration
 string profile
 string project_id
-string readDB
 string regUser
 string resendCode
 string search_menu_title
 string selectedId
 string status_bar_notification_info_overflow
 string status_worker
-string surnameEditProfileInput
 string surnameRegistration
-string this_phone_is_already_usead
 string verifyCode
 string yearId
 style AlertDialog_AppCompat
@@ -1486,7 +1468,6 @@ style Widget_Compat_NotificationActionContainer
 style Widget_Compat_NotificationActionText
 style Widget_Support_CoordinatorLayout
 style allPages
-style regPages
 styleable ActionBar background backgroundSplit backgroundStacked contentInsetEnd contentInsetEndWithActions contentInsetLeft contentInsetRight contentInsetStart contentInsetStartWithNavigation customNavigationLayout displayOptions divider elevation height hideOnContentScroll homeAsUpIndicator homeLayout icon indeterminateProgressStyle itemPadding logo navigationMode popupTheme progressBarPadding progressBarStyle subtitle subtitleTextStyle title titleTextStyle
 styleable ActionBarLayout android_layout_gravity
 styleable ActionMenuItemView android_minWidth

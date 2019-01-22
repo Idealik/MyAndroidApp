@@ -1,9 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="readDB">Read db</string>
     <string name="regUser">Зарегестрироваться</string>
-    <string name="delUser">Del user</string>
-    <string name="goToAuthor">Авторизация</string>
     <string name="logOut">Выйти</string>
     <string name="addServices">Добавить сервис</string>
     <string name="findServices">Найти сервис</string>
@@ -21,15 +17,12 @@
     <string name="nameAddServiceTB">Имя</string>
     <string name="costAddServiceTB">Цена</string>
     <string name="main_screen">Главная страница</string>
-    <string name="city">Город</string>
     <string name="phone">Телефон</string>
 
     //Edit service
     <string name="edit">Изменить</string>
 
     //Edit profile
-    <string name="nameEditProfileInput">Имя</string>
-    <string name="surnameEditProfileInput">Фамилия</string>
 
     //tag id
     <string name="selectedId">selectedId</string>
@@ -42,8 +35,6 @@
     <string name="empty_field">Не все поля заполнены</string>
     <string name="defult_value">-</string>
     <string name="empty_phone_field">Поле с номером телефона не может быть пустым</string>
-    <string name="this_phone_is_already_usead">Этот номер телефона используется другим пользователем</string>
-    <string name="BunB" />
     <string name="resendCode">Отправить код снова</string>
     <string name="verifyCode">Подтвердить код</string>
     <string name="enterCode">Введите код</string>

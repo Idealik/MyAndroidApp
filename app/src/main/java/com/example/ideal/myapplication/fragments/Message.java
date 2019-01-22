@@ -9,6 +9,7 @@ public class Message {
     private String userName;
     private String dialogId;
     private String time;
+    private String orderTime;
 
 
     public void setId(String _id) {
@@ -39,6 +40,10 @@ public class Message {
         time = _time;
     }
 
+    public void setOrderTime(String _orderTime) {
+        orderTime = _orderTime;
+    }
+
     public String getId() {
         return id;
     }
@@ -46,15 +51,16 @@ public class Message {
     public String getServiceName(){
         return serviceName;
     }
+
     public String getUserName(){
-        return serviceName;
+        return userName;
     }
 
     public String getDate() {
         return date;
     }
 
-    public boolean getIsCaneled() {
+    public boolean getIsCanceled() {
         return isCanceled;
     }
 
@@ -64,5 +70,9 @@ public class Message {
 
     public String getTime() {
         return time;
+    }
+
+    public String getOrderTime() {
+        return orderTime;
     }
 }

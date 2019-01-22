@@ -14,10 +14,4 @@
         <item name="android:background">@color/mainColorBG</item>
     </style>
 
-    <style name="regPages" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/lightText</item>
-        <item name="android:textColorHint">@color/lightText</item>
-    </style>
 </resources>

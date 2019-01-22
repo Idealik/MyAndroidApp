@@ -2,17 +2,13 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#005F89</color>
-    <color name="colorAccent">#D81B60</color>
     <color name="lightText">#7DF3F1F1</color>
     <color name="white">#FFFFFF</color>
     <color name = "mainColorBG">#D1E1E5</color>
     <color name="black">#000000</color>
 
     <color name="yellow1">#f5a235</color>
-    <color name="yellow2">#f7e703</color>
     <color name="grey05">#64d1d1d1</color>
-    <color name="orange4">#fca22e</color>
-    <color name="orange5">#ff8810</color>
     <color name="activeButton">#FFFFFF</color>
     <color name="disabledButton">#7fffffff</color>
     <color name="selectedButton">#ffd646</color>

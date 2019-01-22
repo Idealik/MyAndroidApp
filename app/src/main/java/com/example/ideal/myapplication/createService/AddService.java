@@ -4,18 +4,16 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.strictmode.SqliteObjectLeakedViolation;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.Service;
 import com.example.ideal.myapplication.other.DBHelper;
-import com.example.ideal.myapplication.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,14 +22,20 @@ import java.util.Map;
 
 public class AddService extends AppCompatActivity implements View.OnClickListener {
 
-    final String FILE_NAME = "Info";
+    private static final String FILE_NAME = "Info";
     private static final String PHONE_NUMBER = "Phone number";
-    private final String TAG = "DBInf";
-    //для intent
-    final String SERVICE_ID = "service id";
-    //для firebase
-    private static final String SERVICE = "services/";
-    final String STATUS_USER_BY_SERVICE = "status User";
+
+
+    private static final String SERVICE_ID = "service id";
+    private static final String STATUS_USER_BY_SERVICE = "status User";
+
+    private static final String SERVICES = "services";
+    private static final String NAME = "name";
+    private static final String COST = "cost";
+    private static final String DESCRIPTION = "description";
+    private static final String USER_ID = "user id";
+    private static final String COUNT_OF_RATES = "count of rates";
+    private static final String RATING = "rating";
 
     Button addServicesBtn;
 
@@ -89,18 +93,18 @@ public class AddService extends AppCompatActivity implements View.OnClickListene
     private void addService(Service service) {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(SERVICE);
+        DatabaseReference myRef = database.getReference(SERVICES);
         String userId = getUserId();
 
         Map<String,Object> items = new HashMap<>();
-        items.put("name",service.getName().toLowerCase());
-        items.put("cost",service.getCost());
-        items.put("description",service.getDescription());
-        items.put("user id",userId);
-        items.put("count of rates", 0);
-        items.put("rating", 5);
+        items.put(NAME,service.getName().toLowerCase());
+        items.put(COST,service.getCost());
+        items.put(DESCRIPTION,service.getDescription());
+        items.put(USER_ID,userId);
+        items.put(COUNT_OF_RATES, 0);
+        items.put(RATING, 5);
         String serviceId =  myRef.push().getKey();
-        myRef = database.getReference(SERVICE).child(serviceId);
+        myRef = database.getReference(SERVICES).child(serviceId);
         myRef.updateChildren(items);
 
         service.setId(serviceId);
@@ -137,13 +141,11 @@ public class AddService extends AppCompatActivity implements View.OnClickListene
 
     private String getUserId(){
         SharedPreferences sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
-        String userId = sPref.getString(PHONE_NUMBER, getString(R.string.defult_value));
 
-        return userId;
+        return sPref.getString(PHONE_NUMBER, getString(R.string.defult_value));
     }
 
     private void goToMyCalendar(String status, String serviceId) {
-        Log.d(TAG, "goToMyCalendar: " + serviceId);
         Intent intent = new Intent(this, MyCalendar.class);
         intent.putExtra(SERVICE_ID, serviceId);
         intent.putExtra(STATUS_USER_BY_SERVICE, status);

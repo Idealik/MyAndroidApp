@@ -1,16 +1,14 @@
 package com.example.ideal.myapplication.other;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,9 +29,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class SearchService extends FragmentActivity implements View.OnClickListener {
 
@@ -73,9 +68,7 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
     DBHelper dbHelper;
     SharedPreferences sPref;
 
-    private foundServiceElement fElement;
     private FragmentManager manager;
-    private FragmentTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,9 +147,8 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
     // Получает id пользователя
     private String getUserId() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String userId = sPref.getString(PHONE, "-");
 
-        return userId;
+        return sPref.getString(PHONE, "-");
     }
 
     //Получает город пользователя
@@ -236,7 +228,7 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.d(TAG, "onCancelled");
+                            attentionBadConnection();
                         }
                     });
 
@@ -248,7 +240,7 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled");
+                attentionBadConnection();
             }
         });
 
@@ -300,7 +292,8 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
         cursor.close();
     }
 
-    private boolean search() {
+    private void search() {
+
         switch (searchBy) {
             case "название сервиса":
                 searchByNameService();
@@ -311,7 +304,6 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
                 break;
         }
 
-        return true;
     }
 
     private void searchByNameService() {
@@ -376,7 +368,7 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            attentionBadConnection();
                         }
                     });
                 }
@@ -385,7 +377,7 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                attentionBadConnection();
             }
         });
     }
@@ -464,7 +456,7 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            attentionBadConnection();
                         }
                     });
                 }
@@ -473,20 +465,24 @@ public class SearchService extends FragmentActivity implements View.OnClickListe
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                attentionBadConnection();
             }
         });
     }
 
     // Вывод фрагмента сервиса на экран
     private void addToScreen(Service service, User user) {
-        fElement = new foundServiceElement(service, user);
-        transaction = manager.beginTransaction();
+        foundServiceElement fElement = new foundServiceElement(service, user);
+        FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.resultSearchServiceLayout, fElement);
         transaction.commit();
     }
 
     private void attentionNothingFound() {
         Toast.makeText(this, "Ничего не найдено", Toast.LENGTH_SHORT).show();
+    }
+
+    private void attentionBadConnection() {
+        Toast.makeText(this,"Плохое соединение",Toast.LENGTH_SHORT).show();
     }
 }

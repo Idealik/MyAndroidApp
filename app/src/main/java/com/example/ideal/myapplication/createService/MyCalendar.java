@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +15,9 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.ideal.myapplication.other.DBHelper;
 import com.example.ideal.myapplication.R;
+import com.example.ideal.myapplication.helpApi.WorkWithTimeApi;
+import com.example.ideal.myapplication.other.DBHelper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -29,15 +27,21 @@ import java.util.Map;
 
 public class MyCalendar extends AppCompatActivity implements View.OnClickListener {
 
-    private final String FILE_NAME = "Info";
+    private static final String FILE_NAME = "Info";
     private static final String PHONE_NUMBER = "Phone number";
-    private static final String REF = "working days/";
+    private static final String REF = "working days";
 
-    final String SERVICE_ID = "service id";
-    private final String WORKING_DAYS_ID = "working day id";
-    private final String STATUS_USER_BY_SERVICE = "status User";
-    private final int WEEKS_COUNT = 4;
-    private final int DAYS_COUNT = 7;
+    private static final String SERVICE_ID = "service id";
+    private static final String WORKING_DAYS_ID = "working day id";
+    private static final String STATUS_USER_BY_SERVICE = "status User";
+    private static final String DATE = "data";
+    private static final String USER = "User";
+    private static final String WORKER = "worker";
+
+    private static final int WEEKS_COUNT = 4;
+    private static final int DAYS_COUNT = 7;
+
+
 
     String statusUser;
     String date;
@@ -45,13 +49,13 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     Button[][] dayBtns;
     Button nextBtn;
+    WorkWithTimeApi workWithTimeApi;
 
     RelativeLayout mainLayout;
 
     DBHelper dbHelper;
     SharedPreferences sPref;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +65,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         dayBtns = new Button[WEEKS_COUNT][DAYS_COUNT];
 
         dbHelper = new DBHelper(this);
+        workWithTimeApi = new WorkWithTimeApi();
 
         // получаем статус, чтобы определить, кто зашел, worker or User
         statusUser = getIntent().getStringExtra(STATUS_USER_BY_SERVICE);
@@ -69,7 +74,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         createCalendar();
 
         // проверяем имеется ли у данного пользователя запись на данную услугу
-        if(statusUser.equals("User")){
+        if(statusUser.equals(USER)){
             checkOrder();
         }
         else {
@@ -83,7 +88,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.continueMyCalendarBtn2:
-                if(statusUser.equals("worker")){
+                if(statusUser.equals(WORKER)){
                     if(isDaySelected()) {
                         addWorkingDay();
                     } else {
@@ -137,7 +142,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
                 dayId = checkCurrentDay(convertDate(dayAndMonth, year));
                 if (!dayId.equals("0") ) {
-                    if (hasSomeTime(dayId)) {
+                    if (hasSomeWork(dayId)) {
                         dayBtns[i][j].setTextColor(dayWithTimesColor);
                     }
                 }
@@ -145,11 +150,36 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         }
     }
 
+    private boolean hasSomeWork(String dayId) {
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+
+        // Получает id рабочего дня
+        // Таблицы: рабочие время
+        // Условия: уточняем id рабочего дня
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.KEY_ID
+                        + " FROM "
+                        + DBHelper.TABLE_WORKING_TIME
+                        + " WHERE "
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{dayId});
+
+        if(cursor.moveToFirst()) {
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
+        }
+    }
+
     // проверяет имеется ли у данного пользователя запись на данную услугу
     private void checkOrder(){
         //Если пользователь записан на какой-то день выделить только его
         date = getOrderDate();
-        if(date != "") {
+        if(date.equals("")) {
             String[] arrDate = date.split("-");
             String orderDate = arrDate[0] + " " + monthToString(Integer.valueOf(arrDate[1]));
 
@@ -211,8 +241,10 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         if(cursor.moveToFirst()) {
             int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
             String orderDate = cursor.getString(indexDate);
+            cursor.close();
             return orderDate;
         } else {
+            cursor.close();
             return "";
         }
     }
@@ -294,25 +326,53 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         // Условия: уточняем id рабочего дня
         String sqlQuery =
                 "SELECT "
-                        + DBHelper.KEY_ID
+                        + DBHelper.KEY_TIME_WORKING_TIME + ", "
+                        + DBHelper.KEY_DATE_WORKING_DAYS
                         + " FROM "
-                        + DBHelper.TABLE_WORKING_TIME
+                        + DBHelper.TABLE_WORKING_TIME + ", "
+                        + DBHelper.TABLE_WORKING_DAYS
                         + " WHERE "
-                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ";
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = "
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID
+                        + " AND "
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? "
+                        + " AND "
+                        + DBHelper.KEY_USER_ID + " = 0";
 
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{dayId});
 
         if(cursor.moveToFirst()) {
-            return true;
-        } else {
-            return false;
+            int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
+            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
+            String date, time;
+
+            do {
+                date = cursor.getString(indexDate);
+                time = cursor.getString(indexTime);
+                if(hasMoreThenTwoHours(date, time)) {
+                    cursor.close();
+                    return true;
+                }
+            } while (cursor.moveToNext());
         }
+        cursor.close();
+        return false;
+    }
+
+    private boolean hasMoreThenTwoHours(String date, String time) {
+        long twoHours = 2*60*60*1000;
+
+        long sysdateLong = workWithTimeApi.getSysdateLong() ;
+        long currentLong = workWithTimeApi.getMillisecondsStringDate(date + " " + time);
+
+        return currentLong - sysdateLong >= twoHours;
     }
 
     // Преобразует дату в формат БД
     private String convertDate(String dayAndMonth, String year) {
         String[] arrDate = dayAndMonth.split(" ");
         int month = monthToInt(arrDate[1]);
+
         String convertedDate = arrDate[0] + "-" + month + "-" + year;
 
         return convertedDate;
@@ -331,8 +391,8 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
             DatabaseReference myRef = database.getReference(REF);
 
             Map<String,Object> items = new HashMap<>();
-            items.put("data",date);
-            items.put("service id", serviceId);
+            items.put(DATE,date);
+            items.put(SERVICE_ID, serviceId);
 
             Object dayId =  myRef.push().getKey();
             myRef = database.getReference(REF).child(String.valueOf(dayId));
@@ -377,8 +437,10 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
         if(cursor.moveToFirst()) {
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
+            cursor.close();
             return String.valueOf(cursor.getString(indexId));
         }
+        cursor.close();
         return "0";
     }
 
@@ -390,7 +452,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onResume() {
         super.onResume();
-        if(statusUser.equals("User")){
+        if(statusUser.equals(USER)){
             checkOrder();
         }
         else {

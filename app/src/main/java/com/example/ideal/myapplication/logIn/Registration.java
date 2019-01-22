@@ -6,12 +6,12 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.ideal.myapplication.helpApi.WorkWithViewApi;
 import com.example.ideal.myapplication.other.DBHelper;
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.other.Profile;
@@ -19,18 +19,16 @@ import com.example.ideal.myapplication.fragments.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.awt.font.TextAttribute;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Registration extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "DBInf";
     private static final String STATUS = "status";
     private static final String FILE_NAME = "Info";
 
     private static final String PHONE_NUMBER = "Phone number";
-    private static final String REF = "users/";
+    private static final String REF = "users";
 
     private static final String NAME = "name";
     private static final String CITY = "city";
@@ -73,6 +71,8 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
+        WorkWithViewApi.hideKeyboard(this);
 
         switch (v.getId()){
             case R.id.registrateRegistrationBtn:
@@ -120,7 +120,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     private void registration(User user) {
         String phoneNumber = phoneInput.getText().toString();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(REF+phoneNumber);
+        DatabaseReference myRef = database.getReference(REF).child(phoneNumber);
 
         Map<String,Object> items = new HashMap<>();
         items.put(NAME,user.getName());

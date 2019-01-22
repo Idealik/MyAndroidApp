@@ -1,11 +1,14 @@
 package com.example.ideal.myapplication.fragments;
 
-import android.util.Log;
-
 public class User {
 
+    private String phone;
     private String name;
     private String city;
+
+    public void setPhone(String _phone){
+        phone = _phone;
+    }
 
     public boolean setName(String _name){
         if(isCorrectName(_name)) {
@@ -23,6 +26,7 @@ public class User {
         return false;
     }
 
+    public String getPhone(){return phone;}
     public String getName(){return name;}
     public String getCity(){ return city; }
 

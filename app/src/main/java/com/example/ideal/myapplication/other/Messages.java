@@ -1,57 +1,58 @@
 package com.example.ideal.myapplication.other;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.Message;
 import com.example.ideal.myapplication.fragments.MessageOrderElement;
-import com.example.ideal.myapplication.fragments.Service;
-import com.example.ideal.myapplication.fragments.User;
-import com.example.ideal.myapplication.fragments.foundServiceElement;
 
 public class Messages extends AppCompatActivity {
 
-    //мне приходит айди диалога
     final  String TAG = "DBInf";
     private final String FILE_NAME = "Info";
     private final String PHONE_NUMBER = "Phone number";
     private final String DIALOG_ID = "dialog id";
 
-    private String dialogId;
+    private String myPhone;
     private DBHelper dbHelper;
 
-    private LinearLayout resultLayout;
-
-    private MessageOrderElement fElement;
     private FragmentManager manager;
-    private FragmentTransaction transaction;
-    private SharedPreferences sPref;
+
+    LinearLayout messagesLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages);
 
-        dialogId = getIntent().getStringExtra(DIALOG_ID);
-        Log.d(TAG, "onCreate: " + dialogId);
-        resultLayout = findViewById(R.id.resultsMessageLayout);
+        String dialogId = getIntent().getStringExtra(DIALOG_ID);
+        myPhone = getUserId();
         manager = getSupportFragmentManager();
-
         dbHelper = new DBHelper(this);
+
+        messagesLayout = findViewById(R.id.resultsMessageLayout);
+
         // получаем телефон нашего собеседеника
         String senderPhone = getSenderPhone(dialogId);
-        //обработка исключения
+
         if (!senderPhone.equals("0")) {
-            //получаем само сообщение (в цикле по количеству messages)
-            createMessage(dialogId,senderPhone);
+            //выводим на экран сообщения из LocalStorage для воркера
+            createMessages(dialogId,senderPhone, myPhone);
+
+            //выводим на экран сообщения из LocalStorage для юзера
+            createMessages(dialogId,myPhone, senderPhone);
+            //updateMessages(dialogId,senderPhone);
         }
     }
 
@@ -71,13 +72,13 @@ public class Messages extends AppCompatActivity {
 
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{dialogId});
 
-        if(cursor.moveToFirst()){
+        if(cursor.moveToFirst()) {
             int indexFirstPhone = cursor.getColumnIndex(DBHelper.KEY_FIRST_USER_ID_DIALOGS);
             int indexSecondPhone = cursor.getColumnIndex(DBHelper.KEY_SECOND_USER_ID_DIALOGS);
 
             String firstPhone = cursor.getString(indexFirstPhone);
             String secondPhone = cursor.getString(indexSecondPhone);
-            if(firstPhone.equals(getUserId())){
+            if(firstPhone.equals(myPhone)){
                 cursor.close();
                 return secondPhone;
             }
@@ -90,12 +91,12 @@ public class Messages extends AppCompatActivity {
         return "0";
     }
 
-    private String getSender(String senderPhone) {
+    private String getSenderName(String senderPhone) {
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        // Получает всю информацию о юзере, который прислал нам сообщение
-        // Таблицы: services
-        // Условия: уточняем id сервиса
+        // Получает имя пользователя, который отправил нам сообщение
+        // Таблицы: Users
+        // Условия: уточняем id пользователя
         String sqlQuery =
                 "SELECT "
                         + DBHelper.KEY_NAME_USERS
@@ -105,7 +106,6 @@ public class Messages extends AppCompatActivity {
                         + DBHelper.KEY_USER_ID + " = ?";
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{senderPhone});
         if(cursor.moveToFirst()){
-
             int indexName = cursor.getColumnIndex(DBHelper.KEY_NAME_USERS);
             return cursor.getString(indexName);
         }
@@ -113,60 +113,122 @@ public class Messages extends AppCompatActivity {
         return "";
     }
 
-    private void createMessage(String dialogId,String senderPhone) {
+    private void createMessages(String dialogId, String userPhone, String workerPhone) {
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
+
         Message message = new Message();
-        // Получает времяы, отменен, сервис id из message && дату из working days
-        // Таблицы: messages, working days
-        // Условия: уточняем id диалога, связь таблиц по id дня
+        // Получает id сообщения, время сообщения, отменена ли запись, дату и время сеанса, id сервиса
+        // Таблицы: messages, working days, working time
+        // Условия: уточняем id диалога, id пользователя, связь таблиц по id дня
         String sqlQuery =
                 "SELECT "
+                        + DBHelper.TABLE_MESSAGES +"."+ DBHelper.KEY_ID + ", "
                         + DBHelper.KEY_TIME_MESSAGES + ", "
-                        + DBHelper.KEY_DATE_WORKING_DAYS + ", "
                         + DBHelper.KEY_IS_CANCELED_MESSAGES + ", "
-                        + DBHelper.KEY_SERVICE_ID_WORKING_DAYS
+                        + DBHelper.KEY_DATE_WORKING_DAYS + ", "
+                        + DBHelper.KEY_SERVICE_ID_WORKING_DAYS + ", "
+                        + DBHelper.KEY_TIME_WORKING_TIME
                         + " FROM "
-                        + DBHelper.TABLE_MESSAGES + ", " + DBHelper.TABLE_WORKING_DAYS
+                        + DBHelper.TABLE_MESSAGES + ", "
+                        + DBHelper.TABLE_WORKING_DAYS + ", "
+                        + DBHelper.TABLE_WORKING_TIME
                         + " WHERE "
-                        + DBHelper.KEY_DIALOG_ID_MESSAGES + " = ?"
+                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME
+                        + " = "
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID
                         + " AND "
                         + DBHelper.KEY_DAY_ID_MESSAGES
                         + " = "
-                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID;
+                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID
+                        + " AND "
+                        + DBHelper.KEY_DIALOG_ID_MESSAGES + " = ?"
+                        + " AND "
+                        + DBHelper.KEY_USER_ID + " = ?";
 
-        Log.d(TAG, "createMessage: " + sqlQuery);
-        //order by по дате и времени?
-        Cursor cursor = database.rawQuery(sqlQuery, new String[]{dialogId});
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{dialogId, userPhone});
 
         if(cursor.moveToFirst()){
-            Log.d(TAG, "createMessage: ");
+            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
             int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_MESSAGES);
             int indexIsCanceled = cursor.getColumnIndex(DBHelper.KEY_IS_CANCELED_MESSAGES);
             int indexDateWorkingDay = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
             int indexServiceId =  cursor.getColumnIndex(DBHelper.KEY_SERVICE_ID_WORKING_DAYS);
+            int indexOrderTime =  cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
             do {
-                message.setDate(cursor.getString(indexDateWorkingDay));
-                message.setTime(cursor.getString(indexTime));
-                message.setIsCanceled(Boolean.valueOf(cursor.getString(indexIsCanceled)));
-
                 String serviceId = cursor.getString(indexServiceId);
-                message.setServiceName(getService(serviceId));
+                if(isMyService(serviceId)) {
+                    message.setId(cursor.getString(indexId));
+                    message.setServiceName(getService(serviceId));
+                    message.setDate(cursor.getString(indexDateWorkingDay));
+                    message.setTime(cursor.getString(indexTime));
+                    message.setOrderTime(cursor.getString(indexOrderTime));
+                    message.setIsCanceled(Boolean.valueOf(cursor.getString(indexIsCanceled)));
+                    message.setUserName(getSenderName(userPhone));
 
-                message.setUserName(getSender(senderPhone));
-                addToScreen(message);
+                    addToScreen(message);
+                } else {
+                    boolean isCanceled = Boolean.valueOf(cursor.getString(indexIsCanceled));
+                    if(isCanceled) {
+                        message.setUserName(getSenderName(workerPhone));
+                        message.setOrderTime(cursor.getString(indexOrderTime));
+                        message.setDate(cursor.getString(indexDateWorkingDay));
+                        message.setServiceName(getService(serviceId));
+                        message.setTime(cursor.getString(indexTime));
+
+                        addNotificationToScreen(message);
+                    }
+                }
             }while (cursor.moveToNext());
         }
-        else {
-            Log.d(TAG, "PIDOR");
-        }
         cursor.close();
+    }
+
+    // тест
+    /*
+    private void updateMessages(String dialogId, String senderPhone) {
+
+        Query messagesQuery = FirebaseDatabase.getInstance().getReference("message orders")
+                .orderByChild(DIALOG_ID)
+                .equalTo(dialogId);
+
+        messagesQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, dataSnapshot.toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    } */
+
+    private boolean isMyService(String serviceId) {
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        // Получает id сервиса
+        // Таблицы: services
+        // Условия: уточняем id сервиса и id воркера
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.KEY_ID
+                        + " FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES
+                        + " WHERE "
+                        + DBHelper.KEY_ID + " = ? "
+                        + " AND "
+                        + DBHelper.KEY_USER_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{serviceId, myPhone});
+        cursor.close();
+        return cursor.moveToFirst();
     }
 
     private String getService(String serviceId) {
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        // Получает всю информацию о сервисе
+        // Получает имя сервиса
         // Таблицы: services
         // Условия: уточняем id сервиса
         String sqlQuery =
@@ -189,18 +251,32 @@ public class Messages extends AppCompatActivity {
         return "";
     }
 
-
     private void addToScreen(Message message) {
+        MessageOrderElement fElement = new MessageOrderElement(message);
 
-        fElement = new MessageOrderElement(message);
-
-        transaction = manager.beginTransaction();
+        FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.resultsMessageLayout, fElement);
         transaction.commit();
     }
 
+    @SuppressLint("SetTextI18n")
+    private void addNotificationToScreen(Message message) {
+        TextView notificationText = new TextView(this);
+        notificationText.setText("Работник " + message.getUserName()
+                + " по некоторым причинам не сможет обслужить вас.\n Запись на "
+                + message.getOrderTime() + " " + message.getDate()
+                + " на услугу " + message.getServiceName() + " отменена.");
+        notificationText.setBackgroundColor(Color.rgb(130, 216, 233));
+
+        if(notificationText.getParent() != null) {
+            ((ViewGroup)notificationText.getParent()).removeView(notificationText);
+        }
+        messagesLayout.addView(notificationText);
+    }
+
+
     private  String getUserId(){
-        sPref = getSharedPreferences(FILE_NAME,MODE_PRIVATE);
+        SharedPreferences sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
 
         return sPref.getString(PHONE_NUMBER, "-");
     }

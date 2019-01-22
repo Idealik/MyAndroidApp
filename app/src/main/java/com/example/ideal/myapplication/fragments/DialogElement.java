@@ -6,15 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
-import com.example.ideal.myapplication.other.GuestService;
 import com.example.ideal.myapplication.other.Messages;
 
 @SuppressLint("ValidFragment")
@@ -56,7 +53,6 @@ public class DialogElement extends Fragment implements View.OnClickListener {
     }
 
     private void goToDialog(){
-        //Toast.makeText(this.getContext(), "click", Toast.LENGTH_SHORT);
         Intent intent = new Intent(this.getContext(), Messages.class);
         intent.putExtra(DIALOG_ID, idString);
         startActivity(intent);

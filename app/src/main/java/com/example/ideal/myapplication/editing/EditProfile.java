@@ -5,20 +5,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.User;
 import com.example.ideal.myapplication.logIn.Authorization;
-import com.example.ideal.myapplication.logIn.Registration;
 import com.example.ideal.myapplication.other.DBHelper;
-import com.example.ideal.myapplication.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -47,16 +46,19 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     private static final String PASS = "password";
     private static final String USER_CITY = "city";
 
-    private static final String USERS = "users/";
-    private static final String WORKING_TIME = "working time/";
-    private static final String SERVICE = "services/";
+    private static final String DIALOGS = "dialogs";
+    private static final String USERS = "users";
+    private static final String WORKING_TIME = "working time";
+    private static final String SERVICE = "services";
 
     private static final String USER_ID = "user id";
 
     private static final String PHONE_NUMBER = "Phone number";
     private static final String FILE_NAME = "Info";
+    private static final String FIRST_PHONE = "first phone";
+    private static final String SECOND_PHONE = "second phone";
 
-    String oldPhone;
+    private String oldPhone;
 
     Button editBtn;
     Button verifyButton;
@@ -72,9 +74,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             verificationCallbacks;
     private PhoneAuthProvider.ForceResendingToken resendToken;
 
-    DBHelper dbHelper;
-    SharedPreferences sPref;
-    User user;
+    private DBHelper dbHelper;
+    private SharedPreferences sPref;
+    private User user;
 
     private FirebaseAuth fbAuth;
 
@@ -114,6 +116,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             nameInput.setText(cursor.getString(indexName));
             cityInput.setText(cursor.getString(indexCity));
             phoneInput.setText(cursor.getString(indexPhone));
+            cursor.close();
         }
         editBtn.setOnClickListener(this);
         resendButton.setOnClickListener(this);
@@ -143,7 +146,6 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             case R.id.verifyProfileEditProfileBtn:
 
                 String code = codeInput.getText().toString();
-                Log.d(TAG, "onClick: " + code);
                 if (!code.trim().equals("")) {
                     // подтверждаем код и если все хорошо, создаем юзера
                     verifyCode(code);
@@ -163,7 +165,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         //можно объеденить ссылки?
         DatabaseReference reference = FirebaseDatabase
                 .getInstance()
-                .getReference("users/" + getUserPhone());
+                .getReference(USERS).child(getUserPhone());
 
         Map<String, Object> items = new HashMap<>();
         if (user.getName() != null) items.put(USER_NAME, user.getName());
@@ -189,7 +191,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    attentionBadConnection();
                 }
             });
         }
@@ -330,25 +332,24 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot time: dataSnapshot.getChildren()){
 
-                    DatabaseReference myRef = database.getReference(WORKING_TIME+time.getKey());
+                    DatabaseReference myRef = database.getReference(WORKING_TIME).child(time.getKey());
                     Map<String,Object> items = new HashMap<>();
                     items.put(USER_ID, phone);
                     myRef.updateChildren(items);
                 }
                 //update в service
-                updateService(phone);
-
+                updateServices(phone);
+                updateDialogs(phone);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                //стоит обрабатывать исключения?
+                attentionBadConnection();
             }
         });
     }
 
-    private void updateService(final String phone) {
+    private void updateServices(final String phone) {
         //аналогично с working days
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -361,16 +362,94 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot service: dataSnapshot.getChildren()){
 
-                    DatabaseReference myRef = database.getReference(SERVICE+service.getKey());
+                    DatabaseReference myRef = database.getReference(SERVICE).child(service.getKey());
                     Map<String,Object> items = new HashMap<>();
                     items.put(USER_ID, phone);
                     myRef.updateChildren(items);
                 }
-                goToAuthorization();
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //стоит обрабатывать исключения?
+                attentionBadConnection();
+            }
+        });
+    }
+
+    private void updateDialogs(final String phone) {
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        final Query firstPhoneQuery = database.getReference(DIALOGS)
+                .orderByChild(FIRST_PHONE)
+                .equalTo(oldPhone);
+        firstPhoneQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dialogs) {
+                String secondPhone;
+                String dialogId ="";
+
+                for (DataSnapshot dialog : dialogs.getChildren()) {
+                    secondPhone = String.valueOf(dialog.child(FIRST_PHONE).getValue());
+
+                    if (secondPhone.equals(oldPhone)) {
+                        dialogId = dialog.getKey();
+                        //поменять в диалоге номер
+
+                        DatabaseReference myRef = database.getReference(DIALOGS).child(dialogId);
+                        Map<String, Object> items = new HashMap<>();
+                        items.put(FIRST_PHONE, phone);
+                        myRef.updateChildren(items);
+
+                    }
+                }
+                //ищем по second phone
+
+                if(dialogId.isEmpty()) {
+                    checkSecondPhone(phone);
+                }
+                else {
+                    goToAuthorization();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
+        });
+
+    }
+
+    private void checkSecondPhone(final String phone){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        Query secondPhoneQuery = database.getReference(DIALOGS)
+                .orderByChild(SECOND_PHONE)
+                .equalTo(oldPhone);
+        secondPhoneQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dialogs) {
+                String secondPhone;
+                String dialogId;
+
+                for(DataSnapshot dialog:dialogs.getChildren()) {
+                    secondPhone = String.valueOf(dialog.child(SECOND_PHONE).getValue());
+                    if(secondPhone.equals(oldPhone)) {
+                        dialogId = dialog.getKey();
+
+                        DatabaseReference myRef = database.getReference(DIALOGS).child(dialogId);
+                        Map<String, Object> items = new HashMap<>();
+                        items.put(SECOND_PHONE, phone);
+                        myRef.updateChildren(items);
+                    }
+                }
+                goToAuthorization();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
             }
         });
     }
@@ -408,9 +487,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
     private String getUserPhone() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String userId = sPref.getString(PHONE_NUMBER, "-");
 
-        return  userId;
+        return  sPref.getString(PHONE_NUMBER, "-");
     }
 
     private String convertPhoneToNormalView(String phone) {
@@ -443,13 +521,16 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
 
     private String getUserPass() {
         sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        String pass = sPref.getString(PASS, "-");
-        return  pass;
+        return  sPref.getString(PASS, "-");
     }
 
     private void goToAuthorization(){
         Intent intent = new Intent(EditProfile.this, Authorization.class);
         startActivity(intent);
         finish();
+    }
+
+    private void attentionBadConnection() {
+        Toast.makeText(this,"Плохое соединение",Toast.LENGTH_SHORT).show();
     }
 }
