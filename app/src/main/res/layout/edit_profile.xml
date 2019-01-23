@@ -28,9 +28,7 @@
         android:layout_marginBottom="26dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/cityRegistration"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:hint="@string/cityRegistration"/>
 
     <EditText
         android:id="@+id/phoneEditProfileInput"
@@ -41,9 +39,7 @@
         android:layout_marginBottom="26dp"
         android:ems="10"
         android:hint="@string/phone"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/editProfileEditProfileBtn"
@@ -64,9 +60,7 @@
         android:layout_marginBottom="26dp"
         android:ems="10"
         android:hint="@string/enterCode"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:inputType="number" />
     <Button
         android:id="@+id/verifyProfileEditProfileBtn"
         android:layout_width="wrap_content"

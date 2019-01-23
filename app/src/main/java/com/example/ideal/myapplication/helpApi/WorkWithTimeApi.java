@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class WorkWithTimeApi {
 
@@ -29,5 +30,11 @@ public class WorkWithTimeApi {
         }
         return 0L;
     }
-
+    //возвращает время в формате HH:mm:ss
+    public String getCurDateInFormatHMS() {
+        Date dateNow = new Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("HH:mm:ss");
+        formatForDateNow.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
+        return formatForDateNow.format(dateNow);
+    }
 }

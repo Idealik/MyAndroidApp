@@ -76,7 +76,14 @@ public class AddService extends AppCompatActivity implements View.OnClickListene
                     }
 
                     service.setDescription(descriptionServiceInput.getText().toString());
-                    service.setCost(costAddServiceInput.getText().toString());
+
+                    if(!service.setCost(costAddServiceInput.getText().toString())){
+                        Toast.makeText(
+                                this,
+                                "Цена не может содержать больше 8 символов ",
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    }
 
                     addService(service);
                 }

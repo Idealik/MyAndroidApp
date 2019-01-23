@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,10 +20,12 @@ import com.example.ideal.myapplication.fragments.MessageOrderElement;
 
 public class Messages extends AppCompatActivity {
 
-    final  String TAG = "DBInf";
-    private final String FILE_NAME = "Info";
-    private final String PHONE_NUMBER = "Phone number";
-    private final String DIALOG_ID = "dialog id";
+    private static final String TAG = "DBInf";
+
+    private static final String FILE_NAME = "Info";
+    private static final String PHONE_NUMBER = "Phone number";
+
+    private static final String DIALOG_ID = "dialog id";
 
     private String myPhone;
     private DBHelper dbHelper;
@@ -48,10 +51,7 @@ public class Messages extends AppCompatActivity {
 
         if (!senderPhone.equals("0")) {
             //выводим на экран сообщения из LocalStorage для воркера
-            createMessages(dialogId,senderPhone, myPhone);
-
-            //выводим на экран сообщения из LocalStorage для юзера
-            createMessages(dialogId,myPhone, senderPhone);
+            createMessages(dialogId, senderPhone);
             //updateMessages(dialogId,senderPhone);
         }
     }
@@ -113,75 +113,104 @@ public class Messages extends AppCompatActivity {
         return "";
     }
 
-    private void createMessages(String dialogId, String userPhone, String workerPhone) {
+    private void createMessages(String dialogId, String otherPhone) {
 
         SQLiteDatabase database = dbHelper.getReadableDatabase();
 
         Message message = new Message();
-        // Получает id сообщения, время сообщения, отменена ли запись, дату и время сеанса, id сервиса
-        // Таблицы: messages, working days, working time
-        // Условия: уточняем id диалога, id пользователя, связь таблиц по id дня
-        String sqlQuery =
+        // Получает id сообщения, время сообщения, отменена ли запись, id дня записи
+        // Таблицы: messages
+        // Условия: уточняем id диалога
+        String messageQuery =
                 "SELECT "
-                        + DBHelper.TABLE_MESSAGES +"."+ DBHelper.KEY_ID + ", "
-                        + DBHelper.KEY_TIME_MESSAGES + ", "
-                        + DBHelper.KEY_IS_CANCELED_MESSAGES + ", "
-                        + DBHelper.KEY_DATE_WORKING_DAYS + ", "
-                        + DBHelper.KEY_SERVICE_ID_WORKING_DAYS + ", "
-                        + DBHelper.KEY_TIME_WORKING_TIME
-                        + " FROM "
-                        + DBHelper.TABLE_MESSAGES + ", "
-                        + DBHelper.TABLE_WORKING_DAYS + ", "
-                        + DBHelper.TABLE_WORKING_TIME
-                        + " WHERE "
-                        + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME
-                        + " = "
-                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID
-                        + " AND "
+                        + DBHelper.KEY_ID + ", "
+                        + DBHelper.KEY_MESSAGE_TIME_MESSAGES + ", "
+                        + DBHelper.KEY_IS_CANCELED_MESSAGE_ORDERS + ", "
                         + DBHelper.KEY_DAY_ID_MESSAGES
-                        + " = "
-                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID
-                        + " AND "
+                        + " FROM "
+                        + DBHelper.TABLE_MESSAGE_ORDERS
+                        + " WHERE "
                         + DBHelper.KEY_DIALOG_ID_MESSAGES + " = ?"
-                        + " AND "
-                        + DBHelper.KEY_USER_ID + " = ?";
+                        + " ORDER BY "
+                        + DBHelper.KEY_MESSAGE_TIME_MESSAGES;
+        Cursor messageCursor = database.rawQuery(messageQuery, new String[]{dialogId});
 
-        Cursor cursor = database.rawQuery(sqlQuery, new String[]{dialogId, userPhone});
-
-        if(cursor.moveToFirst()){
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_MESSAGES);
-            int indexIsCanceled = cursor.getColumnIndex(DBHelper.KEY_IS_CANCELED_MESSAGES);
-            int indexDateWorkingDay = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
-            int indexServiceId =  cursor.getColumnIndex(DBHelper.KEY_SERVICE_ID_WORKING_DAYS);
-            int indexOrderTime =  cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
+        if (messageCursor.moveToFirst()) {
+            int indexMessageId = messageCursor.getColumnIndex(DBHelper.KEY_ID);
+            int indexTime = messageCursor.getColumnIndex(DBHelper.KEY_MESSAGE_TIME_MESSAGES);
+            int indexIsCanceled = messageCursor.getColumnIndex(DBHelper.KEY_IS_CANCELED_MESSAGE_ORDERS);
+            int indexDayId = messageCursor.getColumnIndex(DBHelper.KEY_DAY_ID_MESSAGES);
             do {
-                String serviceId = cursor.getString(indexServiceId);
-                if(isMyService(serviceId)) {
-                    message.setId(cursor.getString(indexId));
-                    message.setServiceName(getService(serviceId));
-                    message.setDate(cursor.getString(indexDateWorkingDay));
-                    message.setTime(cursor.getString(indexTime));
-                    message.setOrderTime(cursor.getString(indexOrderTime));
-                    message.setIsCanceled(Boolean.valueOf(cursor.getString(indexIsCanceled)));
-                    message.setUserName(getSenderName(userPhone));
+                boolean isCanceled = Boolean.valueOf(messageCursor.getString(indexIsCanceled));
 
-                    addToScreen(message);
-                } else {
-                    boolean isCanceled = Boolean.valueOf(cursor.getString(indexIsCanceled));
-                    if(isCanceled) {
-                        message.setUserName(getSenderName(workerPhone));
-                        message.setOrderTime(cursor.getString(indexOrderTime));
-                        message.setDate(cursor.getString(indexDateWorkingDay));
-                        message.setServiceName(getService(serviceId));
-                        message.setTime(cursor.getString(indexTime));
+                String dayId = messageCursor.getString(indexDayId);
 
-                        addNotificationToScreen(message);
+                // Получает дату записи, id сервиса
+                // Таблицы: working days
+                // Условия: уточняем id дня
+                String dayQuery =
+                        "SELECT "
+                                + DBHelper.KEY_DATE_WORKING_DAYS + ", "
+                                + DBHelper.KEY_SERVICE_ID_WORKING_DAYS
+                                + " FROM "
+                                + DBHelper.TABLE_WORKING_DAYS
+                                + " WHERE "
+                                + DBHelper.KEY_ID + " = ?";
+                Cursor dayCursor = database.rawQuery(dayQuery, new String[]{dayId});
+
+                if (dayCursor.moveToFirst()) {
+                    int indexDate = dayCursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
+                    int indexServiceId = dayCursor.getColumnIndex(DBHelper.KEY_SERVICE_ID_WORKING_DAYS);
+
+                    String serviceId = dayCursor.getString(indexServiceId);
+                    if (!isCanceled) {
+                        if (isMyService(serviceId)) {
+
+                            // Получает время записи
+                            // Таблицы: working time
+                            // Условия: уточняем по id пользователя и id дня
+                            String timeQuery =
+                                    "SELECT "
+                                            + DBHelper.KEY_TIME_WORKING_TIME + ", "
+                                            + DBHelper.KEY_ID
+                                            + " FROM "
+                                            + DBHelper.TABLE_WORKING_TIME
+                                            + " WHERE "
+                                            + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?"
+                                            + " AND "
+                                            + DBHelper.KEY_USER_ID + " = ?";
+                            Cursor timeCursor = database.rawQuery(timeQuery, new String[]{dayId, otherPhone});
+
+                            if (timeCursor.moveToFirst()) {
+                                int indexOrderTime = timeCursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
+                                int indexTimeId = timeCursor.getColumnIndex(DBHelper.KEY_ID);
+
+                                message.setId(messageCursor.getString(indexMessageId));
+                                message.setServiceName(getService(serviceId));
+                                message.setDate(dayCursor.getString(indexDate));
+                                message.setTime(messageCursor.getString(indexTime));
+                                message.setIsCanceled(Boolean.valueOf(messageCursor.getString(indexIsCanceled)));
+                                message.setUserName(getSenderName(otherPhone));
+                                message.setOrderTime(timeCursor.getString(indexOrderTime));
+                                message.setDialogId(dialogId);
+                                message.setTimeId(timeCursor.getString(indexTimeId));
+
+                                addToScreen(message);
+                            }
+                        }
+                    } else {
+                        if (!isMyService(serviceId)) {
+                            message.setUserName(getSenderName(otherPhone));
+                            message.setDate(dayCursor.getString(indexDate));
+                            message.setServiceName(getService(serviceId));
+                            message.setTime(messageCursor.getString(indexTime));
+
+                            addNotificationToScreen(message);
+                        }
                     }
                 }
-            }while (cursor.moveToNext());
+            } while (messageCursor.moveToNext());
         }
-        cursor.close();
     }
 
     // тест
@@ -221,7 +250,6 @@ public class Messages extends AppCompatActivity {
                         + DBHelper.KEY_USER_ID + " = ?";
 
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{serviceId, myPhone});
-        cursor.close();
         return cursor.moveToFirst();
     }
 
@@ -264,7 +292,7 @@ public class Messages extends AppCompatActivity {
         TextView notificationText = new TextView(this);
         notificationText.setText("Работник " + message.getUserName()
                 + " по некоторым причинам не сможет обслужить вас.\n Запись на "
-                + message.getOrderTime() + " " + message.getDate()
+                + message.getDate()
                 + " на услугу " + message.getServiceName() + " отменена.");
         notificationText.setBackgroundColor(Color.rgb(130, 216, 233));
 

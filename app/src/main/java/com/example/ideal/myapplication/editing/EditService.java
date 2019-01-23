@@ -145,5 +145,6 @@ public class EditService extends AppCompatActivity implements View.OnClickListen
         Intent intent = new Intent(this, GuestService.class);
         intent.putExtra(SERVICE_ID, serviseId);
         startActivity(intent);
+        finish();
     }
 }

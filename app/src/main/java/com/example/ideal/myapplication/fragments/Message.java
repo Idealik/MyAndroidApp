@@ -9,6 +9,7 @@ public class Message {
     private String userName;
     private String dialogId;
     private String time;
+    private String timeId;
     private String orderTime;
 
 
@@ -38,6 +39,9 @@ public class Message {
 
     public void setTime(String _time) {
         time = _time;
+    }
+    public void setTimeId(String _timeId) {
+        timeId = _timeId;
     }
 
     public void setOrderTime(String _orderTime) {
@@ -70,6 +74,9 @@ public class Message {
 
     public String getTime() {
         return time;
+    }
+    public String getTimeId() {
+        return timeId;
     }
 
     public String getOrderTime() {

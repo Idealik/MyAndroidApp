@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/findServiceSearchServiceBtn" />
+        android:inputType="textPersonName" />
 
     <Spinner
         android:id="@+id/citySearchServiceSpinner"
@@ -32,22 +31,13 @@
         android:layout_height="310dp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginBottom="8dp">
 
         <LinearLayout
             android:id="@+id/resultSearchServiceLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
-
+            android:orientation="vertical" />
     </ScrollView>
 
     <Button
@@ -56,11 +46,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="@string/findServices"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.851"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
-
+        android:text="@string/findServices"/>
 </LinearLayout>

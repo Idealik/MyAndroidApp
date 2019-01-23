@@ -31,10 +31,14 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
     private static final String WORKING_TIME = "working time/";
     private static final String WORKING_DAYS_ID = "working day id";
     private static final String MESSAGE_ORDERS = "message orders";
+    private static final String MESSAGE_REVIEWS = "message reviews";
+    private static final String MESSAGE_TIME = "message time";
 
     String messageId;
-    String messageDateDay;
-    String messageTimeDay;
+    String messageDateOfDay;
+    String messageTimeOfDay;
+    String messageDialogId;
+    String messageTimeId;
     Boolean messageIsCanceled;
     WorkWithTimeApi workWithTimeApi;
 
@@ -49,9 +53,11 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
     @SuppressLint("ValidFragment")
     public MessageOrderElement(Message message) {
         messageId = message.getId();
-        messageDateDay = message.getDate();
-        messageTimeDay = message.getOrderTime();
+        messageDateOfDay = message.getDate();
+        messageTimeOfDay = message.getOrderTime();
+        messageTimeId = message.getTimeId();
         messageIsCanceled = message.getIsCanceled();
+        messageDialogId = message.getDialogId();
 
         text = "Добрый день, на " + message.getDate() + " в " + message.getOrderTime()
                 + " к вам записался пользователь " + message.getUserName() + " на услугу "
@@ -59,7 +65,7 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
     }
 
     private boolean isRelevance() {
-        String commonDate = messageDateDay + " " + messageTimeDay;
+        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
 
         Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
         Long sysdateLong = workWithTimeApi.getSysdateLong();
@@ -103,27 +109,46 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
     private void setIsCanceled() {
         //Отказываем юзеру в услуге за ЧАС до ее исполнения
         //Иначе даем возможность написать ревью
-        String commonDate = messageDateDay + " " + messageTimeDay;
+        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
         Long sysdateLong = workWithTimeApi.getSysdateLong();
-        Log.d(TAG, "setIsCanceled: ");
         Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
         //если разница между заказом и временем, которое сейчас меньше часа, отмена без review
         //isRelevance нужен, чтобы пользователь, как прошло время, не смог отменить заказ,
         // будучи на активити
         if(isRelevance()) {
             if (orderDateLong - sysdateLong > 3600000) {
-                Log.d(TAG, "setIsCanceled: " + (orderDateLong - sysdateLong));
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("message orders/" + messageId);
-                Map<String, Object> items = new HashMap<>();
-                items.put("is canceled", true);
-                myRef.updateChildren(items);
-                clearPhone();
+                cancel();
             } else {
+                cancel();
                 //отправляем возможность написать ревью
-                Log.d(TAG, "АЯ-ЯЙ Я ЩАС РАЗРЕШУ РЕВЬЮ ПЛОХОЕ НАПИСАТЬ! ");
+                // заполняю firebase тут, а в мессаджах обрабатываю уже ,есть ли ривью
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+                DatabaseReference myRef = database.getReference(MESSAGE_REVIEWS);
+                Map<String,Object> items = new HashMap<>();
+
+                String dateNow = workWithTimeApi.getCurDateInFormatHMS();
+
+                items.put("dialog id", messageDialogId);
+                items.put(MESSAGE_TIME, dateNow);
+                items.put("time id", messageTimeId);
+                items.put("is rate", false);
+
+                String messageId =  myRef.push().getKey();
+                myRef = database.getReference(MESSAGE_REVIEWS).child(messageId);
+                myRef.updateChildren(items);
+
             }
         }
+    }
+    
+    private  void cancel(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message orders/" + messageId);
+        Map<String, Object> items = new HashMap<>();
+        items.put("is canceled", true);
+        myRef.updateChildren(items);
+        clearPhone();
     }
 
     private void clearPhone() {

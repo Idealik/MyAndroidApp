@@ -17,11 +17,7 @@
         android:inputType="textPersonName|textCapWords"
         android:ems="10"
         android:hint="@string/nameAddServiceTB"
-        android:layout_gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/costAddServiceInput"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/costAddServiceInput"
@@ -32,11 +28,7 @@
         android:ems="10"
         android:inputType="number"
         android:hint="@string/costAddServiceTB"
-        android:layout_gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/descriptionAddServiceInput"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameAddServiceInput" />
+        android:layout_gravity="center" />
 
     <EditText
         android:id="@+id/descriptionAddServiceInput"
@@ -46,12 +38,7 @@
         android:layout_marginTop="13dp"
         android:layout_marginBottom="17dp"
         android:layout_gravity="center"
-        android:ems="10"
-        app:layout_constraintBottom_toTopOf="@+id/addServiceAddServiceBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.09"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/costAddServiceInput" />
+        android:ems="10" />
 
     <Button
         android:id="@+id/addServiceAddServiceBtn"
@@ -60,9 +47,6 @@
         android:layout_marginTop="3dp"
         android:layout_marginBottom="5dp"
         android:layout_gravity="center"
-        android:text="@string/addServices"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionAddServiceInput" />
+        android:text="@string/addServices" />
 
 </LinearLayout>

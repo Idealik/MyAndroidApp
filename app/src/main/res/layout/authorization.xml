@@ -34,11 +34,7 @@
         android:visibility="invisible"
         android:inputType="phone"
         android:textColor="@color/white"
-        android:textColorHint="@color/lightText"
-        app:layout_constraintBottom_toTopOf="@+id/passAuthorizationInput"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        android:textColorHint="@color/lightText" />
 
     <EditText
         android:id="@+id/passAuthorizationInput"
@@ -51,11 +47,7 @@
         android:backgroundTint="@color/lightText"
         android:visibility="invisible"
         android:hint="@string/passwordRegistration"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/logInAuthorizationBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneAuthorizationInput" />
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/logInAuthorizationBtn"
@@ -64,11 +56,7 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         android:layout_marginTop="30dp"
-        android:background="@drawable/log_in"
-        app:layout_constraintBottom_toTopOf="@+id/registrationAuthorizationBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passAuthorizationInput" />
+        android:background="@drawable/log_in" />
 
     <Button
         android:id="@+id/registrationAuthorizationBtn"
@@ -77,11 +65,6 @@
         android:layout_height="22dp"
         android:layout_marginTop="23dp"
         android:background="@drawable/registration"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logInAuthorizationBtn" />
-
+        android:visibility="invisible" />
 
 </LinearLayout>

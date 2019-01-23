@@ -52,6 +52,7 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
     private static final String STATUS_USER_BY_SERVICE = "status User";
     private static final String FIRST_PHONE = "first phone";
     private static final String SECOND_PHONE = "second phone";
+    private static final String MESSAGE_TIME = "message time";
     private static final String TIME = "time";
 
     private static final String WORKER = "worker";
@@ -571,15 +572,13 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        Date dateNow = new Date();
-
         DatabaseReference myRef = database.getReference(MESSAGES);
         Map<String, Object> items = new HashMap<>();
-        SimpleDateFormat formatForDateNow = new SimpleDateFormat("HH:mm:ss");
-        formatForDateNow.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
+
+        String dateNow = workWithTimeApi.getCurDateInFormatHMS();
 
         items.put("dialog id", dialogId);
-        items.put("time", formatForDateNow.format(dateNow));
+        items.put(MESSAGE_TIME, dateNow);
         items.put("date", workingDaysId);
         items.put("is canceled", false);
 
@@ -587,9 +586,6 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
         myRef = database.getReference(MESSAGES).child(messageId);
         myRef.updateChildren(items);
 
-
-
-        //добавлять в локальную бд
     }
 
     private void updateLocalStorageTime() {

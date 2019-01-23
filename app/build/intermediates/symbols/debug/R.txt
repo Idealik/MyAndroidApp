@@ -1010,11 +1010,12 @@ int layout notification_template_part_chronometer 0x7f0a003a
 int layout notification_template_part_time 0x7f0a003b
 int layout profile 0x7f0a003c
 int layout registration 0x7f0a003d
-int layout search_service 0x7f0a003e
-int layout select_dialog_item_material 0x7f0a003f
-int layout select_dialog_multichoice_material 0x7f0a0040
-int layout select_dialog_singlechoice_material 0x7f0a0041
-int layout support_simple_spinner_dropdown_item 0x7f0a0042
+int layout review 0x7f0a003e
+int layout search_service 0x7f0a003f
+int layout select_dialog_item_material 0x7f0a0040
+int layout select_dialog_multichoice_material 0x7f0a0041
+int layout select_dialog_singlechoice_material 0x7f0a0042
+int layout support_simple_spinner_dropdown_item 0x7f0a0043
 int mipmap ic_launcher 0x7f0b0000
 int mipmap ic_launcher_foreground 0x7f0b0001
 int mipmap ic_launcher_round 0x7f0b0002

@@ -25,6 +25,7 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
+        <activity android:name="com.example.ideal.myapplication.other.Review" />
         <activity android:name="com.example.ideal.myapplication.other.Messages" />
         <activity android:name="com.example.ideal.myapplication.other.Dialogs" />
         <activity android:name="com.example.ideal.myapplication.logIn.Registration" />

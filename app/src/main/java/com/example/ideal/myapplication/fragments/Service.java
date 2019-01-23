@@ -5,7 +5,7 @@ public class Service {
     private String id;
     private String name;
     private String description;
-    private Integer cost;
+    private String cost;
     private Float rating;
     private String userId;
     private Long countOfRates;
@@ -23,8 +23,14 @@ public class Service {
     public void setDescription(String _description){
         description = _description;
     }
-    public void setCost(String _cost){
-            cost = Integer.valueOf(_cost);
+
+    public boolean setCost(String _cost){
+        if(isCorrectCost(_cost)) {
+
+            cost = _cost;
+            return true;
+        }
+        return false;
     }
     public void setRating(String _rating){
         rating = Float.valueOf(_rating);
@@ -39,7 +45,7 @@ public class Service {
     public String getId(){return id;}
     public String getName(){return name;}
     public String getDescription(){return description;}
-    public Integer getCost(){return cost;}
+    public String getCost(){return cost;}
     public Float getRating(){return rating;}
     public String getUserId(){return userId;}
     public Long getCountOfRates(){return countOfRates;}
@@ -47,6 +53,12 @@ public class Service {
     protected boolean isCorrectData(String data){
 
         if(!data.matches("[a-zA-ZА-Яа-я\\s\\-]+")) return false;
+        return true;
+    }
+
+    private boolean isCorrectCost(String cost){
+
+        if(!cost.matches("[0-9]{1,8}")) return false;
         return true;
     }
 

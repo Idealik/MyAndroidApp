@@ -38,6 +38,7 @@ public class Dialogs extends AppCompatActivity {
     private static final String CITY = "city";
 
     private static final String MESSAGE_ORDERS = "message orders";
+    private static final String DATE = "date";
     private static final String DIALOG_ID = "dialog id";
     private static final String IS_CANCELED = "is canceled";
 
@@ -45,7 +46,10 @@ public class Dialogs extends AppCompatActivity {
     private static final String WORKING_DAYS_ID = "working day id";
     private static final String TIME = "time";
 
-    private static final String DATE = "date";
+    private static final String WORKING_DAYS = "working days";
+    private static final String SERVICE_ID = "service id";
+
+    private static final String SERVICES = "services";
 
     SharedPreferences sPref;
     DBHelper dbHelper;
@@ -62,7 +66,7 @@ public class Dialogs extends AppCompatActivity {
         manager = getSupportFragmentManager();
         dbHelper = new DBHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        database.delete(DBHelper.TABLE_MESSAGES, null, null);
+        database.delete(DBHelper.TABLE_MESSAGE_ORDERS, null, null);
         database.delete(DBHelper.TABLE_DIALOGS, null, null);
     }
 
@@ -281,6 +285,7 @@ public class Dialogs extends AppCompatActivity {
     }
 
     private void addMessagesInLocalStorage(final String dialogId) {
+        //message_orders
         Query messagesQuery = FirebaseDatabase.getInstance().getReference(MESSAGE_ORDERS)
                 .orderByChild(DIALOG_ID)
                 .equalTo(dialogId);
@@ -291,7 +296,7 @@ public class Dialogs extends AppCompatActivity {
                 SQLiteDatabase database = dbHelper.getWritableDatabase();
 
                 String sqlQuery = "SELECT * FROM "
-                        + DBHelper.TABLE_MESSAGES
+                        + DBHelper.TABLE_MESSAGE_ORDERS
                         + " WHERE "
                         + DBHelper.KEY_ID + " = ?";
                 Cursor cursor;
@@ -302,25 +307,110 @@ public class Dialogs extends AppCompatActivity {
                     String isCanceled = String.valueOf(message.child(IS_CANCELED).getValue());
                     String time = String.valueOf(message.child(TIME).getValue());
 
+                    addDayInLocalStorage(date);
+
                     cursor = database.rawQuery(sqlQuery, new String[] {messageId});
 
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(DBHelper.KEY_DIALOG_ID_MESSAGES, dialogId);
                     contentValues.put(DBHelper.KEY_DAY_ID_MESSAGES, date);
-                    contentValues.put(DBHelper.KEY_IS_CANCELED_MESSAGES, isCanceled);
-                    contentValues.put(DBHelper.KEY_TIME_MESSAGES, time);
+                    contentValues.put(DBHelper.KEY_IS_CANCELED_MESSAGE_ORDERS, isCanceled);
+                    contentValues.put(DBHelper.KEY_MESSAGE_TIME_MESSAGES, time);
 
                     if(cursor.moveToFirst()) {
-                        database.update(DBHelper.TABLE_MESSAGES, contentValues,
+                        database.update(DBHelper.TABLE_MESSAGE_ORDERS, contentValues,
                                 DBHelper.KEY_ID + " = ?",
                                 new String[]{String.valueOf(messageId)});
                     } else {
                         contentValues.put(DBHelper.KEY_ID, messageId);
-                        database.insert(DBHelper.TABLE_MESSAGES, null, contentValues);
+                        database.insert(DBHelper.TABLE_MESSAGE_ORDERS, null, contentValues);
                     }
                     cursor.close();
                     updateWorkingTimeInLocalStorage(messageId);
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
+        });
+    }
+
+    private void messageOrders(){
+
+    }
+
+    private void addDayInLocalStorage(final String dayId) {
+        DatabaseReference dayRef = FirebaseDatabase.getInstance().getReference(WORKING_DAYS)
+                .child(dayId);
+
+        dayRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot day) {
+                SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+                String sqlQuery = "SELECT * FROM "
+                        + DBHelper.TABLE_WORKING_DAYS
+                        + " WHERE "
+                        + DBHelper.KEY_ID + " = ?";
+                Cursor cursor = database.rawQuery(sqlQuery, new String[]{dayId});
+
+                String date = String.valueOf(day.child("data").getValue());
+                String serviceId = String.valueOf(day.child(SERVICE_ID).getValue());
+
+                loadServiceInLocalStorage(serviceId);
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DBHelper.KEY_DATE_WORKING_DAYS, date);
+                contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
+                if (cursor.moveToFirst()) {
+                    database.update(DBHelper.TABLE_WORKING_DAYS, contentValues,
+                            DBHelper.KEY_ID + " = ?",
+                            new String[]{String.valueOf(dayId)});
+                } else {
+                    contentValues.put(DBHelper.KEY_ID, dayId);
+                    database.insert(DBHelper.TABLE_WORKING_DAYS, null, contentValues);
+                }
+                cursor.close();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                attentionBadConnection();
+            }
+        });
+    }
+
+    private void loadServiceInLocalStorage(final String serviceId) {
+        DatabaseReference serviceRef = FirebaseDatabase.getInstance().getReference(SERVICES)
+                .child(serviceId);
+
+        serviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot service) {
+                SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+                String sqlQuery = "SELECT * FROM "
+                        + DBHelper.TABLE_CONTACTS_SERVICES
+                        + " WHERE "
+                        + DBHelper.KEY_ID + " = ?";
+                Cursor cursor = database.rawQuery(sqlQuery, new String[]{serviceId});
+
+                String name = String.valueOf(service.child(NAME).getValue());
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DBHelper.KEY_NAME_SERVICES, name);
+
+                if (cursor.moveToFirst()) {
+                    database.update(DBHelper.TABLE_CONTACTS_SERVICES, contentValues,
+                            DBHelper.KEY_ID + " = ?",
+                            new String[]{String.valueOf(serviceId)});
+                } else {
+                    contentValues.put(DBHelper.KEY_ID, serviceId);
+                    database.insert(DBHelper.TABLE_CONTACTS_SERVICES, null, contentValues);
+                }
+                cursor.close();
             }
 
             @Override

@@ -135,6 +135,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
         String dayAndMonth, year;
         String dayId;
         int dayWithTimesColor = ContextCompat.getColor(this, R.color.dayWithTimes);
+        int dayWithoutTimesColor = ContextCompat.getColor(this, R.color.black);
         for (int i = 0; i < WEEKS_COUNT; i++) {
             for (int j = 0; j < DAYS_COUNT; j++) {
                 dayAndMonth = dayBtns[i][j].getText().toString();
@@ -144,6 +145,9 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
                 if (!dayId.equals("0") ) {
                     if (hasSomeWork(dayId)) {
                         dayBtns[i][j].setTextColor(dayWithTimesColor);
+                    }
+                    else {
+                        dayBtns[i][j].setTextColor(dayWithoutTimesColor);
                     }
                 }
             }
@@ -179,7 +183,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
     private void checkOrder(){
         //Если пользователь записан на какой-то день выделить только его
         date = getOrderDate();
-        if(date.equals("")) {
+        if(!date.equals("")) {
             String[] arrDate = date.split("-");
             String orderDate = arrDate[0] + " " + monthToString(Integer.valueOf(arrDate[1]));
 
@@ -437,7 +441,6 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
         if(cursor.moveToFirst()) {
             int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            cursor.close();
             return String.valueOf(cursor.getString(indexId));
         }
         cursor.close();
