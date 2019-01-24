@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final  int DATABASE_VERSION = 36;
+    public static final  int DATABASE_VERSION = 37;
     public static final String DATABASE_NAME = "MyFirstDB";
 
     //tables name
@@ -55,11 +55,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public  static final  String KEY_DIALOG_ID_MESSAGES = "dialog_id";
     public  static final  String KEY_MESSAGE_TIME_MESSAGES = "message_time";
     public  static final  String KEY_IS_CANCELED_MESSAGE_ORDERS = "is_canceled";
-    public  static final  String KEY_DAY_ID_MESSAGES = "day_id";
+    public  static final  String KEY_TIME_ID_MESSAGES = "time_id";
 
     //message_reviews
     public  static final  String KEY_IS_RATE_MESSAGE_REVIEWS = "is_rate";
-    public  static final  String KEY_TIME_ID_MESSAGE_REVIEWS = "time_id";
 
     //reviews for service
     public  static final  String KEY_REVIEW_REVIEWS_FOR_SERVICE = "review";
@@ -116,7 +115,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_ID + " text primary key,"
                 + KEY_DIALOG_ID_MESSAGES + " text,"
                 + KEY_IS_CANCELED_MESSAGE_ORDERS + " text,"
-                + KEY_DAY_ID_MESSAGES + " text,"
+                + KEY_TIME_ID_MESSAGES + " text,"
                 + KEY_MESSAGE_TIME_MESSAGES + " text"
                 + ")";
 
@@ -125,14 +124,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_ID + " text primary key,"
                 + KEY_DIALOG_ID_MESSAGES + " text,"
                 + KEY_IS_RATE_MESSAGE_REVIEWS + " text,"
-                + KEY_TIME_WORKING_TIME + " text,"
+                + KEY_TIME_ID_MESSAGES + " text,"
                 + KEY_MESSAGE_TIME_MESSAGES + " text"
                 + ")";
 
         String reviewsForService = "create table "+ TABLE_REVIEWS_FOR_SERVICE
                 + "("
                 + KEY_ID + " text primary key,"
-                + KEY_TIME_ID_MESSAGE_REVIEWS + " text,"
+                + KEY_TIME_ID_MESSAGES + " text,"
                 + KEY_USER_ID + " text,"
                 + KEY_REVIEW_REVIEWS_FOR_SERVICE + " text,"
                 + KEY_RATING_REVIEWS_FOR_SERVICE + " text"

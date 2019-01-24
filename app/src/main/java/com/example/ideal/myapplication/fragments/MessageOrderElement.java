@@ -82,7 +82,7 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         messageText = view.findViewById(R.id.messageMessageOrderElementText);
-        canceledBtn = view.findViewById(R.id.canceledMessageOrderBtn);
+        canceledBtn = view.findViewById(R.id.canceledMessageOrderElementBtn);
         canceledBtn.setOnClickListener(this);
         workWithTimeApi = new WorkWithTimeApi();
 
@@ -109,12 +109,14 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
     private void setIsCanceled() {
         //Отказываем юзеру в услуге за ЧАС до ее исполнения
         //Иначе даем возможность написать ревью
-        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
-        Long sysdateLong = workWithTimeApi.getSysdateLong();
-        Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
+
         //если разница между заказом и временем, которое сейчас меньше часа, отмена без review
         //isRelevance нужен, чтобы пользователь, как прошло время, не смог отменить заказ,
         // будучи на активити
+
+        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
+        Long sysdateLong = workWithTimeApi.getSysdateLong();
+        Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
         if(isRelevance()) {
             if (orderDateLong - sysdateLong > 3600000) {
                 cancel();
@@ -156,37 +158,27 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         //получить date (id working days)
         //сделать query по date в working time и получить id времени
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(MESSAGE_ORDERS).child(messageId).child("date");
+        DatabaseReference myRef = database
+                .getReference(MESSAGE_ORDERS)
+                .child(messageId)
+                .child("time id");
+
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dateId) {
-                String date = String.valueOf(dateId.getValue());
+            public void onDataChange(@NonNull DataSnapshot timeSnapshot) {
 
-                Query query = database.getReference(WORKING_TIME)
-                        .orderByChild(WORKING_DAYS_ID)
-                        .equalTo(date);
+                for (DataSnapshot time : timeSnapshot.getChildren()) {
+                    String timeId = String.valueOf(time.getKey());
+                    Log.d(TAG, "onDataChange: " + timeId);
 
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    DatabaseReference myRef = database.getReference(WORKING_TIME).child(timeId);
 
-                        for(DataSnapshot time: dataSnapshot.getChildren()) {
-                            String timeId = String.valueOf(time.getKey());
-                            Log.d(TAG, "onDataChange: " + timeId);
+                    Map<String, Object> items = new HashMap<>();
+                    items.put("user id", "0");
+                    myRef.updateChildren(items);
 
-                            DatabaseReference myRef = database.getReference(WORKING_TIME).child(timeId);
-
-                            Map<String, Object> items = new HashMap<>();
-                            items.put("user id", "0");
-                            myRef.updateChildren(items);
-
-                        }
-                        canceledBtn.setEnabled(false);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) { }
-                });
+                }
+                canceledBtn.setEnabled(false);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }

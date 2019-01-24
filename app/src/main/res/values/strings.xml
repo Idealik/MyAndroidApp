@@ -40,6 +40,7 @@
     <string name="enterCode">Введите код</string>
     <string name="canceled">Отказаться</string>
     <string name="Dialogs">Диалоги</string>
+    <string name="rate">оценить</string>
 
     //array for spinner
     <string-array name="cities">

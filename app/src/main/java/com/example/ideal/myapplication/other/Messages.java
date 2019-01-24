@@ -126,7 +126,7 @@ public class Messages extends AppCompatActivity {
                         + DBHelper.KEY_ID + ", "
                         + DBHelper.KEY_MESSAGE_TIME_MESSAGES + ", "
                         + DBHelper.KEY_IS_CANCELED_MESSAGE_ORDERS + ", "
-                        + DBHelper.KEY_DAY_ID_MESSAGES
+                        + DBHelper.KEY_TIME_ID_MESSAGES
                         + " FROM "
                         + DBHelper.TABLE_MESSAGE_ORDERS
                         + " WHERE "
@@ -139,28 +139,38 @@ public class Messages extends AppCompatActivity {
             int indexMessageId = messageCursor.getColumnIndex(DBHelper.KEY_ID);
             int indexTime = messageCursor.getColumnIndex(DBHelper.KEY_MESSAGE_TIME_MESSAGES);
             int indexIsCanceled = messageCursor.getColumnIndex(DBHelper.KEY_IS_CANCELED_MESSAGE_ORDERS);
-            int indexDayId = messageCursor.getColumnIndex(DBHelper.KEY_DAY_ID_MESSAGES);
+            int indexTimeId = messageCursor.getColumnIndex(DBHelper.KEY_TIME_ID_MESSAGES);
             do {
                 boolean isCanceled = Boolean.valueOf(messageCursor.getString(indexIsCanceled));
 
-                String dayId = messageCursor.getString(indexDayId);
+                String timeId = messageCursor.getString(indexTimeId);
 
                 // Получает дату записи, id сервиса
                 // Таблицы: working days
                 // Условия: уточняем id дня
                 String dayQuery =
                         "SELECT "
+                                + DBHelper.TABLE_WORKING_DAYS +"."+ DBHelper.KEY_ID + ", "
                                 + DBHelper.KEY_DATE_WORKING_DAYS + ", "
+                                + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + ", "
                                 + DBHelper.KEY_SERVICE_ID_WORKING_DAYS
                                 + " FROM "
-                                + DBHelper.TABLE_WORKING_DAYS
+                                + DBHelper.TABLE_WORKING_DAYS + ", "
+                                + DBHelper.TABLE_WORKING_TIME
                                 + " WHERE "
-                                + DBHelper.KEY_ID + " = ?";
-                Cursor dayCursor = database.rawQuery(dayQuery, new String[]{dayId});
+                                + DBHelper.TABLE_WORKING_TIME + "." + DBHelper.KEY_ID + " = ?"
+                                +" AND "
+                                + DBHelper.TABLE_WORKING_DAYS +"."+ DBHelper.KEY_ID
+                                + " = "
+                                + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME;
+
+                Cursor dayCursor = database.rawQuery(dayQuery, new String[]{timeId});
 
                 if (dayCursor.moveToFirst()) {
                     int indexDate = dayCursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
                     int indexServiceId = dayCursor.getColumnIndex(DBHelper.KEY_SERVICE_ID_WORKING_DAYS);
+                    int indexDayId = dayCursor.getColumnIndex(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME);
+                    String dayId = dayCursor.getString(indexDayId);
 
                     String serviceId = dayCursor.getString(indexServiceId);
                     if (!isCanceled) {
@@ -183,8 +193,7 @@ public class Messages extends AppCompatActivity {
 
                             if (timeCursor.moveToFirst()) {
                                 int indexOrderTime = timeCursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
-                                int indexTimeId = timeCursor.getColumnIndex(DBHelper.KEY_ID);
-
+                                int indexTimeIdSecond = timeCursor.getColumnIndex(DBHelper.KEY_ID);
                                 message.setId(messageCursor.getString(indexMessageId));
                                 message.setServiceName(getService(serviceId));
                                 message.setDate(dayCursor.getString(indexDate));
@@ -193,7 +202,7 @@ public class Messages extends AppCompatActivity {
                                 message.setUserName(getSenderName(otherPhone));
                                 message.setOrderTime(timeCursor.getString(indexOrderTime));
                                 message.setDialogId(dialogId);
-                                message.setTimeId(timeCursor.getString(indexTimeId));
+                                message.setTimeId(timeCursor.getString(indexTimeIdSecond));
 
                                 addToScreen(message);
                             }
@@ -212,27 +221,6 @@ public class Messages extends AppCompatActivity {
             } while (messageCursor.moveToNext());
         }
     }
-
-    // тест
-    /*
-    private void updateMessages(String dialogId, String senderPhone) {
-
-        Query messagesQuery = FirebaseDatabase.getInstance().getReference("message orders")
-                .orderByChild(DIALOG_ID)
-                .equalTo(dialogId);
-
-        messagesQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG, dataSnapshot.toString());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    } */
 
     private boolean isMyService(String serviceId) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();

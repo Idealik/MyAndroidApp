@@ -750,7 +750,7 @@ id blocking
 id bottom
 id buttonPanel
 id cancel_action
-id canceledMessageOrderBtn
+id canceledMessageOrderElementBtn
 id center
 id center_horizontal
 id center_vertical
@@ -835,6 +835,7 @@ id mainScreenProfileBtn
 id media_actions
 id message
 id messageMessageOrderElementText
+id messageMessageReviewElementText
 id middle
 id multiply
 id nameAddServiceInput
@@ -876,6 +877,7 @@ id resendProfileEditProfileBtn
 id resultSearchServiceLayout
 id resultsMainScreenLayout
 id resultsMessageLayout
+id reviewMessageReviewElementBtn
 id right
 id right_icon
 id right_side
@@ -1107,6 +1109,7 @@ string phone
 string phoneRegistration
 string profile
 string project_id
+string rate
 string regUser
 string resendCode
 string search_menu_title

@@ -64,6 +64,7 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
     private String userId;
     private String workingDaysId;
     private String date;
+    private String timeId;
     private int width;
     private int height;
     private String dialogId = "";
@@ -579,7 +580,7 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
 
         items.put("dialog id", dialogId);
         items.put(MESSAGE_TIME, dateNow);
-        items.put("date", workingDaysId);
+        items.put("time id", timeId);
         items.put("is canceled", false);
 
         String messageId =  myRef.push().getKey();
@@ -590,30 +591,34 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
 
     private void updateLocalStorageTime() {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-
         // Получает время
         // Таблицы: рабочие время
         // Условия: уточняем id рабочего дня
         String sqlQuery =
                 "SELECT "
+                        + DBHelper.KEY_ID + ", "
                         + DBHelper.KEY_TIME_WORKING_TIME
                         + " FROM "
                         + DBHelper.TABLE_WORKING_TIME
                         + " WHERE "
+                        + DBHelper.KEY_TIME_WORKING_TIME + " = ? AND "
                         + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?";
 
-        Cursor cursor = database.rawQuery(sqlQuery, new String[]{String.valueOf(workingDaysId)});
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{workingHours.get(0), String.valueOf(workingDaysId)});
+        if(cursor.moveToFirst()) {
+            int indexTimeId = cursor.getColumnIndex(DBHelper.KEY_ID);
+            timeId = cursor.getString(indexTimeId);
 
-        ContentValues contentValues = new ContentValues();
-        String userId  = getUserId();
-        for (String time: workingHours) {
+            ContentValues contentValues = new ContentValues();
+            String userId = getUserId();
+
             contentValues.put(DBHelper.KEY_USER_ID, userId);
             database.update(DBHelper.TABLE_WORKING_TIME, contentValues,
-                    DBHelper.KEY_TIME_WORKING_TIME + " = ? AND " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? ",
-                    new String []{time, String.valueOf(workingDaysId)});
+                    DBHelper.KEY_ID + " = ? ",
+                    new String[]{String.valueOf(timeId)});
+            workingHours.clear();
+            cursor.close();
         }
-        workingHours.clear();
-        cursor.close();
     }
 
     private void addDayInLocalStorage(String serviceId) {
