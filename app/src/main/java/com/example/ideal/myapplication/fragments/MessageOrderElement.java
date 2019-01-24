@@ -29,7 +29,6 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
 
     private static final String TAG = "DBInf";
     private static final String WORKING_TIME = "working time/";
-    private static final String WORKING_DAYS_ID = "working day id";
     private static final String MESSAGE_ORDERS = "message orders";
     private static final String MESSAGE_REVIEWS = "message reviews";
     private static final String MESSAGE_TIME = "message time";
@@ -59,7 +58,7 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         messageIsCanceled = message.getIsCanceled();
         messageDialogId = message.getDialogId();
 
-        text = "Добрый день, на " + message.getDate() + " в " + message.getOrderTime()
+        text = "Добрый день, на " + messageDateOfDay + " в " + messageTimeOfDay
                 + " к вам записался пользователь " + message.getUserName() + " на услугу "
                 + message.getServiceName() + ". Вы можете отказаться, указав причину.";
     }
@@ -139,11 +138,10 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
                 String messageId =  myRef.push().getKey();
                 myRef = database.getReference(MESSAGE_REVIEWS).child(messageId);
                 myRef.updateChildren(items);
-
             }
         }
     }
-    
+
     private  void cancel(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message orders/" + messageId);
@@ -159,29 +157,13 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         //сделать query по date в working time и получить id времени
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database
-                .getReference(MESSAGE_ORDERS)
-                .child(messageId)
-                .child("time id");
+                .getReference(WORKING_TIME)
+                .child(messageTimeId);
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot timeSnapshot) {
+        Map<String, Object> items = new HashMap<>();
+        items.put("user id", "0");
+        myRef.updateChildren(items);
 
-                for (DataSnapshot time : timeSnapshot.getChildren()) {
-                    String timeId = String.valueOf(time.getKey());
-                    Log.d(TAG, "onDataChange: " + timeId);
-
-                    DatabaseReference myRef = database.getReference(WORKING_TIME).child(timeId);
-
-                    Map<String, Object> items = new HashMap<>();
-                    items.put("user id", "0");
-                    myRef.updateChildren(items);
-
-                }
-                canceledBtn.setEnabled(false);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
+        canceledBtn.setEnabled(false);
     }
 }

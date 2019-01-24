@@ -8,9 +8,12 @@ public class Message {
     private String serviceName;
     private String userName;
     private String dialogId;
-    private String time;
+    private String messageTime;
     private String timeId;
     private String orderTime;
+    private String userPhone;
+    private String serviceId;
+    private boolean isRate;
 
 
     public void setId(String _id) {
@@ -29,7 +32,7 @@ public class Message {
         date = _date;
     }
 
-    public void setIsCanceled(Boolean _isCanceled) {
+    public void setIsCanceled(boolean _isCanceled) {
         isCanceled = _isCanceled;
     }
 
@@ -37,15 +40,20 @@ public class Message {
         dialogId = _dialogId;
     }
 
-    public void setTime(String _time) {
-        time = _time;
+    public void setMessageTime(String _time) {
+        messageTime = _time;
     }
+
     public void setTimeId(String _timeId) {
         timeId = _timeId;
     }
 
     public void setOrderTime(String _orderTime) {
         orderTime = _orderTime;
+    }
+
+    public void setIsRate(boolean _isRate) {
+        isRate = _isRate;
     }
 
     public String getId() {
@@ -72,14 +80,19 @@ public class Message {
         return dialogId;
     }
 
-    public String getTime() {
-        return time;
+    public String getMessageTime() {
+        return messageTime;
     }
+
     public String getTimeId() {
         return timeId;
     }
 
     public String getOrderTime() {
         return orderTime;
+    }
+
+    public boolean getIsRate() {
+        return isRate;
     }
 }

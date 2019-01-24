@@ -315,7 +315,6 @@ public class Dialogs extends AppCompatActivity {
                     // идем по всем сообщениям
                     String messageId = message.getKey();
                     String messageTimeId = String.valueOf(message.child(TIME_ID).getValue());
-                    Log.d(TAG, "onDataChange: " + messageTimeId);
                     String isCanceled = String.valueOf(message.child(IS_CANCELED).getValue());
                     String time = String.valueOf(message.child(TIME).getValue());
 
@@ -423,8 +422,8 @@ public class Dialogs extends AppCompatActivity {
         timeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot time) {
-               final SQLiteDatabase database = dbHelper.getWritableDatabase();
-               final ContentValues contentValues = new ContentValues();
+                final SQLiteDatabase database = dbHelper.getWritableDatabase();
+                final ContentValues contentValues = new ContentValues();
 
                 String sqlQuery = "SELECT * FROM "
                         + DBHelper.TABLE_WORKING_TIME
@@ -442,6 +441,7 @@ public class Dialogs extends AppCompatActivity {
 
                 contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, myTime);
                 contentValues.put(DBHelper.KEY_USER_ID, userId);
+                contentValues.put(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME, dayId);
                 if (cursor.moveToFirst()) {
                     database.update(DBHelper.TABLE_WORKING_TIME, contentValues,
                             DBHelper.KEY_ID + " = ?",

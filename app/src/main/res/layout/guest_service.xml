@@ -16,10 +16,7 @@
         android:layout_marginTop="10dp"
         android:text="TextView"
         android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/costGuestServiceText"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp" />
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/costGuestServiceText"
@@ -28,10 +25,7 @@
         android:layout_marginTop="10dp"
         android:text="TextView"
         android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/descriptionGuestServiceText"
-        app:layout_constraintTop_toBottomOf="@+id/nameGuestServiceText"
-        tools:layout_editor_absoluteX="16dp" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/descriptionGuestServiceText"
@@ -40,9 +34,7 @@
         android:layout_marginTop="10dp"
         android:text="TextView"
         android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/costGuestServiceText"
-        tools:layout_editor_absoluteX="16dp" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/editServiceGuestServiceBtn"
@@ -50,18 +42,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="invisible"
-        android:layout_marginTop="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="15dp" />
 
     <Button
         android:id="@+id/editScheduleGuestServiceBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_gravity="center" />
 
     <Button
         android:id="@+id/profileGuestServiceBtn"
@@ -69,8 +57,24 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="15dp"
-        android:text="@string/profile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:text="@string/profile" />
+
+    <RatingBar
+        android:id="@+id/ratingGuestService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/countOfRatesGuestServiceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:text="TextView"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="16dp" />
 
 </android.support.v7.widget.LinearLayoutCompat>

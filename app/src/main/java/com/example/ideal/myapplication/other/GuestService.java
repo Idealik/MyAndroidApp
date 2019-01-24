@@ -1,5 +1,6 @@
 package com.example.ideal.myapplication.other;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,8 +9,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +41,8 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
     private static final String WORKING_DAYS = "working days";
     private static final String WORKING_TIME = "working time";
     private static final String WORKING_DAYS_ID = "working day id";
+    private static final String REVIEWS_FOR_SERVICE = "reviews for service";
+    private static final String RATING = "rating";
 
     private static final String STATUS_USER_BY_SERVICE = "status User";
     private static final String OWNER_ID = "owner id";
@@ -51,11 +57,14 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
     TextView nameText;
     TextView costText;
     TextView descriptionText;
+    TextView countOfRatesText;
     WorkWithTimeApi workWithTimeApi;
 
     Button editScheduleBtn;
     Button editServiceBtn;
     Button profileBtn;
+
+    RatingBar ratingBar;
 
     DBHelper dbHelper;
 
@@ -70,17 +79,20 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
         nameText = findViewById(R.id.nameGuestServiceText);
         costText = findViewById(R.id.costGuestServiceText);
         descriptionText = findViewById(R.id.descriptionGuestServiceText);
+        countOfRatesText = findViewById(R.id.countOfRatesGuestServiceText);
 
         editScheduleBtn = findViewById(R.id.editScheduleGuestServiceBtn);
         editServiceBtn = findViewById(R.id.editServiceGuestServiceBtn);
         profileBtn = findViewById(R.id.profileGuestServiceBtn);
+        ratingBar = findViewById(R.id.ratingGuestService);
 
         dbHelper = new DBHelper(this);
         workWithTimeApi = new WorkWithTimeApi();
         serviceId = getIntent().getStringExtra(SERVICE_ID);
         //получаем данные о сервисе
         getDataAboutService(serviceId);
-
+        //получаем рейтинг сервиса
+        loadRating(serviceId);
         String userId = getUserId();
 
         // мой сервис или нет?
@@ -95,10 +107,16 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
             editScheduleBtn.setText("Расписание");
         }
 
+        ratingBar.setClickable(false);
+
+        addListenerOnRatingBar();
+
         editScheduleBtn.setOnClickListener(this);
         editServiceBtn.setOnClickListener(this);
         profileBtn.setOnClickListener(this);
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -108,21 +126,36 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
                 countOfDate = 0;
                 haveTime = false;
                 String status;
-                if(isMyService){
+                if (isMyService) {
                     status = "worker";
-                }
-                else {
+                } else {
                     status = "User";
                 }
                 loadSchedule(status);
                 break;
             case R.id.editServiceGuestServiceBtn:
                 goToEditService();
-            break;
+                break;
             case R.id.profileGuestServiceBtn:
                 loadProfileData();
-            default: break;
+            default:
+                break;
         }
+    }
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void addListenerOnRatingBar() {
+        ratingBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // TODO perform your action here
+                }
+                return true;
+            }
+        });
+
     }
 
     private void getDataAboutService(String serviceId) {
@@ -348,6 +381,34 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 attentionBadConnection();
+            }
+        });
+    }
+
+    private void loadRating(String serviceId) {
+        //зашружаю среднюю оценку, складываю все и делю их на количество
+        // также усталавниваю количество оценок
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        Query query = database.getReference(REVIEWS_FOR_SERVICE)
+                .orderByChild(SERVICE_ID)
+                .equalTo(serviceId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot rates) {
+                float sumRates = 0;
+                long countOfRates = rates.getChildrenCount();
+
+                for(DataSnapshot rate: rates.getChildren()){
+                    sumRates += Float.valueOf(String.valueOf(rate.child(RATING).getValue()));
+                }
+                ratingBar.setRating(sumRates/countOfRates);
+                countOfRatesText.setText(String.valueOf(countOfRates));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,13 @@ import android.widget.TextView;
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.Message;
 import com.example.ideal.myapplication.fragments.MessageOrderElement;
+import com.example.ideal.myapplication.fragments.MessageReviewElement;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class Messages extends AppCompatActivity {
 
@@ -26,6 +34,9 @@ public class Messages extends AppCompatActivity {
     private static final String PHONE_NUMBER = "Phone number";
 
     private static final String DIALOG_ID = "dialog id";
+    private static final String MESSAGE_REVIEWS = "message reviews";
+    private static final String TIME_ID = "time id";
+    private static final String IS_RATE = "is rate";
 
     private String myPhone;
     private DBHelper dbHelper;
@@ -137,23 +148,22 @@ public class Messages extends AppCompatActivity {
 
         if (messageCursor.moveToFirst()) {
             int indexMessageId = messageCursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexTime = messageCursor.getColumnIndex(DBHelper.KEY_MESSAGE_TIME_MESSAGES);
+            int indexMessageTime = messageCursor.getColumnIndex(DBHelper.KEY_MESSAGE_TIME_MESSAGES);
             int indexIsCanceled = messageCursor.getColumnIndex(DBHelper.KEY_IS_CANCELED_MESSAGE_ORDERS);
             int indexTimeId = messageCursor.getColumnIndex(DBHelper.KEY_TIME_ID_MESSAGES);
-            do {
-                boolean isCanceled = Boolean.valueOf(messageCursor.getString(indexIsCanceled));
 
+            // Цикл по всем сообщениям в диалоге пользователя
+            do {
                 String timeId = messageCursor.getString(indexTimeId);
 
-                // Получает дату записи, id сервиса
-                // Таблицы: working days
-                // Условия: уточняем id дня
+                // Получает дату и время записи, id сервиса
+                // Таблицы: working days, working time
+                // Условия: уточняем id времени, связываем таблицы по id дня
                 String dayQuery =
                         "SELECT "
-                                + DBHelper.TABLE_WORKING_DAYS +"."+ DBHelper.KEY_ID + ", "
                                 + DBHelper.KEY_DATE_WORKING_DAYS + ", "
-                                + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + ", "
-                                + DBHelper.KEY_SERVICE_ID_WORKING_DAYS
+                                + DBHelper.KEY_SERVICE_ID_WORKING_DAYS + ", "
+                                + DBHelper.KEY_TIME_WORKING_TIME
                                 + " FROM "
                                 + DBHelper.TABLE_WORKING_DAYS + ", "
                                 + DBHelper.TABLE_WORKING_TIME
@@ -164,57 +174,44 @@ public class Messages extends AppCompatActivity {
                                 + " = "
                                 + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME;
 
-                Cursor dayCursor = database.rawQuery(dayQuery, new String[]{timeId});
+                Cursor dayTimeCursor = database.rawQuery(dayQuery, new String[]{timeId});
 
-                if (dayCursor.moveToFirst()) {
-                    int indexDate = dayCursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
-                    int indexServiceId = dayCursor.getColumnIndex(DBHelper.KEY_SERVICE_ID_WORKING_DAYS);
-                    int indexDayId = dayCursor.getColumnIndex(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME);
-                    String dayId = dayCursor.getString(indexDayId);
+                if (dayTimeCursor.moveToFirst()) {
+                    int indexDate = dayTimeCursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
+                    int indexServiceId = dayTimeCursor.getColumnIndex(DBHelper.KEY_SERVICE_ID_WORKING_DAYS);
+                    int indexOrderTime = dayTimeCursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
 
-                    String serviceId = dayCursor.getString(indexServiceId);
-                    if (!isCanceled) {
-                        if (isMyService(serviceId)) {
+                    String serviceId = dayTimeCursor.getString(indexServiceId);
+                    if (!serviceId.equals(null)) {
+                        boolean isCanceled = Boolean.valueOf(messageCursor.getString(indexIsCanceled));
 
-                            // Получает время записи
-                            // Таблицы: working time
-                            // Условия: уточняем по id пользователя и id дня
-                            String timeQuery =
-                                    "SELECT "
-                                            + DBHelper.KEY_TIME_WORKING_TIME + ", "
-                                            + DBHelper.KEY_ID
-                                            + " FROM "
-                                            + DBHelper.TABLE_WORKING_TIME
-                                            + " WHERE "
-                                            + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ?"
-                                            + " AND "
-                                            + DBHelper.KEY_USER_ID + " = ?";
-                            Cursor timeCursor = database.rawQuery(timeQuery, new String[]{dayId, otherPhone});
-
-                            if (timeCursor.moveToFirst()) {
-                                int indexOrderTime = timeCursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
-                                int indexTimeIdSecond = timeCursor.getColumnIndex(DBHelper.KEY_ID);
-                                message.setId(messageCursor.getString(indexMessageId));
-                                message.setServiceName(getService(serviceId));
-                                message.setDate(dayCursor.getString(indexDate));
-                                message.setTime(messageCursor.getString(indexTime));
-                                message.setIsCanceled(Boolean.valueOf(messageCursor.getString(indexIsCanceled)));
+                        boolean isMyService = isMyService(serviceId);
+                        if (isCanceled) {
+                            if (!isMyService) {
                                 message.setUserName(getSenderName(otherPhone));
-                                message.setOrderTime(timeCursor.getString(indexOrderTime));
+                                message.setDate(dayTimeCursor.getString(indexDate));
+                                message.setServiceName(getService(serviceId));
+                                message.setMessageTime(messageCursor.getString(indexMessageTime));
+                                message.setOrderTime(dayTimeCursor.getString(indexOrderTime));
+                                message.setTimeId(timeId);
+
+                                addNotificationToScreen(message);
+                                checkMessageReview(message, serviceId, otherPhone);
+                            }
+                        } else {
+                            if (isMyService) {
+                                message.setId(messageCursor.getString(indexMessageId));
+                                message.setMessageTime(messageCursor.getString(indexMessageTime));
+                                message.setIsCanceled(Boolean.valueOf(messageCursor.getString(indexIsCanceled)));
+                                message.setServiceName(getService(serviceId));
+                                message.setDate(dayTimeCursor.getString(indexDate));
+                                message.setUserName(getSenderName(otherPhone));
+                                message.setOrderTime(dayTimeCursor.getString(indexOrderTime));
                                 message.setDialogId(dialogId);
-                                message.setTimeId(timeCursor.getString(indexTimeIdSecond));
+                                message.setTimeId(timeId);
 
                                 addToScreen(message);
                             }
-                        }
-                    } else {
-                        if (!isMyService(serviceId)) {
-                            message.setUserName(getSenderName(otherPhone));
-                            message.setDate(dayCursor.getString(indexDate));
-                            message.setServiceName(getService(serviceId));
-                            message.setTime(messageCursor.getString(indexTime));
-
-                            addNotificationToScreen(message);
                         }
                     }
                 }
@@ -281,6 +278,7 @@ public class Messages extends AppCompatActivity {
         notificationText.setText("Работник " + message.getUserName()
                 + " по некоторым причинам не сможет обслужить вас.\n Запись на "
                 + message.getDate()
+                + " в " + message.getOrderTime()
                 + " на услугу " + message.getServiceName() + " отменена.");
         notificationText.setBackgroundColor(Color.rgb(130, 216, 233));
 
@@ -290,6 +288,41 @@ public class Messages extends AppCompatActivity {
         messagesLayout.addView(notificationText);
     }
 
+    private void checkMessageReview(final Message _message, final String serviceId, final String phone) {
+        Query query = FirebaseDatabase.getInstance().getReference(MESSAGE_REVIEWS)
+                .orderByChild(TIME_ID)
+                .equalTo(_message.getTimeId());
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot reviewsSnapshot) {
+                if(reviewsSnapshot.getValue() != null) {
+                    for(DataSnapshot messageReview:reviewsSnapshot.getChildren()) {
+                        Message message = new Message();
+                        message.setId(messageReview.getKey());
+                        message.setUserName(_message.getUserName());
+                        message.setServiceName(_message.getServiceName());
+                        message.setDate(_message.getDate());
+                        message.setMessageTime(_message.getMessageTime());
+                        message.setIsRate(Boolean.valueOf(String.valueOf(messageReview.child(IS_RATE).getValue())));
+
+                        addMessageReviewToScreen(message, serviceId, phone);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    private void addMessageReviewToScreen(Message message, String serviceId, String phone) {
+        MessageReviewElement fElement = new MessageReviewElement(message, serviceId, phone);
+
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.resultsMessageLayout, fElement);
+        transaction.commit();
+    }
 
     private  String getUserId(){
         SharedPreferences sPref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);

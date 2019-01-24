@@ -1,9 +1,12 @@
 package com.example.ideal.myapplication.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,20 +17,16 @@ import android.widget.TextView;
 
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.helpApi.WorkWithTimeApi;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.ideal.myapplication.other.GuestService;
+import com.example.ideal.myapplication.other.Review;
 
 
 public class MessageReviewElement extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "DBInf";
+
+    private static final String PHONE_NUMBER = "Phone number";
+    private static final String SERVICE_ID = "service id";
 
     String text;
     String messageId;
@@ -35,7 +34,9 @@ public class MessageReviewElement extends Fragment implements View.OnClickListen
     String messageServiceName;
     String messageDateOfDay;
     String messageTime;
-    Boolean messageIsCanceled;
+    String serviceId;
+    String phoneNumber;
+    boolean messageIsRate;
     WorkWithTimeApi workWithTimeApi;
 
     TextView messageText;
@@ -45,13 +46,15 @@ public class MessageReviewElement extends Fragment implements View.OnClickListen
     }
 
     @SuppressLint("ValidFragment")
-    public MessageReviewElement(Message message) {
+    public MessageReviewElement(Message message, String _serviceId, String _phone) {
         messageId = message.getId();
         messageName = message.getUserName();
         messageServiceName = message.getServiceName();
         messageDateOfDay = message.getDate();
-        messageTime = message.getTime();
-        messageIsCanceled = message.getIsCanceled();
+        messageTime = message.getMessageTime();
+        messageIsRate = message.getIsRate();
+        serviceId = _serviceId;
+        phoneNumber = _phone;
 
         text = "Работник " + messageName
                 + " отказался предоставлять вам услугу "
@@ -62,8 +65,9 @@ public class MessageReviewElement extends Fragment implements View.OnClickListen
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.message_order_element, null);
+        return inflater.inflate(R.layout.message_review_element, null);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -84,5 +88,9 @@ public class MessageReviewElement extends Fragment implements View.OnClickListen
     }
 
     private void goToReview() {
+        Intent intent = new Intent(this.getContext(), Review.class);
+        intent.putExtra(PHONE_NUMBER, phoneNumber);
+        intent.putExtra(SERVICE_ID, serviceId);
+        startActivity(intent);
     }
 }

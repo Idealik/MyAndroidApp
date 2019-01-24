@@ -775,6 +775,7 @@ id costEditServiceInput
 id costFoundOrderElementText
 id costFoundServiceElementText
 id costGuestServiceText
+id countOfRatesGuestServiceText
 id custom
 id customPanel
 id dark
@@ -868,6 +869,9 @@ id profileGuestServiceBtn
 id progress_circular
 id progress_horizontal
 id radio
+id rateReviewBtn
+id ratingBarReview
+id ratingGuestService
 id registrateRegistrationBtn
 id registrationAuthorizationBtn
 id registrationConfirmationBtn
@@ -878,6 +882,7 @@ id resultSearchServiceLayout
 id resultsMainScreenLayout
 id resultsMessageLayout
 id reviewMessageReviewElementBtn
+id reviewReviewInput
 id right
 id right_icon
 id right_side
@@ -929,6 +934,7 @@ id text
 id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
+id textView
 id time
 id title
 id titleDividerNoCustom

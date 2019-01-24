@@ -46,7 +46,6 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
     private static final String DIALOGS = "dialogs";
     private static final String MESSAGES = "message orders";
     private static final String USER_ID = "user id";
-    private static final String TAG = "DBInf";
 
     private static final String SERVICE_ID = "service id";
     private static final String STATUS_USER_BY_SERVICE = "status User";

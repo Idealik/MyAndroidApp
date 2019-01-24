@@ -32,7 +32,7 @@
 
     <EditText
         android:id="@+id/descriptionAddServiceInput"
-        android:inputType="textPersonName|textCapWords"
+        android:inputType="textMultiLine"
         android:layout_width="312dp"
         android:layout_height="233dp"
         android:layout_marginTop="13dp"

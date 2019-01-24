@@ -69,6 +69,7 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
         // получаем статус, чтобы определить, кто зашел, worker or User
         statusUser = getIntent().getStringExtra(STATUS_USER_BY_SERVICE);
+        serviceId = getIntent().getStringExtra(SERVICE_ID);
 
         // создаём календарь
         createCalendar();
@@ -226,7 +227,6 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     //Возвращает дату записи
     private String getOrderDate() {
-        serviceId = getIntent().getStringExtra(SERVICE_ID);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         String userId = getUserId();
         // Получает дату записи
@@ -384,7 +384,6 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     // Добавляе рабочий день в БД
     private void addWorkingDay() {
-        serviceId = getIntent().getStringExtra(SERVICE_ID);
         String id = checkCurrentDay(date);
 
         // Проверка на существование такого дня
@@ -422,7 +421,6 @@ public class MyCalendar extends AppCompatActivity implements View.OnClickListene
 
     //Возвращает id дня по id данного сервиса и дате
     private String checkCurrentDay(String day) {
-        serviceId = getIntent().getStringExtra(SERVICE_ID);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         // Получает id рабочего дня

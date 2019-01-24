@@ -182,7 +182,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                 goToEditProfile();
                 break;
             case R.id.dialogsProfileBtn:
-                goToDialogs();
+                goToDialogs(); // DIALOGS
                 break;
             default:
                 break;
@@ -502,6 +502,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
     private void goToDialogs() {
         Intent intent = new Intent(this, Dialogs.class);
+        startActivity(intent);
+    }
+    private void goToReview(){
+        Intent intent = new Intent(this, Review.class);
         startActivity(intent);
     }
 
