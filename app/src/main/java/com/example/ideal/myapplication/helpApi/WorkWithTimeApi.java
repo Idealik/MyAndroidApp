@@ -18,7 +18,6 @@ public class WorkWithTimeApi {
 
     public Long getMillisecondsStringDate(String date){
 
-        Log.d(TAG, "getMillisecondsStringDate: " + date);
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         try {
             Date orderDate;

@@ -5,36 +5,36 @@
     build-mode="COLD"
     density="420dpi"
     format="10"
-    ir-eligibility="METHOD_DELETED"
+    ir-eligibility="COMPATIBLE"
     plugin-version="3.3.0"
-    timestamp="1548341041271"
+    timestamp="1548719925290"
     token="-8638289024117226396"
     verifier="COLD_SWAP_REQUESTED" >
 
     <task
         name="javac"
-        duration="2330" />
+        duration="588" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="524" />
+        duration="36" />
     <task
         name="verifier"
-        duration="20" />
+        duration="35" />
 
     <artifact
         location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
         type="SPLIT" />
-    <artifact
-        location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_1.apk"
-        type="SPLIT" />
 
     <build
         build-mode="FULL"
-        timestamp="1548340100281"
+        timestamp="1548717055040"
         verifier="FULL_BUILD_REQUESTED" >
+        <artifact
+            location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
+            type="SPLIT" />
         <artifact
             location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_1.apk"
             type="SPLIT" />
@@ -60,9 +60,6 @@
             location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_7.apk"
             type="SPLIT" />
         <artifact
-            location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
-            type="SPLIT" />
-        <artifact
             location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_4.apk"
             type="SPLIT" />
         <artifact
@@ -77,23 +74,20 @@
     </build>
     <build
         build-mode="COLD"
-        ir-eligibility="CLASS_ADDED"
-        timestamp="1548340376733"
+        ir-eligibility="COMPATIBLE"
+        timestamp="1548719123766"
         verifier="COLD_SWAP_REQUESTED" >
         <artifact
-            location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\instant-run-apk\debug\app-debug.apk"
-            type="SPLIT_MAIN" />
+            location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_1.apk"
+            type="SPLIT" />
     </build>
     <build
         build-mode="COLD"
-        ir-eligibility="METHOD_DELETED"
-        timestamp="1548341041271"
+        ir-eligibility="COMPATIBLE"
+        timestamp="1548719925290"
         verifier="COLD_SWAP_REQUESTED" >
         <artifact
             location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_6.apk"
-            type="SPLIT" />
-        <artifact
-            location="C:\Users\Ideal\Desktop\proj\app\build\intermediates\split-apk\debug\slices\slice_1.apk"
             type="SPLIT" />
     </build>
 

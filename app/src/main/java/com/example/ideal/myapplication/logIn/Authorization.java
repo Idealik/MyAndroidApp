@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,10 +56,10 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
     private static final String WORKING_DAYS = "working days";
     private static final String SERVICE_ID = "service id";
     private static final String DATE = "data";
+    private static final String TAG = "DBInf";
 
-    private boolean logIn;
-    private String truePassword;
-    private long counter;
+
+    private long orderCounter;
     Button logInBtn;
     Button registrateBtn;
 
@@ -75,8 +76,6 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
 
         dbHelper = new DBHelper(this);
         boolean status = getStatus();
-        logIn = false;
-        truePassword = "";
 
         logInBtn = findViewById(R.id.logInAuthorizationBtn);
         registrateBtn = findViewById(R.id.registrationAuthorizationBtn);
@@ -132,7 +131,7 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
                 // Получаем пароль из Firebase
                 Object passObj = userSnapshot.child(PASS).getValue();
                 if (passObj != null) {
-                    truePassword = passObj.toString();
+                    String truePassword = passObj.toString();
 
                     // Проверка на правильность пароля
                     if (myPassword.equals(truePassword)) {
@@ -146,7 +145,6 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
                         if(name == null) {
                             // Имя в БД отсутствует, значит пользователь не до конца зарегистрировался
                             goToRegistration(myPhoneNumber);
-                            logIn = true;
                         } else {
                             String city = String.valueOf(userSnapshot.child(CITY).getValue());
 
@@ -158,11 +156,10 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
                             // Очищаем LocalStorage
                             clearSQLite();
 
-                            // Добавляем все данные в SQLite
+                            // Добавляем все данные о пользователе в SQLite
                             addUserInfoInLocalStorage(user);
 
-                            //loadDialogs();
-
+                            // Загружаем сервисы пользователя из FireBase
                             loadServiceByUserPhone(myPhoneNumber, myPassword);
                         }
                     } else{
@@ -199,13 +196,13 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final long serviceCount = dataSnapshot.getChildrenCount();
+                long servicesCount = dataSnapshot.getChildrenCount();
 
-                if(serviceCount==0){
-                    logIn(myPhoneNumber, myPassword);
-                    logIn = true;
+                if(servicesCount==0){
+                    loadTimeByUserPhone(myPhoneNumber, myPassword);
                     return;
                 }
+                long serviceCounter = 0;
 
                 for (DataSnapshot service : dataSnapshot.getChildren()) {
                     String serviceId = String.valueOf(service.getKey());
@@ -224,70 +221,12 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
                     newService.setCountOfRates(serviceCountOfRates);
                     newService.setUserId(myPhoneNumber);
 
-                    addWorkingDaysInLocalStorage(serviceId);
                     addUserServicesInLocalStorage(newService);
-                }
 
-                loadTimeByUserPhone(myPhoneNumber, myPassword);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                attentionBadConnection();
-            }
-        });
-    }
-
-    private void addWorkingDaysInLocalStorage(final String serviceId) {
-        Query query = FirebaseDatabase.getInstance().getReference(WORKING_DAYS)
-                .orderByChild(SERVICE_ID)
-                .equalTo(serviceId);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot days) {
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                for(DataSnapshot day:days.getChildren()) {
-                    String dayId = day.getKey();
-                    String date = String.valueOf(day.child(DATE).getValue());
-
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBHelper.KEY_ID, dayId);
-                    contentValues.put(DBHelper.KEY_DATE_WORKING_DAYS, date);
-                    contentValues.put(DBHelper.KEY_SERVICE_ID_WORKING_DAYS, serviceId);
-
-                    database.insert(DBHelper.TABLE_WORKING_DAYS, null, contentValues);
-
-                    addWorkingTimeInLocalStorage(dayId);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                attentionBadConnection();
-            }
-        });
-    }
-
-    private void addWorkingTimeInLocalStorage(final String dayId) {
-        Query query = FirebaseDatabase.getInstance().getReference(WORKING_TIME)
-                .orderByChild(WORKING_DAY_ID)
-                .equalTo(dayId);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot timePieces) {
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                for(DataSnapshot timeSnapshot:timePieces.getChildren()) {
-                    String timeId = timeSnapshot.getKey();
-                    String time = String.valueOf(timeSnapshot.child(TIME).getValue());
-                    String userId = String.valueOf(timeSnapshot.child(USER_ID).getValue());
-
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBHelper.KEY_ID, timeId);
-                    contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, time);
-                    contentValues.put(DBHelper.KEY_USER_ID, userId);
-                    contentValues.put(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME, dayId);
-
-                    database.insert(DBHelper.TABLE_WORKING_TIME, null, contentValues);
+                    serviceCounter++;
+                    if(serviceCounter==servicesCount) {
+                        loadTimeByUserPhone(myPhoneNumber, myPassword);
+                    }
                 }
             }
 
@@ -306,19 +245,17 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final long ordersCount = dataSnapshot.getChildrenCount();
-                if((ordersCount==0)&&(!logIn)){
+                if(ordersCount==0){
                     logIn(myPhoneNumber, myPassword);
-                    logIn = true;
                     return;
                 }
-                counter = 0;
-                for(DataSnapshot time:dataSnapshot.getChildren()){
-                    String timeId = String.valueOf(time.getKey());
-                    String timeTime = String.valueOf(time.child(TIME).getValue());
-                    String timeUserId = myPhoneNumber;
-                    String timeWorkingDayId = String.valueOf(time.child(WORKING_DAY_ID).getValue());
+                orderCounter = 0;
+                for(DataSnapshot timeSnapshot:dataSnapshot.getChildren()){
+                    String timeId = String.valueOf(timeSnapshot.getKey());
+                    String time = String.valueOf(timeSnapshot.child(TIME).getValue());
+                    String timeWorkingDayId = String.valueOf(timeSnapshot.child(WORKING_DAY_ID).getValue());
 
-                    addTimeInLocalStorage(timeId, timeTime, timeUserId, timeWorkingDayId);
+                    addTimeInLocalStorage(timeId, time, myPhoneNumber, timeWorkingDayId);
 
                     loadWorkingDayById(timeWorkingDayId, ordersCount, myPhoneNumber, myPassword);
                 }
@@ -337,11 +274,10 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
             @Override
             public void onDataChange(@NonNull DataSnapshot day) {
                 String dayServiceId = String.valueOf(day.child(SERVICE_ID).getValue());
-
                 String dayId = String.valueOf(day.getKey());
                 String dayDate = String.valueOf(day.child(DATE).getValue());
 
-                addScheduleInLocalStorage(dayId, dayDate, dayServiceId);
+                addWorkingDayInLocalStorage(dayId, dayDate, dayServiceId);
 
                 loadServiceById(dayServiceId, ordersCount, myPhoneNumber, myPassword);
             }
@@ -376,9 +312,9 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
                 newService.setUserId(serviceUserId);
 
                 addUserServicesInLocalStorage(newService);
-                counter++;
+                orderCounter++;
 
-                if((counter == ordersCount) && (!logIn)) {
+                if((orderCounter == ordersCount)) {
                     // Выполняем вход
                     logIn(myPhoneNumber, myPassword);
                 }
@@ -407,6 +343,7 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
 
     // Удаляет все данные о пользователях, сервисах, рабочих днях и рабочем времени из SQLite
     private void clearSQLite() {
+
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         database.delete(DBHelper.TABLE_CONTACTS_USERS,null,null);
         database.delete(DBHelper.TABLE_CONTACTS_SERVICES, null, null);
@@ -433,21 +370,22 @@ public class Authorization extends AppCompatActivity implements View.OnClickList
         database.insert(DBHelper.TABLE_CONTACTS_SERVICES, null, contentValues);
     }
 
-    private void addTimeInLocalStorage(String timeId, String timeDate,
+    private void addTimeInLocalStorage(String timeId, String time,
                                        String timeUserId, String timeWorkingDayId) {
+
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(DBHelper.KEY_ID, timeId);
-        contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, timeDate);
+        contentValues.put(DBHelper.KEY_TIME_WORKING_TIME, time);
         contentValues.put(DBHelper.KEY_USER_ID,timeUserId);
         contentValues.put(DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME, timeWorkingDayId);
 
         database.insert(DBHelper.TABLE_WORKING_TIME,null,contentValues);
     }
 
-    private void addScheduleInLocalStorage(String dayId, String dayDate, String serviceId) {
+    private void addWorkingDayInLocalStorage(String dayId, String dayDate, String serviceId) {
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();

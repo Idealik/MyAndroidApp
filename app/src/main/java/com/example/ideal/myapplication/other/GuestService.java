@@ -30,7 +30,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class GuestService extends AppCompatActivity implements View.OnClickListener {
-    //
+
     private static final String PHONE_NUMBER = "Phone number";
     private static final String CITY = "city";
     private static final String NAME = "name";
@@ -50,6 +50,7 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
     Boolean isMyService;
     Boolean haveTime;
 
+    String userId;
     String serviceId;
     String ownerId;
     Integer countOfDate;
@@ -93,7 +94,7 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
         getDataAboutService(serviceId);
         //получаем рейтинг сервиса
         loadRating(serviceId);
-        String userId = getUserId();
+        userId = getUserId();
 
         // мой сервис или нет?
         isMyService = userId.equals(ownerId);
@@ -107,9 +108,8 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
             editScheduleBtn.setText("Расписание");
         }
 
-        ratingBar.setClickable(false);
-
-        addListenerOnRatingBar();
+        //ratingBar.setClickable(false);
+        ratingBar.setOnClickListener(this);
 
         editScheduleBtn.setOnClickListener(this);
         editServiceBtn.setOnClickListener(this);
@@ -142,7 +142,6 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
 
     @SuppressLint("ClickableViewAccessibility")
     public void addListenerOnRatingBar() {
@@ -195,7 +194,7 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
             public void onDataChange(@NonNull final DataSnapshot dataSnapshotDate) {
                 //если воркер и нет расписания
                 if((dataSnapshotDate.getChildrenCount() == 0) && (status.equals("worker"))){
-                                    goToMyCalendar(status);
+                    goToMyCalendar(status);
                 }
                 //если юзер и у воркера еще нету расписания на этот сервис
                 if((dataSnapshotDate.getChildrenCount() == 0) && (status.equals("User"))) {
@@ -278,10 +277,12 @@ public class GuestService extends AppCompatActivity implements View.OnClickListe
                         + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID
                         + " AND "
                         + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME + " = ? "
-                        + " AND "
-                        + DBHelper.KEY_USER_ID + " = 0";
+                        + " AND ("
+                        + DBHelper.KEY_USER_ID + " = 0"
+                        + " OR "
+                        + DBHelper.KEY_USER_ID + " = ?)";
 
-        Cursor cursor = database.rawQuery(sqlQuery, new String[]{dayId});
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{dayId, userId});
 
         if(cursor.moveToFirst()) {
             int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);

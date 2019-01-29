@@ -29,9 +29,12 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
 
     private static final String TAG = "DBInf";
     private static final String WORKING_TIME = "working time/";
-    private static final String MESSAGE_ORDERS = "message orders";
     private static final String MESSAGE_REVIEWS = "message reviews";
     private static final String MESSAGE_TIME = "message time";
+    private static final String DIALOG_ID = "dialog id";
+    private static final String IS_RATE_BY_USER = "is rate by user" ;
+    private static final String IS_RATE_BY_WORKER = "is rate by worker" ;
+    private static final String TIME_ID = "time id";
 
     String messageId;
     String messageDateOfDay;
@@ -46,8 +49,7 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
 
     String text;
 
-    public MessageOrderElement() {
-    }
+    public MessageOrderElement() { }
 
     @SuppressLint("ValidFragment")
     public MessageOrderElement(Message message) {
@@ -123,21 +125,7 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
                 cancel();
                 //отправляем возможность написать ревью
                 // заполняю firebase тут, а в мессаджах обрабатываю уже ,есть ли ривью
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-                DatabaseReference myRef = database.getReference(MESSAGE_REVIEWS);
-                Map<String,Object> items = new HashMap<>();
-
-                String dateNow = workWithTimeApi.getCurDateInFormatHMS();
-
-                items.put("dialog id", messageDialogId);
-                items.put(MESSAGE_TIME, dateNow);
-                items.put("time id", messageTimeId);
-                items.put("is rate", false);
-
-                String messageId =  myRef.push().getKey();
-                myRef = database.getReference(MESSAGE_REVIEWS).child(messageId);
-                myRef.updateChildren(items);
+                createMessageReview();
             }
         }
     }
@@ -149,6 +137,25 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         items.put("is canceled", true);
         myRef.updateChildren(items);
         clearPhone();
+    }
+
+    private void createMessageReview(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        DatabaseReference myRef = database.getReference(MESSAGE_REVIEWS);
+        Map<String,Object> items = new HashMap<>();
+
+        String dateNow = workWithTimeApi.getCurDateInFormatHMS();
+
+        items.put(DIALOG_ID, messageDialogId);
+        items.put(MESSAGE_TIME, dateNow);
+        items.put(TIME_ID, messageTimeId);
+        items.put(IS_RATE_BY_USER, false);
+        items.put(IS_RATE_BY_WORKER, false);
+
+        String messageId =  myRef.push().getKey();
+        myRef = database.getReference(MESSAGE_REVIEWS).child(messageId);
+        myRef.updateChildren(items);
     }
 
     private void clearPhone() {

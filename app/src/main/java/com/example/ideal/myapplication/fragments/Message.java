@@ -11,9 +11,8 @@ public class Message {
     private String messageTime;
     private String timeId;
     private String orderTime;
-    private String userPhone;
-    private String serviceId;
-    private boolean isRate;
+    private boolean isRateByUser;
+    private boolean isRateByWorker;
 
 
     public void setId(String _id) {
@@ -51,9 +50,12 @@ public class Message {
     public void setOrderTime(String _orderTime) {
         orderTime = _orderTime;
     }
+    public void setIsRateByUser(boolean _isRate) {
+        isRateByUser = _isRate;
+    }
 
-    public void setIsRate(boolean _isRate) {
-        isRate = _isRate;
+    public void setIsRateByWorker(boolean _isRate) {
+        isRateByWorker = _isRate;
     }
 
     public String getId() {
@@ -92,7 +94,10 @@ public class Message {
         return orderTime;
     }
 
-    public boolean getIsRate() {
-        return isRate;
+    public boolean getIsRateByUser() {
+        return isRateByUser;
+    }
+    public boolean getIsRateByWorker() {
+        return isRateByWorker;
     }
 }

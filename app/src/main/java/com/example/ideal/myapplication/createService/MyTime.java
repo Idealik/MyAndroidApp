@@ -80,7 +80,6 @@ public class MyTime extends AppCompatActivity  implements View.OnClickListener {
     private DBHelper dbHelper;
     private RelativeLayout mainLayout;
 
-    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

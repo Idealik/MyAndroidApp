@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -105,12 +106,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         if(userId.equals(ownerId)){
             // Совпадают - это мой сервис
 
-            // Создаем список сервисов пользователя
-            createServicesList(userId);
-
-            // Создаем список записей пользователя
-            createOrdersList(userId);
-
             // Добавляем данные о пользователе
             createProfileData(userId);
             servicesLayout.setVisibility(View.INVISIBLE);
@@ -147,15 +142,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
             // Подгружаем данные о владельце
             createProfileData(ownerId);
 
-            // Подргужаем его сервисы
-            createServicesList(ownerId);
-
             // Отображаем все сервисы пользователя
             ordersLayout.setVisibility(View.INVISIBLE);
             ordersScroll.setVisibility(View.INVISIBLE);
             servicesLayout.setVisibility(View.VISIBLE);
             servicesScroll.setVisibility(View.VISIBLE);
         }
+
         logOutBtn.setOnClickListener(this);
         findServicesBtn.setOnClickListener(this);
         mainScreenBtn.setOnClickListener(this);
@@ -187,96 +180,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
             default:
                 break;
         }
-    }
-
-    // Получаем все заказы, которые принадлежат юзеру
-    private void createOrdersList(String userId){
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        // получаем id сервиса, имя сервиса, дату и время всех записей
-        // Из 3-х таблиц: сервисы, рабочие дни, рабочие время
-        // Условие: связка таблиц по id сервиса и id рабочего дня; уточняем пользователя по id
-        String sqlQuery =
-                "SELECT "
-                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + ", "
-                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_NAME_SERVICES + ", "
-                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_DATE_WORKING_DAYS + ", "
-                        + DBHelper.TABLE_WORKING_TIME + "." + DBHelper.KEY_TIME_WORKING_TIME
-                        + " FROM "
-                        + DBHelper.TABLE_CONTACTS_SERVICES + ", "
-                        + DBHelper.TABLE_WORKING_DAYS + ", "
-                        + DBHelper.TABLE_WORKING_TIME
-                        + " WHERE "
-                        + DBHelper.TABLE_CONTACTS_SERVICES + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_SERVICE_ID_WORKING_DAYS
-                        + " AND "
-                        + DBHelper.TABLE_WORKING_DAYS + "." + DBHelper.KEY_ID + " = " + DBHelper.KEY_WORKING_DAYS_ID_WORKING_TIME
-                        + " AND "
-                        + DBHelper.TABLE_WORKING_TIME + "." + DBHelper.KEY_USER_ID + " = ?";
-
-        Cursor cursor = database.rawQuery(sqlQuery, new String[] {userId});
-
-        if(cursor.moveToFirst()){
-            int indexServiceId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexServiceName = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
-            int indexDate = cursor.getColumnIndex(DBHelper.KEY_DATE_WORKING_DAYS);
-            int indexTime = cursor.getColumnIndex(DBHelper.KEY_TIME_WORKING_TIME);
-
-            do{
-                String foundId = cursor.getString(indexServiceId);
-                String foundName = cursor.getString(indexServiceName);
-                String foundDate = cursor.getString(indexDate);
-                String foundTime = cursor.getString(indexTime);
-
-                Long sysdateLong = workWithTimeApi.getSysdateLong();
-                Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(foundDate+" "+foundTime);
-
-                //проверяет, актуальность ордера
-                if(orderDateLong-sysdateLong>0) {
-                    addOrderToScreen(foundId, foundName, foundDate, foundTime);
-                }
-            }while (cursor.moveToNext());
-        }
-        cursor.close();
-    }
-
-    //получаем все сервисы, которые пренадлежат юзеру
-    private void createServicesList(String userId){
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        // Возвращает id, название, рэйтинг и количество оценивших
-        // используем таблицу сервисы
-        // уточняем юзера по его id
-        String sqlQuery =
-                "SELECT "
-                        + DBHelper.KEY_ID + ", "
-                        + DBHelper.KEY_NAME_SERVICES + ", "
-                        + DBHelper.KEY_RATING_SERVICES + ", "
-                        + DBHelper.KEY_COUNT_OF_RATES_SERVICES
-                        + " FROM " + DBHelper.TABLE_CONTACTS_SERVICES
-                        + " WHERE " + DBHelper.KEY_USER_ID + " = ?";
-        Cursor cursor = database.rawQuery(sqlQuery, new String[] {userId});
-
-        if(cursor.moveToFirst()){
-            int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
-            int indexRatingService = cursor.getColumnIndex(DBHelper.KEY_RATING_SERVICES);
-            int indexCountOfRatesService = cursor.getColumnIndex(DBHelper.KEY_COUNT_OF_RATES_SERVICES);
-            do{
-                String foundId = cursor.getString(indexId);
-                String foundNameService = cursor.getString(indexNameService);
-                String foundRatingService = cursor.getString(indexRatingService);
-                String foundCountOfRatesService = cursor.getString(indexCountOfRatesService);
-
-                Service service = new Service();
-                service.setId(foundId);
-                service.setName(foundNameService);
-                service.setRating(foundRatingService);
-                service.setCountOfRates(foundCountOfRatesService);
-
-                addServiceToScreen(service);
-            }while (cursor.moveToNext());
-        }
-        cursor.close();
     }
 
     //получить id-phone пользователя
@@ -327,13 +230,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
         if(userId.equals(ownerId)){
             // если это мой сервис
-            addNewOrders(userId);
-            addNewServices(userId);
+            updateOrdersList(userId);
+            updateServicesList(userId);
         }
     }
 
     //добавляет вновь добавленный сервис (обновление serviceList)
-    private void addNewServices(String userId) {
+    private void updateServicesList(String userId) {
         //количество сервисов отображаемых на данный момент(старых)
         int visibleCount = servicesLayout.getChildCount();
 
@@ -356,17 +259,17 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         Cursor cursor = database.rawQuery(sqlQuery, new String[]{userId});
 
         // Реальное кол-во сервисов
-        int serviceCount = cursor.getCount();
+        int cursorCount = cursor.getCount();
 
         //Проверка на наличие вновь добавленных сервисов
-        if(serviceCount > visibleCount) {
+        if(cursorCount > visibleCount) {
             //Идём с конца
             if(cursor.moveToLast()){
                 int indexId = cursor.getColumnIndex(DBHelper.KEY_ID);
                 int indexNameService = cursor.getColumnIndex(DBHelper.KEY_NAME_SERVICES);
                 int indexRatingService = cursor.getColumnIndex(DBHelper.KEY_RATING_SERVICES);
                 int indexCountOfRatesService = cursor.getColumnIndex(DBHelper.KEY_COUNT_OF_RATES_SERVICES);
-                int countOfNewServices = 0;
+                int newServicesCount = 0;
 
                 do{
                     String foundId = cursor.getString(indexId);
@@ -381,17 +284,17 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                     service.setCountOfRates(foundCountOfRatesService);
 
                     addServiceToScreen(service);
+                    newServicesCount++;
 
-                    countOfNewServices++;
                     //пока в курсоре есть строки и есть новые сервисы
-                }while (cursor.moveToPrevious() && countOfNewServices<(serviceCount - visibleCount));
+                }while (cursor.moveToPrevious() && newServicesCount<(cursorCount - visibleCount));
             }
         }
         cursor.close();
     }
 
     //добавляет вновь добавленные записи (обновление ordersList)
-    private void addNewOrders(String userId) {
+    private void updateOrdersList(String userId) {
         // количство записей отображаемых на данный момент(старых)
         int visibleCount = ordersLayout.getChildCount();
 
@@ -418,8 +321,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
         Cursor cursor = database.rawQuery(sqlQuery, new String[] {userId});
 
+        int irrelevantCount = 0;
+        int cursorCount = cursor.getCount();
         //если есть новые записи
-        if(cursor.getCount() > visibleCount) {
+        if(cursorCount > irrelevantCount + visibleCount) {
             //Идём с конца
             if(cursor.moveToLast()){
                 int indexServiceId = cursor.getColumnIndex(DBHelper.KEY_ID);
@@ -440,10 +345,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                     //проверяет, актуальность ордера
                     if(orderDateLong-sysdateLong>0) {
                         addOrderToScreen(foundId, foundName, foundDate, foundTime);
+                        countOfNewOrders++;
+                    } else {
+                        irrelevantCount++;
                     }
-                    countOfNewOrders++;
+
                     //пока в курсоре есть строки и есть новые записи
-                }while (cursor.moveToPrevious() && countOfNewOrders<(cursor.getCount() - visibleCount));
+                }while (cursor.moveToPrevious() && countOfNewOrders<(cursorCount - irrelevantCount - visibleCount));
             }
         }
         cursor.close();
@@ -504,6 +412,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         Intent intent = new Intent(this, Dialogs.class);
         startActivity(intent);
     }
+
     private void goToReview(){
         Intent intent = new Intent(this, Review.class);
         startActivity(intent);
