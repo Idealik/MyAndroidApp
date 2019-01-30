@@ -242,7 +242,6 @@ public class Dialogs extends AppCompatActivity {
         loadMessageOrders(dialogId);
 
         loadMessageReviews(dialogId);
-
     }
 
     private void loadMessageOrders(final String dialogId){
@@ -504,10 +503,12 @@ public class Dialogs extends AppCompatActivity {
                         }
 
                     }
+
                     if(countEqualTimes == 0){
                         createMessageReview(message);
                         loadMessageReviews(message.getDialogId());
                     }
+
                 }
 
             }

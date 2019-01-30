@@ -2,10 +2,10 @@ package com.example.ideal.myapplication.other;
 
 import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,8 +26,10 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
     private static final String PHONE_NUMBER = "Phone number";
 
     private static final String REVIEWS_FOR_SERVICE = "reviews for service";
+    private static final String REVIEWS_FOR_USER = "reviews for user";
     private static final String SERVICE_ID = "service id";
-    private static final String USER_ID = "user id";
+    private static final String VALUING_PHONE = "valuing phone";
+    private static final String ESTIMATED_PHONE = "estimated phone";
     private static final String REVIEW = "review";
     private static final String RATING = "rating";
     private static final String MESSAGE_REVIEWS = "message reviews";
@@ -45,10 +47,7 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
     private String serviceId;
     private boolean isUser;
 
-    private Button rateReviewBtn;
-
     private EditText reviewInput;
-
 
     private RatingBar ratingBar;
     private DBHelper dbHelper;
@@ -59,7 +58,7 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review);
 
-        rateReviewBtn = findViewById(R.id.rateReviewBtn);
+        Button rateReviewBtn = findViewById(R.id.rateReviewBtn);
         reviewInput = findViewById(R.id.reviewReviewInput);
         ratingBar = findViewById(R.id.ratingBarReview);
         messageId = getIntent().getStringExtra(MESSAGE_ID);
@@ -86,9 +85,15 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
             // Берём оценку
             String review = reviewInput.getText().toString();
 
-            // Загружаем в Firebase
-            postReview(review);
-
+            // Загружаем оценку в Firebase в зависимости от статуса человека
+            if(isUser) {
+                //юзер оценивает сервис
+                createReviewForService(review);
+            }
+            else {
+                //воркер оценивает юзера
+                createReviewForUser(review);
+            }
             // Обновляем атрибут "is rate" в таблице "message review"
             updateMessageReview();
 
@@ -117,14 +122,15 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
         myRef.updateChildren(items);
     }
 
-    private void postReview(String review) {
+    private void createReviewForService(String review) {
+        //оценка юзером
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(REVIEWS_FOR_SERVICE);
         String myPhoneNumber = getUserId();
 
         Map<String,Object> items = new HashMap<>();
         items.put(SERVICE_ID, serviceId);
-        items.put(USER_ID, myPhoneNumber);
+        items.put(VALUING_PHONE, myPhoneNumber);
         items.put(REVIEW, review);
         items.put(RATING, myRating);
 
@@ -134,20 +140,86 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
         updateMessageReviewInLocalStorage();
     }
 
+    private void createReviewForUser(String review) {
+        //оценка воркером
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(REVIEWS_FOR_USER);
+        String myPhoneNumber = getUserId();
+
+        Map<String,Object> items = new HashMap<>();
+        items.put(VALUING_PHONE, myPhoneNumber); // кто оценивает
+        items.put(ESTIMATED_PHONE, getEstimatedPhone()); // кого оцениваем
+        items.put(REVIEW, review);
+        items.put(RATING, myRating);
+
+        String reviewId =  myRef.push().getKey();
+        myRef = database.getReference(REVIEWS_FOR_USER).child(reviewId);
+        myRef.updateChildren(items);
+        updateMessageReviewInLocalStorage();
+    }
+
     private void updateMessageReviewInLocalStorage() {
-        Log.d(TAG, "updateMessageReviewInLocalStorage: ");
 
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(DBHelper.KEY_IS_RATE_BY_USER_MESSAGE_REVIEWS, "true");
-        contentValues.put(DBHelper.KEY_IS_RATE_BY_WORKER_MESSAGE_REVIEWS, "true");
+        if(isUser) {
+            contentValues.put(DBHelper.KEY_IS_RATE_BY_USER_MESSAGE_REVIEWS, "true");
+        }
+        else {
+            contentValues.put(DBHelper.KEY_IS_RATE_BY_WORKER_MESSAGE_REVIEWS, "true");
+        }
+
         database.update(DBHelper.TABLE_MESSAGE_REVIEWS, contentValues,
                 DBHelper.KEY_ID + " = ?",
                 new String[]{String.valueOf(messageId)});
 
     }
+
+    private Object getEstimatedPhone() {
+        //получить номера из диалога, к которому принадлежит этот messageId
+
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        // Получает телефоны из диалога
+        // Таблицы: dialogs, message_reviews
+        // Условия: уточняем id message_reviews и связываем диалоги с message_reviews
+        String sqlQuery =
+                "SELECT "
+                        + DBHelper.KEY_FIRST_USER_ID_DIALOGS + ", "
+                        + DBHelper.KEY_SECOND_USER_ID_DIALOGS
+                        + " FROM "
+                        + DBHelper.TABLE_DIALOGS + ", "
+                        + DBHelper.TABLE_MESSAGE_REVIEWS
+                        + " WHERE "
+                        + DBHelper.TABLE_DIALOGS +"."+DBHelper.KEY_ID
+                        + " = "
+                        + DBHelper.KEY_DIALOG_ID_MESSAGES
+                        + " AND "
+                        + DBHelper.TABLE_MESSAGE_REVIEWS +"." + DBHelper.KEY_ID + " = ?";
+
+        Cursor cursor = database.rawQuery(sqlQuery, new String[]{messageId});
+
+        if(cursor.moveToFirst()){
+
+            int indexFirstPhone = cursor.getColumnIndex(DBHelper.KEY_FIRST_USER_ID_DIALOGS);
+            String firstPhone = cursor.getString(indexFirstPhone);
+
+            int indexSecondPhone = cursor.getColumnIndex(DBHelper.KEY_SECOND_USER_ID_DIALOGS);
+            String secondPhone = cursor.getString(indexSecondPhone);
+
+            if(firstPhone.equals(getUserId())){
+                cursor.close();
+                return secondPhone;
+            }
+            else {
+                cursor.close();
+                return  firstPhone;
+            }
+        }
+        return "0";
+    }
+
 
     //Описываем работу слушателя изменения состояний Rating Bar:
     public void addListenerOnRatingBar() {

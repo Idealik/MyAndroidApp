@@ -191,7 +191,7 @@ public class Messages extends AppCompatActivity {
                                 message.setTimeId(timeId);
 
                                 addNotificationCanceledToScreen(message);
-                                checkMessageReview("user");
+                                checkMessageReview(message,"user");
                                 dayTimeCursor.close();
                             }
                         } else {
@@ -208,7 +208,7 @@ public class Messages extends AppCompatActivity {
                                 message.setTimeId(timeId);
 
                                 addToScreen(message);
-                                checkMessageReview("worker");
+                                checkMessageReview(message,"worker");
                                 dayTimeCursor.close();
                             } else {
                                 // Выводить сообщение - "Вы успешно записались на услугу ..."
@@ -220,7 +220,7 @@ public class Messages extends AppCompatActivity {
                                 message.setTimeId(timeId);
 
                                 addNotificationNoCanceledToScreen(message);
-                                checkMessageReview("user");
+                                checkMessageReview(message,"user");
                                 dayTimeCursor.close();
                             }
                         }
@@ -315,26 +315,33 @@ public class Messages extends AppCompatActivity {
         messagesLayout.addView(notificationText);
     }
 
-    private void checkMessageReview(String status) {
+    private void checkMessageReview(Message orderMessage,String status) {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Message message = new Message();
         // Получает id сообщения, время сообщения, отменена ли запись, id дня записи
-        // Таблицы: messages
-        // Условия: уточняем id диалога
+        // Таблицы: messagesO, messagesR
+        // Условия: уточняем id диалога, связываем MO & MR по timeId
         String messageQuery =
                 "SELECT "
-                        + DBHelper.KEY_ID + ", "
-                        + DBHelper.KEY_MESSAGE_TIME_MESSAGES + ", "
+                        + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_ID + ", "
+                        + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_MESSAGE_TIME_MESSAGES + ", "
                         + DBHelper.KEY_IS_RATE_BY_USER_MESSAGE_REVIEWS+ ", "
                         + DBHelper.KEY_IS_RATE_BY_WORKER_MESSAGE_REVIEWS+ ", "
-                        + DBHelper.KEY_TIME_ID_MESSAGES
+                        + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_TIME_ID_MESSAGES
                         + " FROM "
-                        + DBHelper.TABLE_MESSAGE_REVIEWS
+                        + DBHelper.TABLE_MESSAGE_REVIEWS + ", "
+                        + DBHelper.TABLE_MESSAGE_ORDERS
                         + " WHERE "
-                        + DBHelper.KEY_DIALOG_ID_MESSAGES + " = ?"
+                        + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_DIALOG_ID_MESSAGES + " = ?"
+                        + " AND "
+                        + DBHelper.TABLE_MESSAGE_ORDERS + "." +DBHelper.KEY_TIME_ID_MESSAGES + " = ?"
+                        + " AND "
+                        + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_TIME_ID_MESSAGES
+                        + " = "
+                        + DBHelper.TABLE_MESSAGE_ORDERS + "." + DBHelper.KEY_TIME_ID_MESSAGES
                         + " ORDER BY "
-                        + DBHelper.KEY_MESSAGE_TIME_MESSAGES;
-        Cursor messageCursor = database.rawQuery(messageQuery, new String[]{dialogId});
+                        + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_MESSAGE_TIME_MESSAGES;
+        Cursor messageCursor = database.rawQuery(messageQuery, new String[]{dialogId, orderMessage.getTimeId()});
 
         if (messageCursor.moveToFirst()) {
             int indexMessageId = messageCursor.getColumnIndex(DBHelper.KEY_ID);
@@ -344,7 +351,6 @@ public class Messages extends AppCompatActivity {
             int indexTimeId = messageCursor.getColumnIndex(DBHelper.KEY_TIME_ID_MESSAGES);
 
             // Цикл по всем сообщениям в диалоге пользователя
-            do {
                 String timeId = messageCursor.getString(indexTimeId);
                 Log.d(TAG, "id " + timeId);
 
@@ -384,7 +390,6 @@ public class Messages extends AppCompatActivity {
 
                     addMessageReviewToScreen(message, dayTimeCursor.getString(indexServiceId),status);
                 }
-            } while (messageCursor.moveToNext());
             messageCursor.close();
         }
 
