@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:theme="@style/allPages"
     android:orientation="vertical"
-    tools:context=".other.Messages">
+    tools:context=".chat.Messages">
 
     <ScrollView
         android:layout_width="match_parent"

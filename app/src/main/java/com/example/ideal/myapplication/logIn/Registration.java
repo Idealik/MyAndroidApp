@@ -15,7 +15,7 @@ import com.example.ideal.myapplication.helpApi.WorkWithViewApi;
 import com.example.ideal.myapplication.other.DBHelper;
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.other.Profile;
-import com.example.ideal.myapplication.fragments.User;
+import com.example.ideal.myapplication.fragments.objects.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

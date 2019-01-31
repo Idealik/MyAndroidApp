@@ -130,14 +130,14 @@ activity#com.example.ideal.myapplication.other.Review
 ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:12:9-59
 	android:name
 		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:12:19-47
-activity#com.example.ideal.myapplication.other.Messages
-ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:13:9-52
+activity#com.example.ideal.myapplication.chat.Messages
+ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:13:9-51
 	android:name
-		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:13:19-49
-activity#com.example.ideal.myapplication.other.Dialogs
-ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:14:9-51
+		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:13:19-48
+activity#com.example.ideal.myapplication.chat.Dialogs
+ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:14:9-50
 	android:name
-		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:14:19-48
+		ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:14:19-47
 activity#com.example.ideal.myapplication.logIn.Registration
 ADDED from C:\Users\Ideal\Desktop\proj\app\src\main\AndroidManifest.xml:15:9-56
 	android:name

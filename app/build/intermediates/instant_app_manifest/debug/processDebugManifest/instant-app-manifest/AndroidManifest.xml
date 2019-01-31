@@ -26,8 +26,8 @@
         android:testOnly="true"
         android:theme="@style/AppTheme" >
         <activity android:name="com.example.ideal.myapplication.other.Review" />
-        <activity android:name="com.example.ideal.myapplication.other.Messages" />
-        <activity android:name="com.example.ideal.myapplication.other.Dialogs" />
+        <activity android:name="com.example.ideal.myapplication.chat.Messages" />
+        <activity android:name="com.example.ideal.myapplication.chat.Dialogs" />
         <activity android:name="com.example.ideal.myapplication.logIn.Registration" />
         <activity android:name="com.example.ideal.myapplication.logIn.Authorization" >
             <intent-filter>

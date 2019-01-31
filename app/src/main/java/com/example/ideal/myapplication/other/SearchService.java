@@ -20,9 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
-import com.example.ideal.myapplication.fragments.Service;
-import com.example.ideal.myapplication.fragments.User;
-import com.example.ideal.myapplication.fragments.foundServiceElement;
+import com.example.ideal.myapplication.fragments.objects.Service;
+import com.example.ideal.myapplication.fragments.objects.User;
+import com.example.ideal.myapplication.fragments.foundElements.foundServiceElement;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

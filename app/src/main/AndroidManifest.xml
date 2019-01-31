@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".other.Review"></activity>
-        <activity android:name=".other.Messages" />
-        <activity android:name=".other.Dialogs" />
+        <activity android:name=".chat.Messages" />
+        <activity android:name=".chat.Dialogs" />
         <activity android:name=".logIn.Registration" />
         <activity android:name=".logIn.Authorization">
             <intent-filter>

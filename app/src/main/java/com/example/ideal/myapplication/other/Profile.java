@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -18,11 +17,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.ideal.myapplication.R;
+import com.example.ideal.myapplication.chat.Dialogs;
 import com.example.ideal.myapplication.createService.AddService;
 import com.example.ideal.myapplication.editing.EditProfile;
-import com.example.ideal.myapplication.fragments.Service;
-import com.example.ideal.myapplication.fragments.foundOrderElement;
-import com.example.ideal.myapplication.fragments.foundServiceProfileElement;
+import com.example.ideal.myapplication.fragments.objects.Service;
+import com.example.ideal.myapplication.fragments.foundElements.foundOrderElement;
+import com.example.ideal.myapplication.fragments.foundElements.foundServiceProfileElement;
 import com.example.ideal.myapplication.helpApi.WorkWithTimeApi;
 import com.example.ideal.myapplication.logIn.Authorization;
 

@@ -1,6 +1,6 @@
 package com.example.ideal.myapplication;
 
-import com.example.ideal.myapplication.fragments.Service;
+import com.example.ideal.myapplication.fragments.objects.Service;
 
 import org.junit.Test;
 
