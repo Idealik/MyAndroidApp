@@ -851,8 +851,10 @@ id never
 id none
 id normal
 id notification_background
+id notification_canceled_elementText
 id notification_main_column
 id notification_main_column_container
+id notification_no_canceled_elementText
 id orderProfileScroll
 id ordersProfileLayout
 id packed
@@ -1004,8 +1006,10 @@ layout my_calendar
 layout my_time
 layout notification_action
 layout notification_action_tombstone
+layout notification_canceled_element
 layout notification_media_action
 layout notification_media_cancel_action
+layout notification_no_canceled_element
 layout notification_template_big_media
 layout notification_template_big_media_custom
 layout notification_template_big_media_narrow

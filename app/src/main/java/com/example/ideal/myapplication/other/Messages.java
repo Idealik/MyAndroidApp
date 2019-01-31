@@ -18,6 +18,8 @@ import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.Message;
 import com.example.ideal.myapplication.fragments.MessageOrderElement;
 import com.example.ideal.myapplication.fragments.MessageReviewElement;
+import com.example.ideal.myapplication.fragments.notification_canceled_element;
+import com.example.ideal.myapplication.fragments.notification_no_canceled_element;
 
 public class Messages extends AppCompatActivity {
 
@@ -284,35 +286,22 @@ public class Messages extends AppCompatActivity {
         transaction.commit();
     }
 
-    @SuppressLint("SetTextI18n")
     private void addNotificationCanceledToScreen(Message message) {
-        TextView notificationText = new TextView(this);
-        notificationText.setText("  Работник " + message.getUserName()
-                + " по некоторым причинам не сможет обслужить вас.\n   Запись на "
-                + message.getDate()
-                + " в " + message.getOrderTime()
-                + " на услугу " + message.getServiceName() + " отменена.");
-        notificationText.setBackgroundColor(Color.rgb(130, 216, 233));
+        notification_canceled_element fElement = new notification_canceled_element(message);
 
-        if(notificationText.getParent() != null) {
-            ((ViewGroup)notificationText.getParent()).removeView(notificationText);
-        }
-        messagesLayout.addView(notificationText);
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.resultsMessageLayout, fElement);
+        transaction.commit();
     }
 
-    @SuppressLint("SetTextI18n")
     private void addNotificationNoCanceledToScreen(Message message) {
-        TextView notificationText = new TextView(this);
-        notificationText.setText("  Вы успешно записались к " + message.getUserName()
-                + ". Запись на "
-                + message.getDate()
-                + " в " + message.getOrderTime()
-                + " на услугу " + message.getServiceName());
 
-        if(notificationText.getParent() != null) {
-            ((ViewGroup)notificationText.getParent()).removeView(notificationText);
-        }
-        messagesLayout.addView(notificationText);
+        notification_no_canceled_element fElement = new notification_no_canceled_element(message);
+
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.resultsMessageLayout, fElement);
+        transaction.commit();
+
     }
 
     private void checkMessageReview(Message orderMessage,String status) {
@@ -338,9 +327,7 @@ public class Messages extends AppCompatActivity {
                         + " AND "
                         + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_TIME_ID_MESSAGES
                         + " = "
-                        + DBHelper.TABLE_MESSAGE_ORDERS + "." + DBHelper.KEY_TIME_ID_MESSAGES
-                        + " ORDER BY "
-                        + DBHelper.TABLE_MESSAGE_REVIEWS + "." + DBHelper.KEY_MESSAGE_TIME_MESSAGES;
+                        + DBHelper.TABLE_MESSAGE_ORDERS + "." + DBHelper.KEY_TIME_ID_MESSAGES;
         Cursor messageCursor = database.rawQuery(messageQuery, new String[]{dialogId, orderMessage.getTimeId()});
 
         if (messageCursor.moveToFirst()) {
