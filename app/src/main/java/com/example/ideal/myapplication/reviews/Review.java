@@ -1,4 +1,4 @@
-package com.example.ideal.myapplication.other;
+package com.example.ideal.myapplication.reviews;
 
 import android.content.ContentValues;
 import android.content.SharedPreferences;
@@ -13,6 +13,8 @@ import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.example.ideal.myapplication.R;
+import com.example.ideal.myapplication.helpApi.WorkWithTimeApi;
+import com.example.ideal.myapplication.other.DBHelper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -34,6 +36,8 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
     private static final String RATING = "rating";
     private static final String MESSAGE_REVIEWS = "message reviews";
     private static final String MESSAGE_ID = "message id";
+    private static final String MESSAGE_TIME = "message time";
+
 
     private static final String FILE_NAME = "Info";
 
@@ -46,6 +50,7 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
     private float myRating;
     private String serviceId;
     private boolean isUser;
+    String dateNow;
 
     private EditText reviewInput;
 
@@ -69,10 +74,11 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
 
         dbHelper = new DBHelper(this);
 
+        WorkWithTimeApi workWithTimeApi = new WorkWithTimeApi();
+        dateNow = workWithTimeApi.getCurDateInFormatHMS();
+
         addListenerOnRatingBar();
         rateReviewBtn.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -128,9 +134,11 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
         DatabaseReference myRef = database.getReference(REVIEWS_FOR_SERVICE);
         String myPhoneNumber = getUserId();
 
+
         Map<String,Object> items = new HashMap<>();
         items.put(SERVICE_ID, serviceId);
         items.put(VALUING_PHONE, myPhoneNumber);
+        items.put(MESSAGE_TIME, dateNow);
         items.put(REVIEW, review);
         items.put(RATING, myRating);
 
@@ -149,6 +157,7 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
         Map<String,Object> items = new HashMap<>();
         items.put(VALUING_PHONE, myPhoneNumber); // кто оценивает
         items.put(ESTIMATED_PHONE, getEstimatedPhone()); // кого оцениваем
+        items.put(MESSAGE_TIME, dateNow);
         items.put(REVIEW, review);
         items.put(RATING, myRating);
 
@@ -221,9 +230,9 @@ public class Review extends AppCompatActivity implements View.OnClickListener {
     }
 
 
-    //Описываем работу слушателя изменения состояний Rating Bar:
+    //Описываем работу слушателя изменения состояний RatingReview Bar:
     public void addListenerOnRatingBar() {
-        //При смене значения рейтинга в нашем элементе Rating Bar,
+        //При смене значения рейтинга в нашем элементе RatingReview Bar,
         //это изменение будет сохраняться в myRating
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating,

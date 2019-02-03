@@ -24,7 +24,8 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.example.ideal.myapplication.other.Review" />
+        <activity android:name="com.example.ideal.myapplication.reviews.ReviewForService" />
+        <activity android:name="com.example.ideal.myapplication.reviews.Review" />
         <activity android:name="com.example.ideal.myapplication.chat.Messages" />
         <activity android:name="com.example.ideal.myapplication.chat.Dialogs" />
         <activity android:name="com.example.ideal.myapplication.logIn.Registration" />

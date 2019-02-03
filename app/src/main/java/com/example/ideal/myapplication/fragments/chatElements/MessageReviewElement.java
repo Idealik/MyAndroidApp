@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.example.ideal.myapplication.R;
 import com.example.ideal.myapplication.fragments.objects.Message;
-import com.example.ideal.myapplication.other.Review;
+import com.example.ideal.myapplication.reviews.Review;
 
 
 public class MessageReviewElement extends Fragment implements View.OnClickListener {
@@ -67,14 +67,6 @@ public class MessageReviewElement extends Fragment implements View.OnClickListen
                       + " Вы также сможете увидеть отзыв, о себе,"
                       + " как только пользователь оставит его или пройдет 72 часа.";
 
-           /* text = "Работник " + messageName
-                    + " отказался предоставлять вам услугу "
-                    + messageServiceName
-                    + " на "
-                    + messageDateOfDay
-                    + ".\nОднако он сделал это менее чем за час до сеанса," +
-                    " поэтому мы считаем будет честно дать Вам возможность оставить оценку" +
-                    " и комментарий.";*/
         }
         else {
             //письмо для воркера

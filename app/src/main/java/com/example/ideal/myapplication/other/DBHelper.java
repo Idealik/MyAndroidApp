@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final  int DATABASE_VERSION = 41;
+    public static final  int DATABASE_VERSION = 44;
     public static final String DATABASE_NAME = "MyFirstDB";
 
     //tables name
@@ -18,6 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_MESSAGE_ORDERS = "messages";
     public static final String TABLE_MESSAGE_REVIEWS = "message_reviews";
     public static final String TABLE_REVIEWS_FOR_SERVICE = "reviews_for_service";
+    public static final String TABLE_REVIEWS_FOR_USERS = "reviews_for_users";
 
     //for all
     public  static final  String KEY_ID = "_id";
@@ -64,6 +65,15 @@ public class DBHelper extends SQLiteOpenHelper {
     //reviews for service
     public  static final  String KEY_REVIEW_REVIEWS_FOR_SERVICE = "review";
     public  static final  String KEY_RATING_REVIEWS_FOR_SERVICE = "rating";
+    public  static final  String KEY_SERVICE_ID_REVIEWS_FOR_SERVICE = "rating";
+    public  static final  String KEY_VALUING_PHONE_REVIEWS_FOR_SERVICE = "valuing_phone";
+
+
+    //reviews for user
+    public  static final  String KEY_VALUING_PHONE_REVIEWS_FOR_USER = "valuing_phone";
+    public  static final  String KEY_ESTIMATED_PHONE_REVIEWS_FOR_USER = "estimated_phone";
+    public  static final  String KEY_REVIEW_REVIEWS_FOR_USER = "review";
+    public  static final  String KEY_RATING_REVIEWS_FOR_USER = "rating";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -133,10 +143,20 @@ public class DBHelper extends SQLiteOpenHelper {
         String reviewsForService = "create table "+ TABLE_REVIEWS_FOR_SERVICE
                 + "("
                 + KEY_ID + " text primary key,"
-                + KEY_TIME_ID_MESSAGES + " text,"
-                + KEY_USER_ID + " text,"
+                + KEY_MESSAGE_TIME_MESSAGES + " text,"
+                + KEY_VALUING_PHONE_REVIEWS_FOR_SERVICE + " text,"
                 + KEY_REVIEW_REVIEWS_FOR_SERVICE + " text,"
                 + KEY_RATING_REVIEWS_FOR_SERVICE + " text"
+                + ")";
+
+        String reviewsForUser = "create table "+ TABLE_REVIEWS_FOR_USERS
+                + "("
+                + KEY_ID + " text primary key,"
+                + KEY_MESSAGE_TIME_MESSAGES + " text,"
+                + KEY_VALUING_PHONE_REVIEWS_FOR_USER + " text,"
+                + KEY_ESTIMATED_PHONE_REVIEWS_FOR_USER + " text,"
+                + KEY_REVIEW_REVIEWS_FOR_USER + " text,"
+                + KEY_RATING_REVIEWS_FOR_USER + " text"
                 + ")";
 
         // create users table
@@ -162,6 +182,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         //create reviews for service
         db.execSQL(reviewsForService);
+
+        //create reviews for user
+        db.execSQL(reviewsForUser);
     }
 
     @Override
@@ -174,6 +197,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists " + TABLE_MESSAGE_ORDERS);
         db.execSQL("drop table if exists " + TABLE_MESSAGE_REVIEWS);
         db.execSQL("drop table if exists " + TABLE_REVIEWS_FOR_SERVICE);
+        db.execSQL("drop table if exists " + TABLE_REVIEWS_FOR_USERS);
 
         onCreate(db);
     }

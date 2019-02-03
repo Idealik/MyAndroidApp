@@ -55,19 +55,9 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         messageTimeId = message.getTimeId();
         messageIsCanceled = message.getIsCanceled();
         messageDialogId = message.getDialogId();
-
-        text = "Добрый день, на " + messageDateOfDay + " в " + messageTimeOfDay
-                + " к вам записался пользователь " + message.getUserName() + " на услугу "
-                + message.getServiceName() + ". Вы можете отказаться, указав причину.";
-    }
-
-    private boolean isRelevance() {
-        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
-
-        Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
-        Long sysdateLong = workWithTimeApi.getSysdateLong();
-
-        return orderDateLong - sysdateLong > 0;
+            text = "Добрый день, на " + messageDateOfDay + " в " + messageTimeOfDay
+                    + " к вам записался пользователь " + message.getUserName() + " на услугу "
+                    + message.getServiceName() + ". Вы можете отказаться, указав причину.";
     }
 
     @Override
@@ -94,8 +84,15 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         setData();
     }
 
+    @SuppressLint("SetTextI18n")
     private void setData() {
-        messageText.setText(text);
+        if(!beforeOneHour()) {
+            messageText.setText(text);
+        }
+        else {
+            messageText.setText(text + " Если вы сделаете это за час до назначенного времени,"
+                    + " пользователь получит возможность оставить о вас комментарий") ;
+        }
     }
 
     @Override
@@ -111,11 +108,9 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         //isRelevance нужен, чтобы пользователь, как прошло время, не смог отменить заказ,
         // будучи на активити
 
-        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
-        Long sysdateLong = workWithTimeApi.getSysdateLong();
-        Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
         if(isRelevance()) {
-            if (orderDateLong - sysdateLong > 3600000) {
+            //за час до
+            if (!beforeOneHour()) {
                 cancel();
             } else {
                 cancel();
@@ -124,6 +119,15 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
                 createMessageReview();
             }
         }
+    }
+
+    private boolean isRelevance() {
+        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
+
+        Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
+        Long sysdateLong = workWithTimeApi.getSysdateLong();
+
+        return orderDateLong - sysdateLong > 0;
     }
 
     private  void cancel(){
@@ -147,11 +151,19 @@ public class MessageOrderElement extends Fragment implements View.OnClickListene
         items.put(MESSAGE_TIME, dateNow);
         items.put(TIME_ID, messageTimeId);
         items.put(IS_RATE_BY_USER, false);
-        items.put(IS_RATE_BY_WORKER, false);
+        items.put(IS_RATE_BY_WORKER, true);
 
         String messageId =  myRef.push().getKey();
         myRef = database.getReference(MESSAGE_REVIEWS).child(messageId);
         myRef.updateChildren(items);
+    }
+    private boolean beforeOneHour() {
+
+        String commonDate = messageDateOfDay + " " + messageTimeOfDay;
+        Long sysdateLong = workWithTimeApi.getSysdateLong();
+        Long orderDateLong = workWithTimeApi.getMillisecondsStringDate(commonDate);
+
+        return orderDateLong - sysdateLong < 3600000;
     }
 
     private void clearPhone() {

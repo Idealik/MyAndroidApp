@@ -25,6 +25,7 @@ import com.example.ideal.myapplication.fragments.foundElements.foundOrderElement
 import com.example.ideal.myapplication.fragments.foundElements.foundServiceProfileElement;
 import com.example.ideal.myapplication.helpApi.WorkWithTimeApi;
 import com.example.ideal.myapplication.logIn.Authorization;
+import com.example.ideal.myapplication.reviews.Review;
 
 public class Profile extends AppCompatActivity implements View.OnClickListener {
 

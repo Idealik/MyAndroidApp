@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:theme="@style/allPages"
     android:orientation="vertical"
-    tools:context=".other.Review"
+    tools:context=".reviews.Review"
     >
 
     <TextView
